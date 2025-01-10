@@ -1,11 +1,14 @@
 "use client"
 import styles from './index.module.scss';
 import {Button, Input, Tabs, TabsProps} from "antd";
+import { useState } from "react";
 
-
-
-const LoginForm = () => {
-
+const LoginForm = (props: {
+    onLogin: (username: string, password: string) => void;
+}) => {
+    const { onLogin } = props;
+    const [ username, setUsername ] = useState("admin");
+    const [ password, setPassword ] = useState("123456");
     const items: TabsProps['items'] = [
         {
             key: '1',
@@ -13,17 +16,23 @@ const LoginForm = () => {
             children: <>
                 <div>
                     账号
-                    <Input  />
+                    <Input value={username} onChange={(e) => {
+                        setUsername(e.target.value);
+                    }} />
                 </div>
                 <div>
                     密码
-                    <Input  />
+                    <Input value={password} onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}/>
                 </div>
                 <div>
                     <Input type='checkbox' />记住密码
                 </div>
                 <div>
-                    <Button>登录</Button>
+                    <Button onClick={() => {
+                        onLogin(username, password)
+                    }}>登录</Button>
                 </div>
             </>,
         },
