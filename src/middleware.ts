@@ -12,8 +12,14 @@ async function jwtMiddleware(req: NextRequest) {
             });
             const decoded:decodeType = res.data.decoded;
             console.log(accessDecode(decoded));
-            if(!accessDecode(decoded).access && pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url)); // 解码失败，重定向到login页
-            if(accessDecode(decoded).access && pathname === '/login') return NextResponse.redirect(new URL('/', req.url)); // 重定向到登录页
+            const accessInfo = accessDecode(decoded);
+            if(accessInfo.access){
+                if(pathname !== '/login') return NextResponse.next();
+                return NextResponse.redirect(new URL('/', req.url)); // login页直接重定向到主页
+            }else{
+                if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url)); // 非login页的请求直接重定向到login页
+                return NextResponse.next(); // login页直接放行，避免死循环
+            }
         } catch (error) {
             console.error(error);
             if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url));
@@ -23,7 +29,6 @@ async function jwtMiddleware(req: NextRequest) {
     }
 }
 export function middleware(req: NextRequest) {
-    console.log('middleware');
     return jwtMiddleware(req);
 }
 export const config = {

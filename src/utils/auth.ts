@@ -2,7 +2,7 @@
 // @ts-expect-error
 import jwt from 'jsonwebtoken';
 const secretKey = process.env.SECRET_KEY;
-const expiresIn = 60 * 60; // 1小时
+const expiresIn = 60 * 60 * 1000; // 1小时
 
 export type decodeType = {
     username: string;
@@ -20,7 +20,7 @@ export const createToken = (username: string) => {
     *   notBefore: 在一定时间以后生效
     * }
     * */
-    return jwt.sign({ username }, secretKey, { expiresIn: Math.floor(new Date().getTime() / 1000) + expiresIn });
+    return jwt.sign({ username }, secretKey, { expiresIn: Math.floor(new Date().getTime()) + expiresIn });
 }
 
 export const verifyToken = (token: string): decodeType => {
@@ -29,7 +29,6 @@ export const verifyToken = (token: string): decodeType => {
 
 export const accessDecode = (decode: decodeType) => {
     const { username, iat, exp } = decode;
-    console.log('accessDecode', new Date().getTime(), exp);
     if ( exp && new Date().getTime() > exp ) {
         return {
             access: false,
@@ -40,5 +39,4 @@ export const accessDecode = (decode: decodeType) => {
         access: true,
         msg: 'Token access',
     }
-
 }
