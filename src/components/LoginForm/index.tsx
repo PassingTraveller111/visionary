@@ -3,7 +3,7 @@ import styles from './index.module.scss';
 import {Button, Input, Tabs, TabsProps} from "antd";
 import { useState } from "react";
 
-const LoginForm = (props: {
+const Index = (props: {
     onLogin: (username: string, password: string) => void;
 }) => {
     const { onLogin } = props;
@@ -58,4 +58,4 @@ const LoginForm = (props: {
     </div>
 }
 
-export { LoginForm };
+export { Index };

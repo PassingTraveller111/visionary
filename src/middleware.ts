@@ -35,6 +35,7 @@ export const config = {
     matcher: [
         // '/welcome', // 特定路径
         // '/b/:path*', // 前缀匹配
+        '/api/protected/:path*', // 受保护的api需要通过中间件
         '/((?!api|_next/static|_next/image|favicon.ico).*)', // 正则表达式过滤内部请求、静态资源
     ],
 };

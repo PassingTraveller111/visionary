@@ -1,0 +1,16 @@
+.nav-container {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  border-bottom: 1px solid rgba(161, 160, 160, 0.8);
+  .logo{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0 15px;
+    cursor: pointer;
+  }
+  .search{
+    width: 200px;
+  }
+}

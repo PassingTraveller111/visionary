@@ -1,5 +1,5 @@
 "use client"
-import { LoginForm } from "@/components/LoginForm/LoginForm";
+import { Index } from "@/components/LoginForm";
 import styles from './index.module.scss';
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector} from "@/store";
@@ -19,7 +19,7 @@ const LoginPage = () => {
         <div>
             <h1>创见</h1>
         </div>
-        <LoginForm onLogin={onLogin} />
+        <Index onLogin={onLogin} />
     </div>;
 }
 

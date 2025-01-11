@@ -7,6 +7,7 @@ export type UserInfoType = {
     firstName?: string;
     lastName?: string;
     role: roleEnum;
+    profile?: string;
 }
 
 enum roleEnum {
@@ -40,9 +41,17 @@ export const userSlice = createSlice({
         },
         logOut: () => {
             return initialState;
+        },
+        setUserInfo: (state, action: PayloadAction<UserInfoType>) => {
+            return {
+                value: {
+                    ...state,
+                    ...action.payload,
+                }
+            }
         }
     }
 })
 
-export const { logOut, logIn } = userSlice.actions;
+export const { logOut, logIn, setUserInfo } = userSlice.actions;
 export default userSlice.reducer;
