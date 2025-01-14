@@ -1,16 +1,31 @@
 .nav-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   height: 50px;
   border-bottom: 1px solid rgba(161, 160, 160, 0.8);
-  .logo{
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    padding: 0 15px;
-    cursor: pointer;
+  .nav-left{
+    .logo{
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      padding: 0 15px;
+      cursor: pointer;
+    }
   }
-  .search{
-    width: 200px;
+  .nav-right{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    &>*{
+      margin-right: 15px;
+    }
+    &>*:last-child{
+      margin-right: 0;
+    }
+    .search{
+      width: 300px;
+    }
   }
 }
