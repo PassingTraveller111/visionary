@@ -1,8 +1,7 @@
 "use client"
-import {Button} from "antd";
-import {useGetUserInfo, useUserLogout} from "@/hooks/users/useUsers";
-import Navigation from "../components/Navigation";
+import {useGetUserInfo} from "@/hooks/users/useUsers";
 import {useEffect} from "react";
+import NavLayout from "@/components/NavLayout";
 
 export default function Home() {
     const getUserInfo = useGetUserInfo();
@@ -11,10 +10,11 @@ export default function Home() {
     }, [])
   return (
         <div>
-          <Navigation/>
-            <div>
-                content
-            </div>
+            <NavLayout>
+                <div>
+                    content
+                </div>
+            </NavLayout>
         </div>
   );
 }
