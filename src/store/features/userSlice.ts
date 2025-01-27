@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type UserInfoType = {
+    login: boolean;
     id: number;
     username?: string;
     email?: string;
@@ -22,6 +23,7 @@ type InitialStateType = {
 
 const initialState: InitialStateType = {
     value: {
+        login: false,
         id: 0,
         role: roleEnum.GUEST,
     }
@@ -36,6 +38,7 @@ export const userSlice = createSlice({
                 value: {
                     ...state,
                     ...action.payload,
+                    login: true,
                 }
             }
         },

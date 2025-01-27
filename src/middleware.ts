@@ -1,16 +1,19 @@
 import {NextRequest, NextResponse} from 'next/server';
-import axios from "axios";
 import {accessDecode, decodeType} from "@/utils/auth";
+import {apiClient, apiList} from "@/clientApi";
 
 async function jwtMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
     if (token) {
         try {
-            const res = await axios.post('http://localhost:3000/api/user/jwt', {
-                token,
+            const res = await apiClient(apiList.post.user.jwt, {
+                method: 'POST',
+                body: JSON.stringify({
+                    token,
+                }),
             });
-            const decoded:decodeType = res.data.decoded;
+            const decoded:decodeType = res.decoded;
             console.log(accessDecode(decoded));
             const accessInfo = accessDecode(decoded);
             if(accessInfo.access){

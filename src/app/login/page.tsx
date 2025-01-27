@@ -1,16 +1,10 @@
 "use client"
 import { Index } from "@/components/LoginForm";
 import styles from './index.module.scss';
-import { useDispatch } from "react-redux";
-import { AppDispatch, useAppSelector} from "@/store";
 import {useUserLogin} from "@/hooks/users/useUsers";
 
 
 const LoginPage = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const userInfo = useAppSelector((state) => {
-        return state.rootReducer.userReducer.value;
-    });
     const login = useUserLogin()
     const onLogin = async (username: string, password: string) => {
         await login(username, password);
