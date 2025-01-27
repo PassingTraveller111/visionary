@@ -31,15 +31,17 @@ const currentEnv = process.env.NODE_ENV;
 const apiBaseUrl = API_CONFIG[currentEnv];
 
 
-export const apiClient = async (endpoint = '', method = 'GET', data: unknown = null) => {
+export const apiClient = async (endpoint = '', init?: RequestInit) => {
     try {
         const url = `${apiBaseUrl}${endpoint}`;
-        const response = await axios({
-            method,
-            url,
-            data
-        });
-        return response.data;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json' // 请求头
+            },
+            ...init,
+        })
+        return response.json();
     } catch (error) {
         console.error(error);
         throw error;
