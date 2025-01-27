@@ -3,12 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type UserInfoType = {
     login: boolean;
     id: number;
-    username?: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
+    username?: string; // 账号
+    email?: string; // 电子邮箱
+    firstName?: string; // 姓
+    lastName?: string; // 名
     role: roleEnum;
-    profile?: string;
+    profile?: string; // 头像
+    nick_name?: string; // 昵称
 }
 
 enum roleEnum {

@@ -37,7 +37,7 @@ const ProfilePopover = (props: ProfilePopoverProps) => {
             </div>
         </div>
         <Divider/>
-        <div className={styles.contentCenter} onClick={() => router.push('/profile')}>
+        <div className={styles.contentCenter} onClick={() => router.push(`/profile/${userInfo.id}`)}>
             <span>我的主页</span>
         </div>
         <Divider/>

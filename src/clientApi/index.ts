@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 const API_CONFIG = {
     development: 'http://localhost:3000/api/',
     production: '',
@@ -12,9 +10,16 @@ export const apiList = {
         user: {
             jwt: 'user/jwt', // token解析
             login: 'user/login', // 用户登录
-        }
+        },
+        // 受保护的请求
+        protected: {
+            profile: {
+                getProfile: 'protected/profile/getProfile',
+            },
+        },
     },
     get: {
+        // 受保护的请求
         protected: {
             user: {
                 getUserInfo: 'protected/user/getUserInfo', // 获取用户信息

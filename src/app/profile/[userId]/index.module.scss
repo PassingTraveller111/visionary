@@ -1,0 +1,58 @@
+.profile-container{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  .profile-content{
+    width: calc(100% - 200px);
+    margin-top: 20px;
+    .profile-description{
+      width: 100%;
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      .descriptionLeft{
+        width: 120px;
+        height: 120px;
+        img{
+          border-radius: 50%;
+          &:hover{
+            opacity: 0.7;
+            cursor: pointer;
+          }
+        }
+      }
+      .descriptionRight{
+        margin-left: 20px;
+        width: calc(100% - 140px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .name{
+          display: flex;
+          flex-direction: column;
+          .largeName{
+            font-size: 25px;
+            font-weight: 800;
+          }
+          .smallName{
+            color: #666666;
+          }
+        }
+        .edit{
+          text-align: right;
+          cursor: pointer;
+          color: #007fff;
+          &:hover{
+            opacity: 0.7;
+          }
+        }
+      }
+    }
+    .profile-articleList{
+      margin-top: 20px;
+      width: 100%;
+      background: #fff;
+      padding: 20px;
+    }
+  }
+}
