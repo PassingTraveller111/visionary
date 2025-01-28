@@ -14,8 +14,11 @@ export const apiList = {
         // 受保护的请求
         protected: {
             profile: {
-                getProfile: 'protected/profile/getProfile',
+                getProfile: 'protected/profile/getProfile', // 获取用户资料
             },
+            user: {
+                updateUserInfo: 'protected/user/updateUserInfo', // 更新用户信息
+            }
         },
     },
     get: {

@@ -11,10 +11,11 @@ export async function GET(req: NextRequest) {
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE username = '${username}'`);
         const res = rows as {
             username: string;
-            password: string;
+            password?: string;
         }[];
         connection.release();
         if (res.length > 0) {
+            delete res[0].password;
             return NextResponse.json({ msg: 'success', data: res[0] }, { status: 200 });
         } else {
             return NextResponse.json({ msg: 'error' }, { status: 401 });

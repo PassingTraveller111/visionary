@@ -51,6 +51,7 @@ export const userSlice = createSlice({
                 value: {
                     ...state,
                     ...action.payload,
+                    login: true,
                 }
             }
         }

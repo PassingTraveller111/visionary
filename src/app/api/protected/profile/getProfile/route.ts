@@ -15,9 +15,11 @@ export async function POST(req: NextRequest) {
             username: string;
             id: number;
             profile: string;
+            password?: string;
         }[];
         connection.release();
         if (res.length > 0) {
+            delete res[0].password;
             return NextResponse.json({ msg: 'success', data: res[0] }, { status: 200 });
         } else {
             return NextResponse.json({ msg: 'error' }, { status: 401 });

@@ -21,6 +21,7 @@
     "sass": "^1.83.1"
   },
   "devDependencies": {
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",

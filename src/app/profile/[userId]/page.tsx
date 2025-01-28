@@ -17,7 +17,6 @@ const ProfilePage = () => {
     });
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const isMyProfile = Number(userId) === userInfo.id;
-    console.log('isMyProfile', isMyProfile);
     const renderUserName = () => {
         let largeName = '';
         let smallName = '';
@@ -33,7 +32,7 @@ const ProfilePage = () => {
         </span>
     }
     const gotoMyData = () => {
-        router.push(`/profile/myData/${profileInfo.id}`);
+        router.push('/profile/myData');
     }
     useEffect(() => {
         apiClient(apiList.post.protected.profile.getProfile, {
@@ -55,10 +54,10 @@ const ProfilePage = () => {
                         </span>
                         <span className={styles.descriptionRight}>
                             {renderUserName()}
-                            <span
+                            {isMyProfile && <span
                                 className={styles.edit}
                                 onClick={gotoMyData}
-                            >编辑</span>
+                            >编辑</span>}
                         </span>
                     </div>
                     <div>
