@@ -23,7 +23,11 @@ const Navigation = () => {
         </span>
         <span className={styles['nav-right']}>
             <Input.Search className={styles.search} placeholder='搜索'/>
-            <Button>创作</Button>
+            <Button
+                onClick={() => {
+                    router.push('/editor');
+                }}
+            >创作</Button>
             <Profile/>
         </span>
     </div>
