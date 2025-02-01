@@ -1,0 +1,32 @@
+.uploadContainer{
+  :global(.ant-upload-list-item::before) {
+      display: none;
+  }
+  :global(.ant-upload-list-item-actions) {
+    display: none;
+  }
+  .avatar-container{
+    width: 102px;
+    height: 102px;
+    position: relative;
+    .avatar-hover{
+      position: absolute;
+      top: 0;
+      display: inline-flex;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #fff;
+      font-size: 13px;
+      &:hover{
+        border-radius: 8px;
+        opacity: 0.7;
+        background: #666666;
+      }
+    }
+  }
+}

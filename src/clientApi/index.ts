@@ -18,6 +18,10 @@ export const apiList = {
             },
             user: {
                 updateUserInfo: 'protected/user/updateUserInfo', // 更新用户信息
+                updateUserAvatar: 'protected/user/updateUserAvatar', // 更新用户头像
+            },
+            cos: {
+                upload: 'protected/cos/upload', // 上传文件到cos
             }
         },
     },
@@ -36,7 +40,7 @@ export const apiList = {
 
 
 const currentEnv = process.env.NODE_ENV;
-const apiBaseUrl = API_CONFIG[currentEnv];
+export const apiBaseUrl = API_CONFIG[currentEnv];
 
 
 export const apiClient = async (endpoint = '', init?: RequestInit) => {

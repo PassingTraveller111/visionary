@@ -5,12 +5,13 @@ const secretKey = process.env.SECRET_KEY;
 const expiresIn = 60 * 60 * 1000; // 1小时
 
 export type decodeType = {
+    userId: number;
     username: string;
     iat: number; // token开始时间
     exp: number; // token到期时间
 };
 
-export const createToken = (username: string) => {
+export const createToken = (username: string, userId: number) => {
     /*
     * payload 一个对象，经过加密后存储到token里
     * secretKey 密钥，用来加密解密token
@@ -20,7 +21,7 @@ export const createToken = (username: string) => {
     *   notBefore: 在一定时间以后生效
     * }
     * */
-    return jwt.sign({ username }, secretKey, { expiresIn: Math.floor(new Date().getTime()) + expiresIn });
+    return jwt.sign({ username, userId }, secretKey, { expiresIn: Math.floor(new Date().getTime()) + expiresIn });
 }
 
 export const verifyToken = (token: string): decodeType => {

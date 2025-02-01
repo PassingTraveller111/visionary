@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
         const connection = await pool.getConnection();
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE username = '${username}'`);
         const res = rows as {
+            id: number;
             username: string;
             password: string;
         }[];
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
             && res[0]?.username === username
             && res[0]?.password === password
         ) {
-            const token = createToken(username);
+            const token = createToken(username, res[0].id);
             const response = NextResponse.json({ status: 200, msg: 'success', data: res[0]}, { status: 200});
             response.cookies.set('token', token, {
                 expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60),

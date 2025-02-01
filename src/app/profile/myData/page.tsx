@@ -5,6 +5,8 @@ import {useAppSelector} from "@/store";
 import styles from "./index.module.scss";
 import {apiClient, apiList} from "@/clientApi";
 import {useGetUserInfo} from "@/hooks/users/useUsers";
+import EditAvatar from "../../../components/EditAvatar";
+import Upload from "@/components/Upload";
 
 type FieldType = {
     nick_name?: string;
@@ -65,10 +67,7 @@ const MyDataPage = () => {
                             }
                         </div>
                         <div className={styles['profile-right']}>
-                            <div className={styles['avatar-container']}>
-                                <img className={styles['avatar-img']} src={userInfo.profile} alt=""/>
-                                <span className={styles['avatar-hover']} >点击修改头像</span>
-                            </div>
+                            <EditAvatar />
                         </div>
                     </div>
                 </div>
