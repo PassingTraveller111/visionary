@@ -9,12 +9,14 @@ export const useUserLogin = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const dispatch = useDispatch();
     const router = useRouter();
-    return async (username:string, password: string) => {
+    return async (username:string, password: string, isRemember: boolean = false) => {
+        console.log('isRemember', isRemember);
         const res = await apiClient(apiList.post.user.login,  {
             method: 'POST',
             body: JSON.stringify({
-                username: username,
-                password: password,
+                username,
+                password,
+                isRemember,
             })
         });
         if (res.status === 200) {

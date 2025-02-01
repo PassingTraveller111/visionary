@@ -4,7 +4,7 @@ import {createToken} from "@/utils/auth";
 
 export async function POST(req: NextRequest) {
     try {
-        const { username, password } = await req.json();
+        const { username, password, isRemember } = await req.json();
         const connection = await pool.getConnection();
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE username = '${username}'`);
         const res = rows as {
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
             const token = createToken(username, res[0].id);
             const response = NextResponse.json({ status: 200, msg: 'success', data: res[0]}, { status: 200});
             response.cookies.set('token', token, {
-                expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60),
+                expires: isRemember ? new Date(new Date().getTime() + 1000 * 60 * 60 * 60) : undefined,
                 httpOnly: true,
                 path: '/',
             })

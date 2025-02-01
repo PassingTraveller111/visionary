@@ -6,7 +6,6 @@ import styles from "./index.module.scss";
 import {apiClient, apiList} from "@/clientApi";
 import {useGetUserInfo} from "@/hooks/users/useUsers";
 import EditAvatar from "../../../components/EditAvatar";
-import Upload from "@/components/Upload";
 
 type FieldType = {
     nick_name?: string;
