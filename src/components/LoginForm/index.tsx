@@ -1,7 +1,6 @@
 "use client"
 import styles from './index.module.scss';
 import {Button, Checkbox, Form, FormProps, Input, Tabs, TabsProps} from "antd";
-import { useState } from "react";
 
 type FieldType = {
     username: string
@@ -10,11 +9,23 @@ type FieldType = {
 }
 
 const Index = (props: {
-    onLogin: (username: string, password: string, isRemember: boolean) => void;
+    onLogin: (username: string, password: string, isRemember: boolean) => Promise<any>;
 }) => {
     const { onLogin } = props;
+    const [ form ]= Form.useForm<FieldType>();
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        onLogin(values.username, values.password, values.isRemember);
+        const res = await onLogin(values.username, values.password, values.isRemember);
+        if(res.status !== 200){
+            form.validateFields(['password']).then((values) => {
+                form.setFields([
+                    {
+                        name: 'password',
+                        value: values.password,
+                        errors: [res.message],
+                    },
+                ]);
+            })
+        }
     };
     const onFinishFailed = () => {
 
@@ -27,6 +38,7 @@ const Index = (props: {
                 <Form
                     name="basic"
                     labelCol={{span: 4}}
+                    form={form}
                     wrapperCol={{span: 16}}
                     style={{maxWidth: 600}}
                     onFinish={onFinish}
@@ -51,7 +63,7 @@ const Index = (props: {
                         <Checkbox>记住密码</Checkbox>
                     </Form.Item>
                     <Form.Item label={null}>
-                        <Button type="primary" htmlType="submit">
+                        <Button block type="primary" htmlType="submit">
                             登录
                         </Button>
                     </Form.Item>

@@ -10,7 +10,6 @@ export const useUserLogin = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     return async (username:string, password: string, isRemember: boolean = false) => {
-        console.log('isRemember', isRemember);
         const res = await apiClient(apiList.post.user.login,  {
             method: 'POST',
             body: JSON.stringify({

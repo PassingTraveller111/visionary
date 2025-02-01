@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
             })
             return response;
         } else {
-            return NextResponse.json({ message: '用户名或密码错误' }, { status: 401 });
+            return NextResponse.json({ status: 401, message: '用户名或密码错误' }, { status: 401 });
         }
     } catch (error) {
         console.error(error);
