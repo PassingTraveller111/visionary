@@ -9,7 +9,10 @@ type FieldType = {
 }
 
 const Index = (props: {
-    onLogin: (username: string, password: string, isRemember: boolean) => Promise<any>;
+    onLogin: (username: string, password: string, isRemember: boolean) => Promise<{
+        status: number
+        message: string
+    }>;
 }) => {
     const { onLogin } = props;
     const [ form ]= Form.useForm<FieldType>();

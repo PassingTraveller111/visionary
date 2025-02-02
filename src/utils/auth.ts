@@ -29,7 +29,7 @@ export const verifyToken = (token: string): decodeType => {
 }
 
 export const accessDecode = (decode: decodeType) => {
-    const { username, iat, exp } = decode;
+    const { exp } = decode;
     if ( exp && new Date().getTime() > exp ) {
         return {
             access: false,

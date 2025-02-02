@@ -5,6 +5,7 @@ import {useAppSelector} from "@/store";
 import {useParams, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
+import Image from "next/image";
 
 const ProfilePage = () => {
     const router = useRouter();
@@ -50,7 +51,7 @@ const ProfilePage = () => {
                 <div className={styles['profile-content']}>
                     <div className={styles['profile-description']}>
                         <span className={styles.descriptionLeft}>
-                            <img src={profileInfo.profile} alt="profile"/>
+                           {profileInfo.profile && <Image src={profileInfo.profile} alt="profile" width={120} height={120}/>}
                         </span>
                         <span className={styles.descriptionRight}>
                             {renderUserName()}

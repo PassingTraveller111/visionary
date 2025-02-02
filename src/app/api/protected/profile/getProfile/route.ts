@@ -1,13 +1,13 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
-import {verifyToken} from "@/utils/auth";
+// import {verifyToken} from "@/utils/auth";
 
 export async function POST(req: NextRequest) {
     try {
-        const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
-        const decode = verifyToken(token);
+        // const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
+        // const decode = verifyToken(token);
         const { userId } = await req.json();
-        const { username } = decode;
+        // const { username } = decode;
         const connection = await pool.getConnection();
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE id = '${userId}'`);
         const res = rows as {

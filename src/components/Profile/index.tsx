@@ -5,6 +5,7 @@ import {UserInfoType} from "@/store/features/userSlice";
 import {useUserLogout} from "@/hooks/users/useUsers";
 import styles from './index.module.scss';
 import {useRouter} from "next/navigation";
+import Image from "next/image";
 
 type ProfileProps = {
     width?: number;
@@ -21,7 +22,7 @@ export const Profile = (props: ProfileProps) => {
     return <ProfilePopover
         userInfo={userInfo}
     >
-        <img src={userInfo.profile} alt="profile" style={{width: width, height: height, cursor: "pointer"}} />
+        {userInfo.profile && <Image src={userInfo.profile} alt="profile" width={width} height={height} style={{ cursor: "pointer"}} />}
     </ProfilePopover>
 }
 
@@ -31,7 +32,7 @@ const ProfilePopover = (props: ProfilePopoverProps) => {
     const router = useRouter();
     const content = <div className={styles.ProfilePopoverContent}>
         <div className={styles.contentTop}>
-            <img className={styles.ProfileImg} src={userInfo.profile} alt="profile"/>
+            {userInfo.profile && <Image className={styles.ProfileImg} src={userInfo.profile} alt="profile" width={50} height={50}/>}
             <div className={styles.ProfileName}>
                 {userInfo.username}
             </div>

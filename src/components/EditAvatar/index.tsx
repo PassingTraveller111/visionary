@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Upload} from 'antd';
 import type { UploadFile, UploadProps } from 'antd';
 import ImgCrop from 'antd-img-crop';
@@ -28,7 +28,7 @@ const App: React.FC = () => {
         }
     };
 
-    const onReset = () => {
+    const onReset = useCallback(() => {
         setFileList([
             {
                 uid: '1',
@@ -39,7 +39,7 @@ const App: React.FC = () => {
         ]);
         setAvatarUrl(userinfo.profile ?? '');
         setIsChange(false);
-    };
+    }, [userinfo.profile]);
 
     const onSave = async () => {
         const res = await apiClient(apiList.post.protected.user.updateUserAvatar, {
@@ -54,7 +54,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         onReset();
-    }, [userinfo]);
+    }, [onReset]);
 
     // 处理图片点击事件
     const handleImageClick = () => {
