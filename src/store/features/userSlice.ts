@@ -37,7 +37,7 @@ export const userSlice = createSlice({
         logIn: (state, action: PayloadAction<UserInfoType>) => {
             return {
                 value: {
-                    ...state,
+                    ...state.value,
                     ...action.payload,
                     login: true,
                 }
@@ -49,7 +49,7 @@ export const userSlice = createSlice({
         setUserInfo: (state, action: PayloadAction<UserInfoType>) => {
             return {
                 value: {
-                    ...state,
+                    ...state.value,
                     ...action.payload,
                     login: true,
                 }

@@ -22,6 +22,10 @@ export const apiList = {
             },
             cos: {
                 upload: 'protected/cos/upload', // 上传文件到cos
+            },
+            article: {
+                updateArticle: 'protected/article/updateArticle', // 更新文章
+                getArticle: 'protected/article/getArticle', // 获取文章
             }
         },
     },
