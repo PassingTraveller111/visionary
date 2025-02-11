@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     try {
         const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
         const decode = verifyToken(token);
-        const { username } = decode;
+        // const { username } = decode;
         const connection = await pool.getConnection();
         const data: updateDataType = await req.json();
         let sql, values: unknown[];

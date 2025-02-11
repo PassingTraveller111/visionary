@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import {Input} from "antd";
 import {useDispatch} from "react-redux";
 import {AppDispatch, useAppSelector} from "@/store";

@@ -34,6 +34,9 @@ export const apiList = {
         protected: {
             user: {
                 getUserInfo: 'protected/user/getUserInfo', // 获取用户信息
+            },
+            article: {
+                getMyArticleList: 'protected/article/getMyArticleList', // 获取我的文章列表
             }
         },
         user: {

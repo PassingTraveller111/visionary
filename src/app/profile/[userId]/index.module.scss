@@ -2,6 +2,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   .profile-content{
     width: calc(100% - 200px);
     margin-top: 20px;
@@ -53,6 +54,26 @@
       width: 100%;
       background: #fff;
       padding: 20px;
+    }
+  }
+  .articleList-container{
+    width: calc(100% - 200px);
+    background: #fff;
+    margin-top: 20px;
+    padding: 20px;
+    .articleList-item{
+      padding: 20px;
+      box-sizing: content-box;
+      cursor: pointer;
+      &:hover{
+        background: rgba(0,0,0,.1);
+      }
+      .article-title{
+        font-weight: bold;
+      }
+      .article-date{
+        color: #666666;
+      }
     }
   }
 }

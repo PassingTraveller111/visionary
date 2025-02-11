@@ -44,7 +44,7 @@ const ReactEditor = (props: ReactEditorProps) => {
             value={value}
             onChange={(e) => setValue(e.text)}
             shortcuts
-            style={{height: '500px'}}
+            style={{height: 'calc(100vh - 32px)'}}
             renderHTML={text => mdParser.render(text)}
         />
     </>

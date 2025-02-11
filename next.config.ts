@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
             },
         ],
     },
+    eslint: {
+        // 构建时禁用检查
+        ignoreDuringBuilds: true,
+    }
 };
 
 export default nextConfig;

@@ -6,6 +6,14 @@ import {useParams, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
 import Image from "next/image";
+import moment from "moment";
+
+
+type articleType = {
+    title: string;
+    id: number;
+    updated_time: string;
+}
 
 const ProfilePage = () => {
     const router = useRouter();
@@ -16,6 +24,7 @@ const ProfilePage = () => {
         id: 0,
         profile: '',
     });
+    const [articleList, setArticleList] = useState([]);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const isMyProfile = Number(userId) === userInfo.id;
     const renderUserName = () => {
@@ -43,6 +52,9 @@ const ProfilePage = () => {
             }),
         }).then(res => {
             setProfileInfo(res.data);
+        });
+        apiClient(apiList.get.protected.article.getMyArticleList).then(res => {
+            setArticleList(res.data);
         })
     }, [userId])
     return <>
@@ -51,7 +63,8 @@ const ProfilePage = () => {
                 <div className={styles['profile-content']}>
                     <div className={styles['profile-description']}>
                         <span className={styles.descriptionLeft}>
-                           {profileInfo.profile && <Image src={profileInfo.profile} alt="profile" width={120} height={120}/>}
+                           {profileInfo.profile &&
+                               <Image src={profileInfo.profile} alt="profile" width={120} height={120}/>}
                         </span>
                         <span className={styles.descriptionRight}>
                             {renderUserName()}
@@ -61,13 +74,21 @@ const ProfilePage = () => {
                             >编辑</span>}
                         </span>
                     </div>
-                    <div>
-                        我的文章
-                    </div>
+                </div>
+                <div className={styles['articleList-container']}>
+                    {articleList.map((article: articleType) => {
+                        return <div key={article.id} className={styles['articleList-item']}
+                            onClick={() => {
+                                router.push('/editor/' + article.id);
+                            }}
+                        >
+                            <div className={styles['article-title']}>{article.title}</div>
+                            <div className={styles['article-date']}>{moment(article.updated_time).format('YYYY-MM-DD HH:mm')}</div>
+                        </div>
+                    })}
                 </div>
             </div>
         </NavLayout>
-
     </>
 }
 
