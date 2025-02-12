@@ -6,6 +6,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 import MarkdownIt from "markdown-it";
 import {useEffect, useState} from "react";
 import SavePlugin from "@/components/MdEditor/plugins/SavePlugin";
+import ImagePlugin from "@/components/MdEditor/plugins/ImagePlugin";
 
 
 // 初始化Markdown解析器
@@ -17,6 +18,8 @@ const loadMarkdownEditor = async () => {
         const { default: MarkdownEditor } = await import('react-markdown-editor-lite');
         // eslint-disable-next-line react-hooks/rules-of-hooks
         MarkdownEditor.use(SavePlugin);
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        MarkdownEditor.use(ImagePlugin);
         return MarkdownEditor;
     } catch (error) {
         console.error('Failed to load Markdown editor:', error);
@@ -38,6 +41,7 @@ const ReactEditor = (props: ReactEditorProps) => {
     useEffect(() => {
         setValue(initialValue);
     }, [initialValue])
+
     return <>
         <MdEditor
             // ref={editorRef}
@@ -46,6 +50,7 @@ const ReactEditor = (props: ReactEditorProps) => {
             shortcuts
             style={{height: 'calc(100vh - 32px)'}}
             renderHTML={text => mdParser.render(text)}
+            // onImageUpload={handleImageUpload}
         />
     </>
 }

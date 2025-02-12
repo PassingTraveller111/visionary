@@ -15,6 +15,7 @@ export const apiList = {
         protected: {
             profile: {
                 getProfile: 'protected/profile/getProfile', // 获取用户资料
+                uploadAvatar: 'protected/profile/uploadAvatar', // 上传用户头像
             },
             user: {
                 updateUserInfo: 'protected/user/updateUserInfo', // 更新用户信息
@@ -26,6 +27,7 @@ export const apiList = {
             article: {
                 updateArticle: 'protected/article/updateArticle', // 更新文章
                 getArticle: 'protected/article/getArticle', // 获取文章
+                uploadImage: 'protected/article/uploadImage', // 上传文章图片
             }
         },
     },

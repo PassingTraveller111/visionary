@@ -71,7 +71,7 @@ const App: React.FC = () => {
             <div className={styles['avatar-container']}>
                 <ImgCrop>
                          <Upload
-                             action={apiBaseUrl + apiList.post.protected.cos.upload}
+                             action={apiBaseUrl + apiList.post.protected.profile.uploadAvatar}
                              listType="picture-card"
                              fileList={fileList}
                              onChange={onChange}
