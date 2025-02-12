@@ -8,6 +8,7 @@ import SaveIcon from '../../../../../public/save.svg';
 import {apiClient, apiList} from "@/clientApi";
 
 const ImagePlugin = (props: PluginProps) => {
+    const { editor } = props;
     const fileInputRef = useRef(null);
     const handleClick = () => {
         // 触发文件输入元素的点击事件
@@ -22,16 +23,14 @@ const ImagePlugin = (props: PluginProps) => {
             console.log('文件大小：', file.size, '字节');
             console.log('文件类型：', file.type);
             const formData = new FormData();
-            formData.append('image', file);
-            // 这里只是示例，实际需要替换为真实的服务器地址
-
-            apiClient(apiList.post.protected.cos.upload, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => console.log('上传成功：', data))
-            .catch(error => console.error('上传失败：', error));
+            formData.append('file', file);
+            editor.insertPlaceholder('![]()', apiClient(apiList.post.protected.article.uploadImage, {
+                    method: 'POST',
+                    body: formData
+                }).then(res => {
+                    return `![](https://${res.data.Location})`
+                })
+            )
         }
     };
 

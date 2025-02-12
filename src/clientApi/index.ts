@@ -57,9 +57,6 @@ export const apiClient = async (endpoint = '', init?: RequestInit) => {
         const url = `${apiBaseUrl}${endpoint}`;
         const response = await fetch(url, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json' // 请求头
-            },
             ...init,
         })
         return response.json();
