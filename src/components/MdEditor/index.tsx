@@ -16,6 +16,7 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 const loadMarkdownEditor = async () => {
     try {
         const { default: MarkdownEditor } = await import('react-markdown-editor-lite');
+
         // eslint-disable-next-line react-hooks/rules-of-hooks
         MarkdownEditor.use(SavePlugin);
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -44,13 +45,11 @@ const ReactEditor = (props: ReactEditorProps) => {
 
     return <>
         <MdEditor
-            // ref={editorRef}
             value={value}
             onChange={(e) => setValue(e.text)}
             shortcuts
             style={{height: 'calc(100vh - 32px)'}}
             renderHTML={text => mdParser.render(text)}
-            // onImageUpload={handleImageUpload}
         />
     </>
 }
