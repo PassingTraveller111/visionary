@@ -1,0 +1,36 @@
+.readerHeaderContainer {
+  background: #fff;
+  padding: 20px;
+  .title{
+    font-size: 32px;
+    font-weight: bold;
+  }
+  .introContainer{
+    display: flex;
+    justify-content: space-between;
+    .left{
+      .authorName{
+        color: #515767;
+        cursor: pointer;
+        &:hover{
+          color: #1e80ff;
+        }
+      }
+      .publishTime{
+        margin-left: 10px;
+        color: #8a919f;
+      }
+      .view{
+        margin-left: 10px;
+        color: #8a919f;
+      }
+    }
+    .right{
+      color: #1e80ff;
+      cursor: pointer;
+    }
+
+
+  }
+
+}

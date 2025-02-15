@@ -20,6 +20,22 @@ export const useUpdateArticle = () => {
     }
 }
 
+type articleDataType = {
+    "id": number,
+    "title": string,
+    "summary": string,
+    content: string,
+    "author_id": number,
+    "published_time": string,
+    "updated_time": string,
+    "is_published": 0 | 1,
+    "views": number,
+    "likes": number,
+    "collects": number,
+    "tags": string,
+    "author_nickname": string,
+}
+
 export const useGetArticle = () => {
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const dispatch = useDispatch<AppDispatch>();
@@ -31,7 +47,19 @@ export const useGetArticle = () => {
             })
         });
         if (res.msg === 'success') {
-            dispatch(setArticle(res.data));
+            const { title, id, content, author_nickname, author_id, published_time, views } = res.data as articleDataType;
+            dispatch(setArticle(
+                {
+                    ...article,
+                    articleId: id,
+                    title,
+                    views,
+                    content,
+                    publishTime: published_time,
+                    authorId: author_id,
+                    authorName: author_nickname,
+                }
+            ));
         }
         return res;
     }

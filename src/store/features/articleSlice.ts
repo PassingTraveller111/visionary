@@ -5,6 +5,10 @@ export type articleType = {
     authorId: number; // 作者id
     title: string; // 标题
     content: string; // 内容
+    authorName?: string; // 作者名
+    publishTime?: string; // 发布时间
+    views: number; // 浏览次数
+    likes: number; // 点赞次数
 }
 
 type InitialStateType = {
@@ -17,6 +21,8 @@ const initialState: InitialStateType = {
         authorId: 0,
         title: '',
         content: '',
+        views: 0, // 浏览次数
+        likes: 0, // 点赞次数
     }
 };
 
