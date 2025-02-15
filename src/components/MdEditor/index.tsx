@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import 'react-markdown-editor-lite/lib/index.css';
 import {useEffect, useState} from "react";
 import rootPluginsList from "@/components/MdEditor/plugins/root";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown from "@/components/ReactMarkdown";
 
 
 // 动态加载编辑器

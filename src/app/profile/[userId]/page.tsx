@@ -1,12 +1,12 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
 import styles from "./index.module.scss";
-import {useAppSelector} from "@/store";
 import {useParams, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
 import Image from "next/image";
 import moment from "moment";
+import {useIsUserOwn} from "@/hooks/users/useUsers";
 
 
 type articleType = {
@@ -17,6 +17,7 @@ type articleType = {
 
 const ProfilePage = () => {
     const router = useRouter();
+    const isOwn = useIsUserOwn();
     const { userId } =  useParams();
     const [profileInfo, setProfileInfo ] = useState({
         nick_name: '',
@@ -25,8 +26,7 @@ const ProfilePage = () => {
         profile: '',
     });
     const [articleList, setArticleList] = useState([]);
-    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
-    const isMyProfile = Number(userId) === userInfo.id;
+    const isMyProfile = isOwn(userId as string | number);
     const renderUserName = () => {
         let largeName = '';
         let smallName = '';
@@ -82,8 +82,13 @@ const ProfilePage = () => {
                                 window.open('/reader/' + article.id);
                             }}
                         >
-                            <div className={styles['article-title']}>{article.title}</div>
-                            <div className={styles['article-date']}>{moment(article.updated_time).format('YYYY-MM-DD HH:mm')}</div>
+                            <div>
+                                <div className={styles['article-title']}>{article.title}</div>
+                                <div className={styles['article-date']}>{moment(article.updated_time).format('YYYY-MM-DD HH:mm')}</div>
+                            </div>
+                            <div>
+                                编辑
+                            </div>
                         </div>
                     })}
                 </div>

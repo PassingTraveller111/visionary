@@ -5,10 +5,10 @@ import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
 import {useCallback, useEffect} from "react";
 import {useGetArticle} from "@/hooks/articles/useArticles";
-import MdReader from "@/components/MdReader";
 import ReaderHeader from "@/components/ReaderHeader";
 import NavLayout from "@/components/NavLayout";
-
+import ReactMarkdown from "@/components/ReactMarkdown";
+import styles from './index.module.scss';
 
 const ReaderPage = () => {
     const { articleId } =  useParams();
@@ -30,8 +30,12 @@ const ReaderPage = () => {
     }, [initArticle])
     return <>
         <NavLayout>
-            <ReaderHeader />
-            <MdReader initialValue={article.content} />
+            <div className={styles.readerContainer}>
+                <div className={styles.readerContent}>
+                    <ReaderHeader />
+                    <ReactMarkdown>{article.content}</ReactMarkdown>
+                </div>
+            </div>
         </NavLayout>
     </>
 }

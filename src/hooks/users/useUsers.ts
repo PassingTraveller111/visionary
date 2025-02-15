@@ -47,3 +47,13 @@ export const useGetUserInfo =  () => {
         dispatch(setUserInfo(res.data));
     }
 }
+// 用于判断是否是本人
+export const useIsUserOwn = () => {
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    return (idOrUserName: number | string) => {
+        if(typeof idOrUserName === "string") {
+            return idOrUserName === userInfo.username;
+        }
+        return idOrUserName === userInfo.id;
+    }
+}

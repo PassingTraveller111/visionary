@@ -3,10 +3,13 @@ import { useAppSelector } from "@/store";
 import styles from "./index.module.scss";
 import {useRouter} from "next/navigation";
 import moment from "moment";
+import {useIsUserOwn} from "@/hooks/users/useUsers";
 
 
 const ReaderHeader= () => {
     const { title, articleId, authorName, publishTime, views, authorId } = useAppSelector(state => state.rootReducer.articleReducer.value);
+    const isUserOwn = useIsUserOwn();
+    const isOwn = isUserOwn(authorId);
     const router = useRouter();
     const gotoEditor = () => {
         router.push(`/editor/${articleId}`);
@@ -26,9 +29,9 @@ const ReaderHeader= () => {
                 <span className={styles.publishTime}>{moment(publishTime).format('YYYY-MM-DD')}</span>
                 <span className={styles.view}>{views}</span>
             </span>
-            <span className={styles.right} onClick={gotoEditor}>
+            {isOwn && <span className={styles.right} onClick={gotoEditor}>
                 编辑
-            </span>
+            </span>}
         </div>
     </div>
 }

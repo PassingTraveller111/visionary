@@ -1,0 +1,138 @@
+// 定义全局变量，方便后续统一修改颜色、字体等
+$primary-color: #333;
+$secondary-color: #777;
+$link-color: #007BFF;
+$background-color: #f8f8f8;
+$border-color: #ccc;
+$font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+.markdown {
+  font-family: $font-family;
+  line-height: 1.6;
+  color: $primary-color;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  // 标题样式
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 0.5em;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 0.2em;
+  }
+
+  h2 {
+    font-size: 2em;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.2em;
+  }
+
+  h3 {
+    font-size: 1.75em;
+    margin-top: 1.2em;
+    margin-bottom: 0.3em;
+  }
+
+  h4 {
+    font-size: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+  }
+
+  h5 {
+    font-size: 1.25em;
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+  }
+
+  h6 {
+    font-size: 1em;
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+    color: $secondary-color;
+  }
+
+  // 段落样式
+  p {
+    margin-bottom: 1em;
+  }
+
+  // 列表样式
+  ul,
+  ol {
+    margin-bottom: 1em;
+    padding-left: 2em;
+
+    li {
+      margin-bottom: 0.5em;
+    }
+  }
+
+  // 代码块样式
+  pre {
+    background-color: $background-color;
+    border: 1px solid $border-color;
+    border-radius: 3px;
+    padding: 1em;
+    overflow-x: auto;
+    margin-bottom: 1em;
+
+    code {
+      background-color: transparent;
+      padding: 0;
+    }
+  }
+
+  code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f0f0f0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+
+  // 引用样式
+  blockquote {
+    border-left: 4px solid $border-color;
+    padding-left: 1em;
+    color: $secondary-color;
+    margin-bottom: 1em;
+  }
+
+  // 链接样式
+  a {
+    color: $link-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // 表格样式
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+
+    th,
+    td {
+      border: 1px solid $border-color;
+      padding: 0.5em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+  }
+
+  // 图片样式
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
+  }
+}
