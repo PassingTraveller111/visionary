@@ -28,6 +28,7 @@ export const apiList = {
                 updateArticle: 'protected/article/updateArticle', // 更新文章
                 getArticle: 'protected/article/getArticle', // 获取文章
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片
+                delArticle: 'protected/article/delArticle', // 删除文章
             }
         },
     },

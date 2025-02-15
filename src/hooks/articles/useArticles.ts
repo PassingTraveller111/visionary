@@ -65,3 +65,14 @@ export const useGetArticle = () => {
         return res;
     }
 }
+
+export const useDelArticle =() => {
+    return async (id?: number) => {
+        return await apiClient(apiList.post.protected.article.delArticle,  {
+            method: 'POST',
+            body: JSON.stringify({
+                articleId: id,
+            })
+        });
+    }
+}

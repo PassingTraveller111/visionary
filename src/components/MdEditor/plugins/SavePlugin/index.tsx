@@ -3,10 +3,10 @@ import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import classNames from "classnames";
-import SaveIcon from '../../../../../public/pluginIcon/save.svg';
+import SaveIcon from '../../../../../public/icon/pluginIcon/save.svg';
 import {useUpdateArticle} from "@/hooks/articles/useArticles";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
-import SaveHoverIcon from "../../../../../public/pluginIcon/saveHover.svg";
+import SaveHoverIcon from "../../../../../public/icon/pluginIcon/saveHover.svg";
 import {Tooltip, message} from "antd";
 
 const SavePlugin = (props: PluginProps) => {
