@@ -1,14 +1,9 @@
 "use client"
 import dynamic from 'next/dynamic';
 import 'react-markdown-editor-lite/lib/index.css';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import MarkdownIt from "markdown-it";
+import ReactMarkdown from 'react-markdown';
 import {useEffect, useState} from "react";
 
-
-// 初始化Markdown解析器
-const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 // 动态加载编辑器
 const loadMarkdownEditor = async () => {
@@ -46,7 +41,9 @@ const ReactReader = (props: ReactEditorProps) => {
                 html: true,
             }}
             style={{height: 'calc(100vh - 50px - 112px)'}}
-            renderHTML={text => mdParser.render(text)}
+            renderHTML={text => {
+                return <ReactMarkdown>{text}</ReactMarkdown>;
+            }}
         />
     </>
 }
