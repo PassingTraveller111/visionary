@@ -7,19 +7,23 @@ import SaveIcon from '../../../../../public/pluginIcon/save.svg';
 import {useUpdateArticle} from "@/hooks/articles/useArticles";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
 import SaveHoverIcon from "../../../../../public/pluginIcon/saveHover.svg";
-import {Tooltip} from "antd";
+import {Tooltip, message} from "antd";
 
 const SavePlugin = (props: PluginProps) => {
     const updateArticle = useUpdateArticle();
+    const [messageApi, contextHolder] = message.useMessage();
     const handleClick = async () => {
         const newMdValue = props.editor.getMdValue();
         const res = await updateArticle(newMdValue);
-        console.log(res);
+        if (res.msg === "success") {
+            messageApi.success('保存成功');
+        }
     }
     return (
         <Tooltip
             title="保存"
         >
+            {contextHolder}
             <span
                 className={classNames({
                     'button': true,

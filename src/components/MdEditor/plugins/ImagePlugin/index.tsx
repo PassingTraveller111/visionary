@@ -62,7 +62,7 @@ ImagePlugin.defaultConfig = {
     imageUrl: '', // 默认的图片地址
 }
 ImagePlugin.align = 'left';
-ImagePlugin.pluginName = 'image';
+ImagePlugin.pluginName = 'imagePlugin';
 
 
 export default ImagePlugin;

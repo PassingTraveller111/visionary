@@ -4,9 +4,10 @@ import {useParams} from "next/navigation";
 import {AppDispatch, useAppSelector} from "@/store";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
-import {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useGetArticle} from "@/hooks/articles/useArticles";
 import EditorHeader from "@/components/EditorHeader";
+
 
 
 const EditorPage = () => {
@@ -33,3 +34,4 @@ const EditorPage = () => {
     </>
 }
 export default EditorPage;
+

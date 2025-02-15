@@ -7,6 +7,7 @@ export type updateDataType = {
     content: string;
     title: string;
     authorId: number;
+    author_nickname: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -18,8 +19,8 @@ export async function POST(req: NextRequest) {
         const data: updateDataType = await req.json();
         let sql, values: unknown[];
         if (data.articleId === 'new') {
-            sql = `INSERT INTO articles (title, content, author_id, published_time, updated_time) VALUES (?,?,?,?,?)`;
-            values = [data.title, data.content, data.authorId, new Date(), new Date()];
+            sql = `INSERT INTO articles (title, content, author_id, published_time, updated_time, author_nickname) VALUES (?,?,?,?,?,?)`;
+            values = [data.title, data.content, data.authorId, new Date(), new Date(), data.author_nickname];
         } else {
             sql = `UPDATE articles SET content = ?, title = ? WHERE id = ?;`;
             values = [data.content, data.title, data.articleId]

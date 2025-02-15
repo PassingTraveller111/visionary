@@ -25,7 +25,7 @@ const Navigation = () => {
             <Input.Search className={styles.search} placeholder='搜索'/>
             <Button
                 onClick={() => {
-                    router.push('/editor/new');
+                    window.open('/editor/new', '_blank');
                 }}
             >创作</Button>
             <Profile/>

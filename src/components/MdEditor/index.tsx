@@ -5,8 +5,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 // @ts-expect-error
 import MarkdownIt from "markdown-it";
 import {useEffect, useState} from "react";
-import SavePlugin from "@/components/MdEditor/plugins/SavePlugin";
-import ImagePlugin from "@/components/MdEditor/plugins/ImagePlugin";
+import rootPluginsList from "@/components/MdEditor/plugins/root";
 
 
 // 初始化Markdown解析器
@@ -16,11 +15,9 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 const loadMarkdownEditor = async () => {
     try {
         const { default: MarkdownEditor } = await import('react-markdown-editor-lite');
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        MarkdownEditor.use(SavePlugin);
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        MarkdownEditor.use(ImagePlugin);
+        rootPluginsList.map(plugin => {
+            MarkdownEditor.use(plugin);
+        });
         return MarkdownEditor;
     } catch (error) {
         console.error('Failed to load Markdown editor:', error);
@@ -35,6 +32,7 @@ const MdEditor = dynamic(loadMarkdownEditor, {
 type ReactEditorProps = {
     initialValue?: string;
 }
+
 
 const ReactEditor = (props: ReactEditorProps) => {
     const { initialValue = ''} = props;

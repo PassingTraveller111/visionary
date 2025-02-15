@@ -79,7 +79,7 @@ const ProfilePage = () => {
                     {articleList.map((article: articleType) => {
                         return <div key={article.id} className={styles['articleList-item']}
                             onClick={() => {
-                                router.push('/reader/' + article.id);
+                                window.open('/reader/' + article.id);
                             }}
                         >
                             <div className={styles['article-title']}>{article.title}</div>

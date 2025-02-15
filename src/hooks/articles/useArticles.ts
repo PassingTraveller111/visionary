@@ -14,6 +14,7 @@ export const useUpdateArticle = () => {
                 content,
                 articleId: article.articleId,
                 authorId: userInfo.id,
+                author_nickname: userInfo.nick_name,
                 title: article.title,
             })
         });
