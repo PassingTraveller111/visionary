@@ -2,6 +2,7 @@ import {AppDispatch, useAppSelector} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
+import {useState} from "react";
 
 
 export const useUpdateArticle = () => {
@@ -75,4 +76,27 @@ export const useDelArticle =() => {
             })
         });
     }
+}
+
+
+type articleType = {
+    title: string;
+    id: number;
+    updated_time: string;
+}
+export const useGetArticleList = () => {
+    // 文章列表数据
+    const [articleList, setArticleList] = useState<articleType[]>([]);
+    // 获取文章列表
+    const getArticleList =  (userId: number) => {
+        apiClient(apiList.post.protected.article.getArticleList, {
+            method: "POST",
+            body: JSON.stringify({
+                authorId: userId,
+            })
+        }).then(res => {
+            setArticleList(res.data);
+        })
+    };
+    return { articleList, getArticleList };
 }

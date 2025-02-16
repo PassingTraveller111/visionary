@@ -9,15 +9,11 @@ import moment from "moment";
 import {useIsUserOwn} from "@/hooks/users/useUsers";
 import {Dropdown, MenuProps, Modal, message} from "antd";
 import moreIcon from '../../../../public/icon/more.svg';
-import {useDelArticle} from "@/hooks/articles/useArticles";
+import {useDelArticle, useGetArticleList} from "@/hooks/articles/useArticles";
 import {HookAPI} from "antd/es/modal/useModal";
 import {MessageInstance} from "antd/es/message/interface";
 
-type articleType = {
-    title: string;
-    id: number;
-    updated_time: string;
-}
+
 
 const ProfilePage = () => {
     const router = useRouter();
@@ -31,7 +27,7 @@ const ProfilePage = () => {
         id: 0,
         profile: '',
     });
-    const [articleList, setArticleList] = useState([]);
+    const { articleList, getArticleList } = useGetArticleList();
     const isMyProfile = isOwn(Number(userId) as string | number);
     const renderUserName = () => {
         let largeName = '';
@@ -50,11 +46,6 @@ const ProfilePage = () => {
     const gotoMyData = () => {
         router.push('/profile/myData');
     }
-    const getArticleList = async () => {
-        apiClient(apiList.get.protected.article.getMyArticleList).then(res => {
-            setArticleList(res.data);
-        })
-    }
     useEffect(() => {
         apiClient(apiList.post.protected.profile.getProfile, {
             method: 'POST',
@@ -64,7 +55,7 @@ const ProfilePage = () => {
         }).then(res => {
             setProfileInfo(res.data);
         });
-        getArticleList();
+        getArticleList(Number(userId));
     }, [userId])
     return <>
         {modalContextHolder}
@@ -87,7 +78,7 @@ const ProfilePage = () => {
                     </div>
                 </div>
                 <div className={styles['articleList-container']}>
-                    {articleList.map((article: articleType) => {
+                    {articleList.map((article) => {
                         return <div key={article.id} className={styles['articleList-item']}
                             onClick={() => {
                                 window.open('/reader/' + article.id);
@@ -98,7 +89,7 @@ const ProfilePage = () => {
                                 <div className={styles['article-date']}>{moment(article.updated_time).format('YYYY-MM-DD HH:mm')}</div>
                             </div>
                             <div className={styles['article-menu']} onClick={(e) => {e.stopPropagation()}}>
-                                {isMyProfile && <ArticleItemMenu messageApi={messageApi} modalApi={modalApi}  articleId={article.id} getArticleList={getArticleList} />}
+                                {isMyProfile && <ArticleItemMenu messageApi={messageApi} modalApi={modalApi}  articleId={article.id} getArticleList={getArticleList} userId={Number(userId)} />}
                             </div>
                         </div>
                     })}
@@ -109,8 +100,8 @@ const ProfilePage = () => {
 }
 
 
-const ArticleItemMenu = (props: { articleId: number, modalApi: HookAPI, messageApi: MessageInstance, getArticleList: () => void }) => {
-    const { articleId, modalApi, messageApi, getArticleList } = props;
+const ArticleItemMenu = (props: { articleId: number, modalApi: HookAPI, messageApi: MessageInstance, getArticleList: (userId: number) => void , userId: number}) => {
+    const { articleId, modalApi, messageApi, getArticleList, userId } = props;
     const delArticle = useDelArticle();
     const items: MenuProps['items'] = [
         {
@@ -139,7 +130,7 @@ const ArticleItemMenu = (props: { articleId: number, modalApi: HookAPI, messageA
                             } else {
                                 messageApi.error('删除失败');
                             }
-                            getArticleList();
+                            getArticleList(userId);
                         })
                     }
                 }}>

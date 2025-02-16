@@ -27,6 +27,7 @@ export const apiList = {
             article: {
                 updateArticle: 'protected/article/updateArticle', // 更新文章
                 getArticle: 'protected/article/getArticle', // 获取文章
+                getArticleList: 'protected/article/getArticleList', // 获取文章列表
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片
                 delArticle: 'protected/article/delArticle', // 删除文章
             }
@@ -39,7 +40,6 @@ export const apiList = {
                 getUserInfo: 'protected/user/getUserInfo', // 获取用户信息
             },
             article: {
-                getMyArticleList: 'protected/article/getMyArticleList', // 获取我的文章列表
             }
         },
         user: {
