@@ -30,6 +30,7 @@ export const apiList = {
                 getArticleList: 'protected/article/getArticleList', // 获取文章列表
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片
                 delArticle: 'protected/article/delArticle', // 删除文章
+                editorAuth: 'protected/article/editorAuth', // 是否有编辑文章的权限
             }
         },
     },

@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {verifyToken} from "@/utils/auth";
 
-export type updateDataType = {
+export type updateArticleDataType = {
     articleId: number | 'new';
     content: string;
     title: string;
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         const decode = verifyToken(token);
         // const { username } = decode;
         const connection = await pool.getConnection();
-        const data: updateDataType = await req.json();
+        const data: updateArticleDataType = await req.json();
         let sql, values: unknown[];
         if (data.articleId === 'new') {
             sql = `INSERT INTO articles (title, content, author_id, published_time, updated_time, author_nickname) VALUES (?,?,?,?,?,?)`;

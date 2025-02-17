@@ -9,7 +9,7 @@ export type UserInfoType = {
     lastName?: string; // 名
     role: roleEnum;
     profile?: string; // 头像
-    nick_name?: string; // 昵称
+    nick_name: string; // 昵称
 }
 
 enum roleEnum {
@@ -27,6 +27,7 @@ const initialState: InitialStateType = {
         login: false,
         id: 0,
         role: roleEnum.GUEST,
+        nick_name: "",
     }
 };
 

@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {accessDecode, decodeType} from "@/utils/auth";
 import {apiClient, apiList} from "@/clientApi";
+import {editorAuthDataType} from "@/app/api/protected/article/editorAuth/route";
 
 async function jwtMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
@@ -13,7 +14,7 @@ async function jwtMiddleware(req: NextRequest) {
                     token,
                 }),
             });
-            const decoded:decodeType = res.decoded;
+            const decoded: decodeType = res.decoded;
             console.log(accessDecode(decoded));
             const accessInfo = accessDecode(decoded);
             if(accessInfo.access){
@@ -31,9 +32,51 @@ async function jwtMiddleware(req: NextRequest) {
         if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url));
     }
 }
-export function middleware(req: NextRequest) {
-    return jwtMiddleware(req);
+
+async function editorAuthMiddleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
+    const articleId = pathname.split('/')[2] === 'new' ? 'new' : Number(pathname.split('/')[2]);
+    const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
+    if (token) {
+        try {
+            const apiData: editorAuthDataType = {
+                articleId,
+            }
+            // 鉴权
+            const auth = await apiClient(apiList.post.protected.article.editorAuth, {
+                method: 'POST',
+                body: JSON.stringify(apiData),
+                headers: {
+                    Cookie: req.cookies.toString()
+                }
+            });
+            if(auth.msg === 'success') {
+                if(auth.data.auth === true) {
+                    return NextResponse.next();
+                }
+            }
+            // 无权限，返回主页
+            console.log('无访问权限');
+            return NextResponse.redirect(new URL('/', req.url));
+        } catch (error) {
+            console.error(error);
+            if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url));
+        }
+    } else {
+        if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url));
+    }
 }
+
+export async function middleware(req: NextRequest) {
+    let response = await jwtMiddleware(req);
+    const {pathname} = req.nextUrl;
+    if (pathname.startsWith('/editor/') && response) {
+        response = await editorAuthMiddleware(req);
+    }
+    return response;
+}
+
+
 export const config = {
     matcher: [
         // '/welcome', // 特定路径

@@ -22,12 +22,13 @@ const EditorPage = () => {
             ...article,
             articleId: id
         }))
-        if(typeof id === 'number')
+        if(typeof id === 'number'){
             getArticle(id);
+        }
     }, [articleId]);
     useEffect(() => {
        initArticle();
-    }, [initArticle])
+    }, [initArticle]);
     return <>
         <EditorHeader />
         <MdEditor initialValue={article.content} />
