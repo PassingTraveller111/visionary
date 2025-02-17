@@ -6,7 +6,6 @@ import classNames from "classnames";
 import SaveIcon from '../../../../../public/icon/pluginIcon/save.svg';
 import {useUpdateArticle} from "@/hooks/articles/useArticles";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
-import SaveHoverIcon from "../../../../../public/icon/pluginIcon/saveHover.svg";
 import {Tooltip, message} from "antd";
 
 const SavePlugin = (props: PluginProps) => {
@@ -31,7 +30,7 @@ const SavePlugin = (props: PluginProps) => {
                 })}
                 onClick={handleClick}
             >
-                <PluginIcon defaultIcon={SaveIcon} hoverIcon={SaveHoverIcon}/>
+                <PluginIcon defaultIcon={SaveIcon} />
             </span>
         </Tooltip>
     );
@@ -41,7 +40,7 @@ const SavePlugin = (props: PluginProps) => {
 //     articleId: 'new',
 // }
 SavePlugin.align = 'left';
-SavePlugin.pluginName = 'counter';
+SavePlugin.pluginName = 'SavePlugin';
 
 
 export default SavePlugin;

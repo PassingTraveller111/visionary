@@ -4,7 +4,6 @@ import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import classNames from "classnames";
 import ImageIcon from '../../../../../public/icon/pluginIcon/image.svg';
-import ImageHoverIcon from '../../../../../public/icon/pluginIcon/imageHover.svg';
 import {apiClient, apiList} from "@/clientApi";
 import {Tooltip} from "antd";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
@@ -44,7 +43,7 @@ const ImagePlugin = (props: PluginProps) => {
                 })}
                 onClick={handleClick}
             >
-                <PluginIcon defaultIcon={ImageIcon} hoverIcon={ImageHoverIcon} />
+                <PluginIcon defaultIcon={ImageIcon} />
                 {/* 隐藏的文件输入元素 */}
                 <input
                     type="file"
