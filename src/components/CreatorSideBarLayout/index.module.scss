@@ -1,0 +1,20 @@
+.creatorSideBarLayout{
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  overflow: auto;
+  .sideBar{
+    width: 200px;
+    position: relative;
+    .sideBarContent{
+      width: 200px;
+      background: #fff;
+      position: fixed;
+    }
+  }
+  .content{
+    width: calc(100% - 200px);
+  }
+}
