@@ -1,13 +1,21 @@
 import React from 'react'
-import { useAppSelector } from "@/store";
 import styles from "./index.module.scss";
 import {useRouter} from "next/navigation";
 import moment from "moment";
 import {useIsUserOwn} from "@/hooks/users/useUsers";
 
 
-const ReaderHeader= () => {
-    const { title, authorName, publishTime, views, authorId, draft_id } = useAppSelector(state => state.rootReducer.articleReducer.value);
+export type ReaderHeaderProps = {
+    title: string;
+    authorName?: string;
+    publishTime?: string;
+    views?: number;
+    authorId: number;
+    draft_id?: number;
+}
+
+const ReaderHeader= (props: ReaderHeaderProps) => {
+    const { title, authorName, publishTime, views, authorId, draft_id } = props;
     const isUserOwn = useIsUserOwn();
     const isOwn = isUserOwn(authorId);
     const router = useRouter();

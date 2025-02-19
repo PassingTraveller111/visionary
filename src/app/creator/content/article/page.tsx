@@ -47,8 +47,16 @@ const ArticlePage = () => {
                                 <div className={styles['article-menu']} onClick={(e) => {
                                     e.stopPropagation()
                                 }}>
-                                    <ArticleItemMenu messageApi={messageApi} modalApi={modalApi} articleId={article.id}
-                                                     getArticleList={getArticleList} userId={Number(userId)}/>
+                                    <ArticleItemMenu
+                                        messageApi={messageApi}
+                                        modalApi={modalApi}
+                                        articleId={article.id}
+                                        draft_id={article.draft_id}
+                                        getArticleList={getArticleList}
+                                        userId={Number(userId)}
+                                        review_id={article.review_id}
+                                        review_status={article.review_status}
+                                    />
                                 </div>
                             </div>
                         })}
@@ -62,24 +70,27 @@ const ArticlePage = () => {
 
 const ArticleItemMenu = (props: {
     articleId: number,
+    draft_id?: number,
+    review_id?: number,
     modalApi: HookAPI,
     messageApi: MessageInstance,
     getArticleList: (userId: number) => void,
-    userId: number
+    userId: number;
+    review_status: reviewStatusType;
 }) => {
-    const {articleId, modalApi, messageApi, getArticleList, userId} = props;
+    const {articleId, modalApi, messageApi, getArticleList, userId, draft_id, review_id, review_status} = props;
     const delArticle = useDelArticle();
     const items: MenuProps['items'] = [
         {
             key: 'edit',
             label: (
                 <span onClick={() => {
-                    window.open('/editor/' + props.articleId);
+                    window.open('/editor/draft/' + draft_id);
                 }}>编辑</span>
             ),
         },
         {
-            key: '2',
+            key: 'del',
             label: (
                 <span onClick={async (e) => {
                     e.stopPropagation();
@@ -105,6 +116,18 @@ const ArticleItemMenu = (props: {
             ),
         },
     ];
+    if (review_status !== 'already_review') {
+        items.push({
+            key: 'lookReview',
+            label: (
+                <span
+                    onClick={() => {
+                        window.open('/reader/review/' + review_id)
+                    }}
+                >查看审核稿</span>
+            )
+        })
+    }
     return <>
         <Dropdown menu={{items}}>
             <Image src={moreIcon} alt='更多' width={30} height={30} />

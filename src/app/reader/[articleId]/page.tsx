@@ -32,7 +32,7 @@ const ReaderPage = () => {
         <NavLayout>
             <div className={styles.readerContainer}>
                 <div className={styles.readerContent}>
-                    <ReaderHeader />
+                    <ReaderHeader title={article.title} authorName={article.authorName} authorId={article.authorId} draft_id={article.draft_id} views={article.views} publishTime={article.publishTime} />
                     <ReactMarkdown>{article.content}</ReactMarkdown>
                 </div>
             </div>

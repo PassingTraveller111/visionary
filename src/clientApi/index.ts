@@ -36,6 +36,9 @@ export const apiList = {
                 updateDraft: 'protected/draft/updateDraft', // 更新草稿
                 getDraft: 'protected/draft/getDraft', // 获取草稿
                 publishDraft: 'protected/draft/publishDraft', // 发布草稿
+            },
+            review: {
+                getReview: 'protected/review/getReview', // 获取审核文章
             }
         },
     },

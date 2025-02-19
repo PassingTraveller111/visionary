@@ -9,7 +9,7 @@ export type reviewTableType = {
     author_id: number;
     author_nickname: string;
     article_id?: number;
-    review_id?: number;
+    draft_id?: number;
 }
 
 
