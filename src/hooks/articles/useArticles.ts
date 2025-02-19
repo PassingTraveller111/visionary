@@ -84,6 +84,7 @@ export const useGetArticleList = () => {
     const [articleList, setArticleList] = useState<articleListType>([]);
     // 获取文章列表
     const getArticleList =  (userId: number) => {
+        if(!userId) return [];
         apiClient(apiList.post.protected.article.getArticleList, {
             method: "POST",
             body: JSON.stringify({

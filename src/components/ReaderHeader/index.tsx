@@ -7,12 +7,12 @@ import {useIsUserOwn} from "@/hooks/users/useUsers";
 
 
 const ReaderHeader= () => {
-    const { title, articleId, authorName, publishTime, views, authorId } = useAppSelector(state => state.rootReducer.articleReducer.value);
+    const { title, authorName, publishTime, views, authorId, draft_id } = useAppSelector(state => state.rootReducer.articleReducer.value);
     const isUserOwn = useIsUserOwn();
     const isOwn = isUserOwn(authorId);
     const router = useRouter();
     const gotoEditor = () => {
-        router.push(`/editor/${articleId}`);
+        router.push(`/editor/draft/${draft_id}`);
     }
     const gotoProfile = () => {
         router.push(`/profile/${authorId}`);

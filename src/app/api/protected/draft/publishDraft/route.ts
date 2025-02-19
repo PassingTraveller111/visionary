@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {draftTableType} from "@/app/api/protected/draft/type";
 import {PoolConnection} from "mysql2/promise";
+import {reviewStatusType} from "@/app/api/protected/review/type";
 
 export type publishDraftDataType = {
     draftId: number;
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
                 await updateDraftStatus(draft, connection);
             }
             // 发起审核
-            auditArticle(draft, article_id, connection);
+            auditArticle(draft, article_id, review_id, connection);
             return NextResponse.json({ msg: 'success', data: { draft_id: draft.id, review_id, article_id }}, { status: 200 });
         } else {
             return NextResponse.json({ msg: 'error', data: '发布失败' }, { status: 200 });
@@ -52,8 +53,8 @@ export async function POST(req: NextRequest) {
 }
 
 const insertReview = async (draft: draftTableType, connection: PoolConnection): Promise<number> => {
-    const sql = `INSERT INTO reviews (content, title, summary, tags, draft_id, author_id) VALUES (?,?,?,?,?,?)`;
-    const values = [draft.content, draft.title, draft.summary, draft.tags, draft.id, draft.author_id];
+    const sql = `INSERT INTO reviews (content, title, summary, tags, draft_id, author_id, status) VALUES (?,?,?,?,?,?,?)`;
+    const values = [draft.content, draft.title, draft.summary, draft.tags, draft.id, draft.author_id, 'reviewing'];
     const [ rows ] = await connection.execute(sql, values);
     const insertId = (rows as { insertId: number }).insertId;
     return insertId ?? 0;
@@ -110,7 +111,7 @@ const updateDraftStatus = async (draft: draftTableType, connection: PoolConnecti
     await connection.execute(sql, values);
 }
 
-const auditArticle = (draft: draftTableType, article_id: number, connection: PoolConnection) => {
+const auditArticle = (draft: draftTableType, article_id: number, review_id: number,connection: PoolConnection) => {
     // 模拟异步审核任务
     setTimeout(async () => {
         // 根据草稿内容进行审核
@@ -139,6 +140,13 @@ const auditArticle = (draft: draftTableType, article_id: number, connection: Poo
             draft.author_nickname,
             article_id];
         await connection.execute(sql, values);
+        // 修改审核稿状态
+        await updateReviewStatus(review_id, 'review_success', connection);
     }, 1000 * 60);
     return true;
+};
+
+const updateReviewStatus = async (review_id: number, status: reviewStatusType, connection: PoolConnection) => {
+    const sql = `UPDATE reviews SET status = ? WHERE id = ?;`;
+    await connection.execute(sql, [ status, review_id ]);
 }
