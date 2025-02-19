@@ -1,8 +1,11 @@
+@use '@/styles/variables' as var;
+
+
 .nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
+  height: var.$nav-container-height;
   .nav-left{
     .logo{
       display: flex;

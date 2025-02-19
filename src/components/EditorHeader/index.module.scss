@@ -1,0 +1,10 @@
+.editorHeaderContainer{
+  display: flex;
+  width: 100%;
+  .title{
+    width: calc(100% - 200px);
+  }
+  .tools{
+    width: 200px;
+  }
+}

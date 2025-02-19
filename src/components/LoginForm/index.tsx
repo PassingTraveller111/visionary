@@ -39,7 +39,6 @@ const Index = (props: {
             label: '账号登录',
             children: <>
                 <Form
-                    name="basic"
                     labelCol={{span: 4}}
                     form={form}
                     wrapperCol={{span: 16}}

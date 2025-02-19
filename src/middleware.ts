@@ -70,9 +70,9 @@ async function editorAuthMiddleware(req: NextRequest) {
 export async function middleware(req: NextRequest) {
     let response = await jwtMiddleware(req);
     const {pathname} = req.nextUrl;
-    if (pathname.startsWith('/editor/') && response) {
-        response = await editorAuthMiddleware(req);
-    }
+    // if (pathname.startsWith('/editor/') && response) {
+    //     response = await editorAuthMiddleware(req);
+    // }
     return response;
 }
 

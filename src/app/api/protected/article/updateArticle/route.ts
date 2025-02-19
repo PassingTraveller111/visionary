@@ -1,6 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
-import {verifyToken} from "@/utils/auth";
 
 export type updateArticleDataType = {
     articleId: number | 'new';
@@ -12,9 +11,6 @@ export type updateArticleDataType = {
 
 export async function POST(req: NextRequest) {
     try {
-        const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
-        const decode = verifyToken(token);
-        // const { username } = decode;
         const connection = await pool.getConnection();
         const data: updateArticleDataType = await req.json();
         let sql, values: unknown[];

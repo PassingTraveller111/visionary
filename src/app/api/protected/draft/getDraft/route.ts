@@ -1,22 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
-import { articleTableType } from "@/app/api/protected/article/type";
+import {draftTableType} from "@/app/api/protected/draft/type";
 
-export type getArticleRequestType = {
-    articleId: number;
+export type getDraftDataType = {
+    draftId: number;
 }
 
-export type getArticleResponseType = {
-    msg: 'success' | 'error';
-    data: articleTableType;
+export type getDraftResponseType = {
+    data: draftTableType,
+    msg: 'success' | 'error',
 }
 
 export async function POST(req: NextRequest) {
     try {
         const connection = await pool.getConnection();
-        const data: getArticleRequestType = await req.json();
-        const sql = `SELECT * FROM articles WHERE id = ?`;
-        const values = [data.articleId];
+        const data: getDraftDataType = await req.json();
+        const sql = `SELECT * FROM drafts WHERE id = ?`;
+        const values = [data.draftId];
         const [ rows ] = await connection.execute(sql, values);
         if(Array.isArray(rows) && rows.length > 0) {
             return NextResponse.json({ msg: 'success', data: rows[0] }, { status: 200 });

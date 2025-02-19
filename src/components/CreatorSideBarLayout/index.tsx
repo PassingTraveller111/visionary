@@ -14,7 +14,7 @@ const CreatorSideBarLayout = (props: CreatorSideBarLayoutProps) => {
                 <Button
                     type="primary"
                     onClick={() => {
-                        window.open('/editor/new', '_blank');
+                        window.open('/editor/draft/new', '_blank');
                     }}
                 >新建</Button>
             </div>

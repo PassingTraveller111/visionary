@@ -4,13 +4,14 @@ import styles from "./index.module.scss";
 import { useEffect } from "react";
 import Image from "next/image";
 import moment from "moment";
-import {Dropdown, MenuProps, Modal, message} from "antd";
+import {Dropdown, MenuProps, Modal, message, Tag} from "antd";
 import moreIcon from '../../../../../public/icon/more.svg';
 import {useDelArticle, useGetArticleList} from "@/hooks/articles/useArticles";
 import {HookAPI} from "antd/es/modal/useModal";
 import {MessageInstance} from "antd/es/message/interface";
 import {useAppSelector} from "@/store";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
+import {reviewStatusType} from "@/store/features/articleSlice";
 
 
 
@@ -36,7 +37,10 @@ const ArticlePage = () => {
                                         }}
                             >
                                 <div>
-                                    <div className={styles['article-title']}>{article.title}</div>
+                                    <div className={styles['article-title']}>
+                                        {article.title}
+                                        <ArticleStatus status={article.review_status} />
+                                    </div>
                                     <div
                                         className={styles['article-date']}>{moment(article.updated_time).format('YYYY-MM-DD HH:mm')}</div>
                                 </div>
@@ -108,4 +112,21 @@ const ArticleItemMenu = (props: {
     </>
 }
 
+
+const ArticleStatus = (props: { status: reviewStatusType }) => {
+    const { status } = props;
+    switch (status) {
+        case "already_review": {
+            return <></>;
+        }
+        case "pending_review": {
+            return <Tag color='yellow'>审核中</Tag>
+        }
+        case "failed_review": {
+            return <Tag color='red'>审核失败</Tag>
+        }
+    }
+}
+
 export default ArticlePage;
+

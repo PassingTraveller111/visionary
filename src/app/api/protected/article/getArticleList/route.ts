@@ -1,10 +1,16 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {verifyToken} from "@/utils/auth";
+import {articleTableType} from "@/app/api/protected/article/type";
 
-export type updateDataType = {
+export type getArticleListRequestType = {
     authorId: number;
 }
+export type getArticleListResponseType = {
+    msg: 'success' | 'error';
+    data: itemType[];
+}
+export type itemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time'>;
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,15 +18,15 @@ export async function POST(req: NextRequest) {
         const decode = verifyToken(token);
         const { userId } = decode;
         const connection = await pool.getConnection();
-        const data: updateDataType = await req.json();
+        const data: getArticleListRequestType = await req.json();
         const isOwn = userId === data.authorId;
         let sql, values: unknown[];
         if (isOwn) {
-            sql = `SELECT id, title, updated_time, views, likes FROM articles WHERE author_id = ? ORDER BY updated_time DESC`;
+            sql = `SELECT id, title, views, review_status, review_id, updated_time, draft_id, is_published, published_time FROM articles WHERE author_id = ? ORDER BY updated_time DESC`;
             values = [data.authorId];
         } else {
             // 非本人，过滤未公开文章
-            sql = `SELECT id, title, updated_time, views, likes 
+            sql = `SELECT id, title, views, review_status, review_id, updated_time, draft_id, is_published, published_time
                    FROM articles 
                    WHERE author_id = ? And is_published = 1
                    ORDER BY updated_time DESC`;

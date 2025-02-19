@@ -4,6 +4,8 @@ import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
 import {useState} from "react";
 import {updateArticleDataType} from "@/app/api/protected/article/updateArticle/route";
+import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected/article/getArticle/route";
+import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
 
 
 export const useUpdateArticle = () => {
@@ -24,34 +26,20 @@ export const useUpdateArticle = () => {
     }
 }
 
-type articleDataType = {
-    "id": number,
-    "title": string,
-    "summary": string,
-    content: string,
-    "author_id": number,
-    "published_time": string,
-    "updated_time": string,
-    "is_published": 0 | 1,
-    "views": number,
-    "likes": number,
-    "collects": number,
-    "tags": string,
-    "author_nickname": string,
-}
 
 export const useGetArticle = () => {
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const dispatch = useDispatch<AppDispatch>();
     return async (id?: number) => {
+        const apiData: getArticleRequestType = {
+            articleId: id ?? article.articleId as number,
+        }
         const res = await apiClient(apiList.post.protected.article.getArticle,  {
             method: 'POST',
-            body: JSON.stringify({
-                articleId: id ?? article.articleId,
-            })
-        });
+            body: JSON.stringify(apiData)
+        }) as getArticleResponseType;
         if (res.msg === 'success') {
-            const { title, id, content, author_nickname, author_id, published_time, views } = res.data as articleDataType;
+            const { title, id, content, author_nickname, author_id, published_time, views, is_published, updated_time, draft_id, likes, review_id, review_status, tags, summary, collects } = res.data;
             dispatch(setArticle(
                 {
                     ...article,
@@ -62,6 +50,15 @@ export const useGetArticle = () => {
                     publishTime: published_time,
                     authorId: author_id,
                     authorName: author_nickname,
+                    is_published,
+                    updated_time,
+                    draft_id,
+                    likes,
+                    review_id,
+                    review_status,
+                    tags,
+                    summary,
+                    collects,
                 }
             ));
         }
@@ -80,15 +77,11 @@ export const useDelArticle =() => {
     }
 }
 
+type articleListType = itemType[];
 
-type articleType = {
-    title: string;
-    id: number;
-    updated_time: string;
-}
 export const useGetArticleList = () => {
     // 文章列表数据
-    const [articleList, setArticleList] = useState<articleType[]>([]);
+    const [articleList, setArticleList] = useState<articleListType>([]);
     // 获取文章列表
     const getArticleList =  (userId: number) => {
         apiClient(apiList.post.protected.article.getArticleList, {
@@ -96,8 +89,8 @@ export const useGetArticleList = () => {
             body: JSON.stringify({
                 authorId: userId,
             })
-        }).then(res => {
-            setArticleList(res.data);
+        }).then((res: getArticleListResponseType) => {
+            return setArticleList(res.data);
         })
     };
     return { articleList, getArticleList };

@@ -25,21 +25,18 @@ const MdEditor = dynamic(loadMarkdownEditor, {
 });
 
 type ReactEditorProps = {
-    initialValue?: string;
+    value: string;
+    onChange: (value: string) => void;
 }
 
 
-const ReactEditor = (props: ReactEditorProps) => {
-    const { initialValue = ''} = props;
-    const [value, setValue] = useState(initialValue);
-    useEffect(() => {
-        setValue(initialValue);
-    }, [initialValue])
 
+const ReactEditor = (props: ReactEditorProps) => {
+    const { value = '', onChange } = props;
     return <>
         <MdEditor
             value={value}
-            onChange={(e) => setValue(e.text)}
+            onChange={(e) => onChange(e.text)}
             shortcuts
             style={{height: 'calc(100vh - 32px)'}}
             renderHTML={text => {
