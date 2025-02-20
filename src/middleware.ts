@@ -36,7 +36,7 @@ async function jwtMiddleware(req: NextRequest) {
 async function editorAuthMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     if (!pathname.startsWith('/editor/draft/')) return NextResponse.next();
-    const draftId = pathname.split('/')[2] === 'new' ? 'new' : Number(pathname.split('/')[2]);
+    const draftId = pathname.split('/')[3] === 'new' ? 'new' : Number(pathname.split('/')[3]);
     const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
     if (token) {
         try {
