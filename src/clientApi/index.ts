@@ -1,6 +1,7 @@
 const API_CONFIG = {
     development: 'http://localhost:3000/api/',
-    production: 'http://101.43.168.254/api/',
+    // production: 'https://101.43.168.254/api/',
+    production: 'https://visionaryblog.cn/api/',
     test: '',
 };
 export default API_CONFIG;

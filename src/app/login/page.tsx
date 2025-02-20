@@ -11,7 +11,7 @@ const LoginPage = () => {
     }
     return <div className={styles.container}>
         <div>
-            <h1>创见</h1>
+
         </div>
         <LoginForm onLogin={onLogin} />
     </div>;
