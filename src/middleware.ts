@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {accessDecode, decodeType} from "@/utils/auth";
 import {apiClient, apiList} from "@/clientApi";
-import {editorAuthDataType} from "@/app/api/protected/article/editorAuth/route";
+import {draftEditorAuthDataType} from "@/app/api/protected/draft/editorAuth/route";
 
 async function jwtMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
@@ -35,15 +35,16 @@ async function jwtMiddleware(req: NextRequest) {
 
 async function editorAuthMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
-    const articleId = pathname.split('/')[2] === 'new' ? 'new' : Number(pathname.split('/')[2]);
+    if (!pathname.startsWith('/editor/draft/')) return NextResponse.next();
+    const draftId = pathname.split('/')[2] === 'new' ? 'new' : Number(pathname.split('/')[2]);
     const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
     if (token) {
         try {
-            const apiData: editorAuthDataType = {
-                articleId,
+            const apiData: draftEditorAuthDataType = {
+                draftId,
             }
             // 鉴权
-            const auth = await apiClient(apiList.post.protected.article.editorAuth, {
+            const auth = await apiClient(apiList.post.protected.draft.editorAuth, {
                 method: 'POST',
                 body: JSON.stringify(apiData),
                 headers: {
@@ -68,11 +69,12 @@ async function editorAuthMiddleware(req: NextRequest) {
 }
 
 export async function middleware(req: NextRequest) {
+    // 程序使用权限
     let response = await jwtMiddleware(req);
-    const {pathname} = req.nextUrl;
-    // if (pathname.startsWith('/editor/') && response) {
-    //     response = await editorAuthMiddleware(req);
-    // }
+    // 草稿编辑器权限
+    if(response) response = await editorAuthMiddleware(req);
+    // 文档阅读权限
+
     return response;
 }
 

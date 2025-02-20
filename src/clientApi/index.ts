@@ -30,12 +30,12 @@ export const apiList = {
                 getArticleList: 'protected/article/getArticleList', // 获取文章列表
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片
                 delArticle: 'protected/article/delArticle', // 删除文章
-                editorAuth: 'protected/article/editorAuth', // 是否有编辑文章的权限
             },
             draft: {
                 updateDraft: 'protected/draft/updateDraft', // 更新草稿
                 getDraft: 'protected/draft/getDraft', // 获取草稿
                 publishDraft: 'protected/draft/publishDraft', // 发布草稿
+                editorAuth: 'protected/draft/editorAuth', // 是否有编辑文章草稿的权限
             },
             review: {
                 getReview: 'protected/review/getReview', // 获取审核文章
