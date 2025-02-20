@@ -7,8 +7,8 @@ export type updateDataType = {
 }
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: updateDataType = await req.json();
         // 查找该文章的草稿id
         const draft_id = await getDraftId(data.articleId, connection);
@@ -19,6 +19,10 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }
 

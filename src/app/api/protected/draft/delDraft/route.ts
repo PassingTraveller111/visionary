@@ -11,8 +11,8 @@ export type delDraftResponse = {
 }
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: delDraftRequestType = await req.json();
         // 只能删除仅草稿的草稿
         const sql = `DELETE FROM drafts WHERE id = ? AND status = 'onlyDraft';`;
@@ -21,5 +21,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

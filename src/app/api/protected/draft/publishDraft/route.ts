@@ -14,8 +14,8 @@ export type publishDraftResponseType = {
 }
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: publishDraftDataType = await req.json();
         const sql = `SELECT * FROM drafts WHERE id = ?`;
         const values = [data.draftId];
@@ -49,6 +49,10 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }
 

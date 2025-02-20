@@ -10,8 +10,8 @@ export type updateArticleDataType = {
 }
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: updateArticleDataType = await req.json();
         let sql, values: unknown[];
         if (data.articleId === 'new') {
@@ -23,9 +23,12 @@ export async function POST(req: NextRequest) {
         }
         const [ rows ] = await connection.execute(sql, values);
         return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
-
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

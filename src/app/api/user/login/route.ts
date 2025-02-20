@@ -3,9 +3,9 @@ import pool from "@/lib/db";
 import {createToken} from "@/utils/auth";
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
         const { username, password, isRemember } = await req.json();
-        const connection = await pool.getConnection();
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE username = '${username}'`);
         const res = rows as {
             id: number;
@@ -31,5 +31,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

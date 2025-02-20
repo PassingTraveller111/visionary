@@ -13,11 +13,11 @@ export type getArticleListResponseType = {
 export type itemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time'>;
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
         const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
         const decode = verifyToken(token);
         const { userId } = decode;
-        const connection = await pool.getConnection();
         const data: getArticleListRequestType = await req.json();
         const isOwn = userId === data.authorId;
         let sql, values: unknown[];
@@ -38,5 +38,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

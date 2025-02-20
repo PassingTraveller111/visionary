@@ -13,8 +13,8 @@ export type updateDraftDataType = {
 
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: updateDraftDataType = await req.json();
         const { title, content, summary, tags, author_id, draftId, author_nickname } = data;
         let sql, values: unknown[];
@@ -30,5 +30,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

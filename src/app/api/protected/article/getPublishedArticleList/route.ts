@@ -14,8 +14,8 @@ export type getPublishedArticleListResponseType = {
 export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary'>;
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: getPublishedArticleListRequestType = await req.json();
         const page = parseInt(String(data.page), 10);
         const limit = parseInt(String(data.limit), 10);
@@ -33,5 +33,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

@@ -3,12 +3,12 @@ import pool from "@/lib/db";
 // import {verifyToken} from "@/utils/auth";
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
         // const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
         // const decode = verifyToken(token);
         const { userId } = await req.json();
         // const { username } = decode;
-        const connection = await pool.getConnection();
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE id = '${userId}'`);
         const res = rows as {
             nike_name: string;
@@ -27,5 +27,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release()
+        }
     }
 }

@@ -7,11 +7,11 @@ export type draftEditorAuthDataType = {
 }
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
         const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
         const decode = verifyToken(token);
         const { userId } = decode;
-        const connection = await pool.getConnection();
         const data: draftEditorAuthDataType = await req.json();
         if (data.draftId === 'new') {
             return NextResponse.json({ msg: 'success', data: { auth: true } }, { status: 200 });
@@ -28,5 +28,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ msg: 'error', data: { auth: false } }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }

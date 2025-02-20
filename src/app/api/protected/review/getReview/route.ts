@@ -12,8 +12,8 @@ export type getReviewResponseType = {
 }
 
 export async function POST(req: NextRequest) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const data: getReviewRequestType = await req.json();
         const sql = `SELECT * FROM reviews WHERE id = ?`;
         const values = [data.review_id];
@@ -26,5 +26,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
+    } finally {
+        if (connection) {
+            connection.release()
+        }
     }
 }
