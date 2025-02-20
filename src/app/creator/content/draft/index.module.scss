@@ -1,0 +1,31 @@
+.container{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-bottom: 40px;
+  .articleList-container{
+    width: calc(100% - 20px);
+    background: #fff;
+    .articleList-item{
+      padding: 20px;
+      box-sizing: content-box;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      &:hover{
+        background: rgba(0,0,0,.1);
+      }
+      .article-title{
+        font-weight: bold;
+      }
+      .article-date{
+        color: #666666;
+      }
+      .article-menu{
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}

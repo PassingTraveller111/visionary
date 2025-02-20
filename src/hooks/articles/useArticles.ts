@@ -6,6 +6,10 @@ import {useState} from "react";
 import {updateArticleDataType} from "@/app/api/protected/article/updateArticle/route";
 import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected/article/getArticle/route";
 import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
+import {
+    getPublishedArticleListRequestType,
+    getPublishedArticleListResponseType, publishedItemType
+} from "@/app/api/protected/article/getPublishedArticleList/route";
 
 
 export const useUpdateArticle = () => {
@@ -95,4 +99,22 @@ export const useGetArticleList = () => {
         })
     };
     return { articleList, getArticleList };
+}
+
+type publishedArticleListType = publishedItemType[];
+export const useGetPublishedArticleList = () => {
+    const [articleList, setArticleList] = useState<publishedArticleListType>([]);
+    const [pageInfo, setPageInfo] = useState({
+        page: 0,
+        limit: 10,
+    });
+    const getPublishedArticleList = async () => {
+        const apiData: getPublishedArticleListRequestType = pageInfo;
+        const res: getPublishedArticleListResponseType = await apiClient(apiList.post.protected.article.getPublishedArticleList, {
+            method: 'POST',
+            body: JSON.stringify(apiData)
+        });
+        if (res.msg === 'success') setArticleList(res.data);
+    }
+    return { articleList, getPublishedArticleList, pageInfo, setPageInfo };
 }

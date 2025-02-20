@@ -1,3 +1,4 @@
+"use client"
 import {Button, Input} from "antd";
 import styles from './index.module.scss';
 import {LogoIcon} from "@/components/LogoIcon";
@@ -8,7 +9,6 @@ import classNames from "classnames";
 
 const Navigation = () => {
     const router = useRouter();
-
     return <div className={styles['nav-container']}>
         <span className={styles['nav-left']}>
             <span

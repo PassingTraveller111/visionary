@@ -3,49 +3,44 @@ import NavLayout from "@/components/NavLayout";
 import styles from "./index.module.scss";
 import { useEffect } from "react";
 import Image from "next/image";
-import moment from "moment";
-import {Dropdown, MenuProps, Modal, message, Tag, Empty} from "antd";
+import {Dropdown, MenuProps, Modal, message, Empty} from "antd";
 import moreIcon from '../../../../../public/icon/more.svg';
-import {useDelArticle, useGetArticleList} from "@/hooks/articles/useArticles";
 import {HookAPI} from "antd/es/modal/useModal";
 import {MessageInstance} from "antd/es/message/interface";
 import {useAppSelector} from "@/store";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
-import {reviewStatusType} from "@/store/features/articleSlice";
+import {useDeleteDraft, useGetDraftList} from "@/hooks/drafts/useDrafts";
 
 
 
-const ArticlePage = () => {
+const DraftPage = () => {
     const { id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
     const [modalApi, modalContextHolder] = Modal.useModal();
     const [messageApi, messageContextHolder] = message.useMessage();
-    const { articleList, getArticleList } = useGetArticleList();
+    const { draftList, getDraftList } = useGetDraftList();
     useEffect(() => {
-        getArticleList(Number(userId));
+        getDraftList(Number(userId));
     }, [userId]);
     return <>
         {modalContextHolder}
         {messageContextHolder}
         <NavLayout>
             <CreatorSideBarLayout
-                selectedMenuKey='article'
+                selectedMenuKey='draft'
             >
                 <div className={styles['container']}>
                     <div className={styles['articleList-container']}>
-                        {articleList.length <= 0 && <Empty/>}
-                        {articleList.map((article) => {
-                            return <div key={article.id} className={styles['articleList-item']}
+                        {draftList.length <= 0 && <Empty/>}
+                        {draftList.map((draft) => {
+                            return <div key={draft.id} className={styles['articleList-item']}
                                         onClick={() => {
-                                            window.open('/reader/' + article.id);
+                                            window.open('/editor/draft/' + draft.id);
                                         }}
                             >
                                 <div>
                                     <div className={styles['article-title']}>
-                                        {article.title}
-                                        <ArticleStatus status={article.review_status} />
+                                        {draft.title}
                                     </div>
-                                    <div
-                                        className={styles['article-date']}>{moment(article.updated_time).format('YYYY-MM-DD HH:mm')}</div>
                                 </div>
                                 <div className={styles['article-menu']} onClick={(e) => {
                                     e.stopPropagation()
@@ -53,12 +48,9 @@ const ArticlePage = () => {
                                     <ArticleItemMenu
                                         messageApi={messageApi}
                                         modalApi={modalApi}
-                                        articleId={article.id}
-                                        draft_id={article.draft_id}
-                                        getArticleList={getArticleList}
+                                        draft_id={draft.id}
+                                        getDraftList={getDraftList}
                                         userId={Number(userId)}
-                                        review_id={article.review_id}
-                                        review_status={article.review_status}
                                     />
                                 </div>
                             </div>
@@ -72,17 +64,14 @@ const ArticlePage = () => {
 
 
 const ArticleItemMenu = (props: {
-    articleId: number,
     draft_id?: number,
-    review_id?: number,
     modalApi: HookAPI,
     messageApi: MessageInstance,
-    getArticleList: (userId: number) => void,
+    getDraftList: (userId: number) => void,
     userId: number;
-    review_status: reviewStatusType;
 }) => {
-    const {articleId, modalApi, messageApi, getArticleList, userId, draft_id, review_id, review_status} = props;
-    const delArticle = useDelArticle();
+    const { modalApi, messageApi, getDraftList, userId, draft_id } = props;
+    const delDraft = useDeleteDraft();
     const items: MenuProps['items'] = [
         {
             key: 'edit',
@@ -104,13 +93,13 @@ const ArticleItemMenu = (props: {
                         cancelText: '取消',
                     });
                     if (confirm) {
-                        delArticle(articleId).then(res => {
+                        delDraft(draft_id).then(res => {
                             if (res.msg === 'success') {
                                 messageApi.success('删除成功');
                             } else {
                                 messageApi.error('删除失败');
                             }
-                            getArticleList(userId);
+                            getDraftList(userId);
                         })
                     }
                 }}>
@@ -119,18 +108,6 @@ const ArticleItemMenu = (props: {
             ),
         },
     ];
-    if (review_status !== 'already_review') {
-        items.push({
-            key: 'lookReview',
-            label: (
-                <span
-                    onClick={() => {
-                        window.open('/reader/review/' + review_id)
-                    }}
-                >查看审核稿</span>
-            )
-        })
-    }
     return <>
         <Dropdown menu={{items}}>
             <Image src={moreIcon} alt='更多' width={30} height={30} />
@@ -138,21 +115,5 @@ const ArticleItemMenu = (props: {
     </>
 }
 
-
-const ArticleStatus = (props: { status: reviewStatusType }) => {
-    const { status } = props;
-    switch (status) {
-        case "already_review": {
-            return <></>;
-        }
-        case "pending_review": {
-            return <Tag color='yellow'>审核中</Tag>
-        }
-        case "failed_review": {
-            return <Tag color='red'>审核失败</Tag>
-        }
-    }
-}
-
-export default ArticlePage;
+export default DraftPage;
 

@@ -5,6 +5,9 @@ import {setDraft} from "@/store/features/draftSlice";
 import {useDispatch} from "react-redux";
 import {getDraftDataType, getDraftResponseType} from "@/app/api/protected/draft/getDraft/route";
 import {publishDraftDataType, publishDraftResponseType} from "@/app/api/protected/draft/publishDraft/route";
+import {useState} from "react";
+import {getDraftListResponseType, itemType} from "@/app/api/protected/draft/getDraftList/route";
+import {delDraftRequestType} from "@/app/api/protected/draft/delDraft/route";
 
 export const useUpdateDraft = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value)
@@ -79,5 +82,38 @@ export const usePublishDraft = () => {
             body: JSON.stringify(apiData),
         });
         return res;
+    }
+}
+
+type draftListType = itemType[];
+
+export const useGetDraftList = () => {
+    // 草稿列表数据
+    const [draftList, setDraftList] = useState<draftListType>([]);
+    // 获取文章列表
+    const getDraftList =  (userId: number) => {
+        if(!userId) return [];
+        apiClient(apiList.post.protected.draft.getDraftList, {
+            method: "POST",
+            body: JSON.stringify({
+                authorId: userId,
+            })
+        }).then((res: getDraftListResponseType) => {
+            return setDraftList(res.data);
+        })
+    };
+    return { draftList, getDraftList };
+}
+
+export const useDeleteDraft = () => {
+    return async (id?: number) => {
+        if(!id) return;
+        const apiData: delDraftRequestType = {
+            id,
+        }
+        return apiClient(apiList.post.protected.draft.delDraft, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        })
     }
 }

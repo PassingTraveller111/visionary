@@ -1,0 +1,39 @@
+@use '@/styles/variables' as var;
+.container {
+  height: calc(100vh - #{var.$nav-container-height});
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  .articleList {
+    overflow: scroll;
+    width: calc(100% - 200px);
+    background: #fff;
+    .articleItem{
+      cursor: pointer;
+      padding: 20px;
+      &:hover{
+        background: #cccaca;
+      }
+      .title{
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .summary{
+        color: #888888;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .itemBottom{
+        display: flex;
+        .author{
+
+        }
+        .date{
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

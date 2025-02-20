@@ -1,15 +1,19 @@
 "use client"
 import MdEditor from "@/components/MdEditor";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import React, {useCallback, useEffect} from "react";
 import EditorHeader from "@/components/EditorHeader";
 import {AppDispatch, useAppSelector} from "@/store";
 import {useDispatch} from "react-redux";
 import {setDraft} from "@/store/features/draftSlice";
 import {useGetDraft, usePublishDraft, useUpdateDraft} from "@/hooks/drafts/useDrafts";
+import useMessage from "antd/es/message/useMessage";
 
 const DraftPage = () => {
     const { draftId } =  useParams();
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const [messageApi, contextHandle] = useMessage();
+    const router = useRouter();
     const updateDraft = useUpdateDraft();
     const getDraft = useGetDraft();
     const publishDraft = usePublishDraft();
@@ -47,15 +51,28 @@ const DraftPage = () => {
     const onSaveDraft = async () => {
         const res = await updateDraft();
         if(res.msg === "success") {
-            console.log('更新成功');
+            messageApi.success('更新成功');
         }else {
-            console.log('更新失败');
+            messageApi.error('更新失败');
         }
     }
     const onPublicArticle = () => {
-        publishDraft();
+        updateDraft().then(res => {
+            if(res.msg === "success") {
+                publishDraft().then(res => {
+                    if(res.msg === "success") {
+                        messageApi.success('发布成功').then(() => {
+                            router.push('/profile/' + userInfo.id);
+                        });
+                    }else {
+                        messageApi.error('发布失败');
+                    }
+                })
+            }
+        })
     }
     return <>
+        {contextHandle}
         <EditorHeader
             draft={draft}
             onTitleChange={onEditorHeaderChange}
