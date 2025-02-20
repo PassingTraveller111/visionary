@@ -71,8 +71,8 @@ async function editorAuthMiddleware(req: NextRequest) {
 export async function middleware(req: NextRequest) {
     // 程序使用权限
     let response = await jwtMiddleware(req);
-    // 草稿编辑器权限
-    if(response) response = await editorAuthMiddleware(req);
+    // // 草稿编辑器权限
+    // if(response) response = await editorAuthMiddleware(req);
     // 文档阅读权限
 
     return response;
