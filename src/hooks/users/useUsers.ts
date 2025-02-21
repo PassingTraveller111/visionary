@@ -3,6 +3,12 @@ import {useAppSelector, AppDispatch} from "@/store";
 import {useDispatch} from "react-redux";
 import {logIn, logOut, setUserInfo} from "@/store/features/userSlice";
 import {apiClient, apiList} from "@/clientApi";
+import {useState} from "react";
+import {
+    AuthorInfoType,
+    getAuthorInfoRequestType,
+    getAuthorInfoResponseType
+} from "@/app/api/protected/user/getAuthorInfo/route";
 
 
 export const useUserLogin = () => {
@@ -56,4 +62,22 @@ export const useIsUserOwn = () => {
         }
         return idOrUserName === userInfo.id;
     }
+}
+
+export const useGetAuthorInfo = () => {
+    const [authorInfo, setAuthorInfo] = useState<AuthorInfoType>({
+        id: 0, email: "", nick_name: "", profile: ""
+    });
+    const getAuthorInfo = (id: number) => {
+        const apiData: getAuthorInfoRequestType = {
+            authorId: id,
+        }
+        apiClient(apiList.post.protected.user.getAuthorInfo, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        }).then((res: getAuthorInfoResponseType) => {
+            setAuthorInfo(res.data);
+        })
+    }
+    return { authorInfo, getAuthorInfo };
 }

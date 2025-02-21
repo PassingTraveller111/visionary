@@ -21,6 +21,7 @@ export const apiList = {
             user: {
                 updateUserInfo: 'protected/user/updateUserInfo', // 更新用户信息
                 updateUserAvatar: 'protected/user/updateUserAvatar', // 更新用户头像
+                getAuthorInfo: 'protected/user/getAuthorInfo', // 获取作者信息
             },
             cos: {
                 upload: 'protected/cos/upload', // 上传文件到cos

@@ -1,5 +1,52 @@
+$operatorWidth: 50px;
+$rightBarWidth: 260px;
 .readerContainer {
-  .readerContent {
+  padding: 20px;
+  display: flex;
+  .operatorFix{
+    position: fixed;
+    width: $operatorWidth;
+    height: 300px;
     background: #fff;
+  }
+  .readerContent {
+    padding: 20px;
+    width: calc(100% - #{$operatorWidth} - 20px - #{$rightBarWidth} - 20px);
+    margin-left: $operatorWidth + 20px;
+    min-width: 400px;
+    background: #fff;
+  }
+  .rightBar{
+    position: fixed;
+    width: $rightBarWidth;
+    right: 20px;
+  }
+}
+
+.authorBar{
+  display: flex;
+  background: #fff;
+  padding: 20px;
+  .avatar{
+    width: 60px;
+    height: 60px;
+    img{
+      border-radius: 50%;
+    }
+  }
+  .authorInfo{
+    margin-left: 20px;
+    width: 140px;
+    div{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .nickName{
+      cursor: pointer;
+      &:hover{
+        color: #1e80ff;
+      }
+    }
   }
 }
