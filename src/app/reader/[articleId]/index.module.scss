@@ -1,5 +1,9 @@
 $operatorWidth: 50px;
 $rightBarWidth: 260px;
+.readerScroll{
+  overflow: auto;
+  height: 100%;
+}
 .readerContainer {
   padding: 20px;
   display: flex;
@@ -48,5 +52,26 @@ $rightBarWidth: 260px;
         color: #1e80ff;
       }
     }
+  }
+}
+
+.outlineBarContainer{
+  margin-top: 20px;
+  background: #fff;
+
+  .outlineHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    .outlineOpen{
+      font-size: 14px;
+      color: #8a919f;
+      cursor: pointer;
+    }
+  }
+  .outlineContent{
+    overflow: auto;
+    transition: 0.1s;
   }
 }

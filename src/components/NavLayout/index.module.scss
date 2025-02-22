@@ -1,5 +1,5 @@
+@use '@/styles/variables' as var;
 .layoutContent{
-  height: calc(100vh - 50px);
+  height: calc(100vh - #{var.$nav-container-height});
   background: #f2f3f5;
-  overflow: auto;
 }
