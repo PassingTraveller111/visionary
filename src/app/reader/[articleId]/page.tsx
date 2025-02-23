@@ -126,12 +126,17 @@ const OutlineBar = (props: OutlineBarProps) => {
             title: string;
         }[]
     >([]);
+    const [renderAnchor, setRenderAnchor] = useState(false);
     const [outlineOpen, setOutlineOpen] = useState<boolean>(true);
     useEffect(() => {
         setOutline(parseMarkdownOutline(markdown));
     }, [markdown]);
 
-    if(!scrollContainerRef.current) return <></>;
+    useEffect(() => {
+        if(scrollContainerRef.current) setRenderAnchor(true);
+        setRenderAnchor(false);
+    }, [scrollContainerRef]);
+    if(!renderAnchor) <></>;
 
     return <div className={styles.outlineBarContainer}>
         <div className={styles.outlineHeader}>
