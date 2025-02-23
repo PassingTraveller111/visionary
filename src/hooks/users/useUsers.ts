@@ -50,7 +50,9 @@ export const useGetUserInfo =  () => {
     const dispatch = useDispatch<AppDispatch>();
     return async () => {
         const res = await apiClient(apiList.get.protected.user.getUserInfo);
-        dispatch(setUserInfo(res.data));
+        dispatch(setUserInfo(
+            res.data
+        ));
     }
 }
 // 用于判断是否是本人

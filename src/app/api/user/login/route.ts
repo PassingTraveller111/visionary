@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
             username: string;
             password: string;
         }[];
-        connection.release();
         if (res.length > 0
             && res[0]?.username === username
             && res[0]?.password === password

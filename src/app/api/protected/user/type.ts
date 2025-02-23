@@ -12,3 +12,4 @@ export type userTableType = {
     profile: string, // 头像
     nick_name: string,
 }
+
