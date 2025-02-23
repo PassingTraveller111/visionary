@@ -3,6 +3,8 @@ import pool from "@/lib/db";
 import {draftTableType} from "@/app/api/protected/draft/type";
 import {PoolConnection} from "mysql2/promise";
 import {reviewStatusType} from "@/app/api/protected/review/type";
+import redis from "@/lib/redis";
+import {getArticleKey, getDraftKey} from "@/app/api/redisKeys";
 
 export type publishDraftDataType = {
     draftId: number;
@@ -64,13 +66,14 @@ const insertReview = async (draft: draftTableType, connection: PoolConnection): 
     return insertId ?? 0;
 }
 const updateReviewAndDraftWithArticleId = async (review_id: number, draft_id: number, article_id: number, connection: PoolConnection) => {
-    const reSql = `UPDATE reviews SET articke_id = ? WHERE id = ?`;
+    const reSql = `UPDATE reviews SET article_id = ? WHERE id = ?`;
     const drSql = `UPDATE drafts SET article_id = ? WHERE id = ?`;
     const reValues = [article_id, review_id];
     const drValues = [article_id, draft_id];
     try {
         await connection.execute(reSql, reValues);
         await connection.execute(drSql, drValues);
+        await redis.del(getDraftKey(draft_id));
     } catch (error) {
         console.error(error);
     }
@@ -106,12 +109,14 @@ const updateArticle = async (draft: draftTableType, review_id: number, connectio
     const sql = `UPDATE articles SET review_status = ?, review_id = ? where id = ?;`;
     const values = ['pending_review', review_id, draft.article_id];
     await connection.execute(sql, values);
+    await redis.del(getArticleKey(draft.article_id ?? 0));
     return draft.article_id ?? 0;
 }
 
 const updateDraftStatus = async (draft: draftTableType, connection: PoolConnection) => {
     const sql = `UPDATE drafts SET status = ? WHERE id = ?;`
     const values = ['hasArticle', draft.id];
+    await redis.del(getDraftKey(draft.id));
     await connection.execute(sql, values);
 }
 
@@ -144,6 +149,7 @@ const auditArticle = (draft: draftTableType, article_id: number, review_id: numb
             draft.author_nickname,
             article_id];
         await connection.execute(sql, values);
+        await redis.del(getArticleKey(article_id ?? 0));
         // 修改审核稿状态
         await updateReviewStatus(review_id, 'review_success', connection);
     }, 1000 * 60);

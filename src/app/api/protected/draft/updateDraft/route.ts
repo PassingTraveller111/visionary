@@ -1,5 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
+import redis from "@/lib/redis";
+import {getDraftKey} from "@/app/api/redisKeys";
 
 export type updateDraftDataType = {
     draftId: number | 'new';
@@ -24,6 +26,7 @@ export async function POST(req: NextRequest) {
         } else {
             sql = `UPDATE drafts SET content = ?, title = ?, summary = ?, tags = ? WHERE id = ?;`;
             values = [content, title, summary, tags, draftId];
+            await redis.del(getDraftKey(draftId));
         }
         const [ rows ] = await connection.execute(sql, values);
         return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });

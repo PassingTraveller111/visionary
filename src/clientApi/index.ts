@@ -27,7 +27,6 @@ export const apiList = {
                 upload: 'protected/cos/upload', // 上传文件到cos
             },
             article: {
-                updateArticle: 'protected/article/updateArticle', // 更新文章
                 getArticle: 'protected/article/getArticle', // 获取文章
                 getArticleList: 'protected/article/getArticleList', // 获取文章列表
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片

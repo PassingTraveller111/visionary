@@ -3,32 +3,12 @@ import {apiClient, apiList} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
 import {useState} from "react";
-import {updateArticleDataType} from "@/app/api/protected/article/updateArticle/route";
 import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected/article/getArticle/route";
 import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
 import {
     getPublishedArticleListRequestType,
     getPublishedArticleListResponseType, publishedItemType
 } from "@/app/api/protected/article/getPublishedArticleList/route";
-
-
-export const useUpdateArticle = () => {
-    const article = useAppSelector(state => state.rootReducer.articleReducer.value);
-    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value)
-    return async (content: string) => {
-        const apiData: updateArticleDataType = {
-            content,
-            articleId: article.articleId,
-            authorId: userInfo.id,
-            author_nickname: userInfo.nick_name ?? '',
-            title: article.title,
-        }
-        return await apiClient(apiList.post.protected.article.updateArticle,  {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        });
-    }
-}
 
 
 export const useGetArticle = () => {

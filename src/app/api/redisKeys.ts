@@ -14,7 +14,26 @@
     return `user:userInfo:${userId}`;
 }
 
+/**
+* 用于存储文章数据
+* 生命周期：文章数据更新或删除
+* @param articleId
+*/
+function getArticleKey(articleId: number) {
+     return `article:content:${articleId}`;
+}
+
+/**
+ * 用于存储草稿数据
+ * 生命周期：草稿数据更新或删除
+* @param draftId
+*/
+function getDraftKey(draftId: number) {
+    return `draft:content:${draftId}`;
+}
 
 export {
-     getUserInfoKey,
+    getUserInfoKey,
+    getArticleKey,
+    getDraftKey,
 }
