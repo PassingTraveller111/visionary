@@ -11,12 +11,13 @@ export async function POST(req: NextRequest) {
             id: number;
             username: string;
             password: string;
+            role: 0 | 1 | 2;
         }[];
         if (res.length > 0
             && res[0]?.username === username
             && res[0]?.password === password
         ) {
-            const token = createToken(username, res[0].id);
+            const token = createToken(username, res[0].id, res[0].role);
             const response = NextResponse.json({ status: 200, msg: 'success', data: res[0]}, { status: 200});
             response.cookies.set('token', token, {
                 expires: isRemember ? new Date(new Date().getTime() + 1000 * 60 * 60 * 60) : undefined,

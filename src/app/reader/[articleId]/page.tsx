@@ -117,15 +117,16 @@ type OutlineBarProps = {
     markdown: string;
     scrollContainerRef:  React.RefObject<HTMLDivElement>;
 }
+type nodeType = {
+    title: string,
+    level: number,
+    key: string,
+    href: string,
+    children: nodeType[],
+}
 const OutlineBar = (props: OutlineBarProps) => {
     const {markdown, scrollContainerRef} = props;
-    const [outline, setOutline] = useState<
-        {
-            href: string;
-            key: string;
-            title: string;
-        }[]
-    >([]);
+    const [outline, setOutline] = useState<nodeType[]>([]);
     const [renderAnchor, setRenderAnchor] = useState(false);
     const [outlineOpen, setOutlineOpen] = useState<boolean>(true);
     useEffect(() => {
@@ -137,6 +138,7 @@ const OutlineBar = (props: OutlineBarProps) => {
         setRenderAnchor(false);
     }, [scrollContainerRef]);
     if(!renderAnchor) <></>;
+    if(outline.length === 0) return <></>;
 
     return <div className={styles.outlineBarContainer}>
         <div className={styles.outlineHeader}>
@@ -185,13 +187,6 @@ function parseMarkdownOutline(markdown: string) {
 
     // 构建树结构
     for (const header of headers) {
-        type nodeType = {
-            title: string,
-            level: number,
-            key: string,
-            href: string,
-            children: nodeType[],
-        }
         const node: nodeType = {
             title: header.title,
             level: header.level,

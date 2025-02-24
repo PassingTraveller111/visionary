@@ -20,7 +20,7 @@ const ReaderHeader= (props: ReaderHeaderProps) => {
     const isOwn = isUserOwn(authorId);
     const router = useRouter();
     const gotoEditor = () => {
-        router.push(`/editor/draft/${draft_id}`);
+        window.open(`/editor/draft/${draft_id}`, '_blank');
     }
     const gotoProfile = () => {
         router.push(`/profile/${authorId}`);

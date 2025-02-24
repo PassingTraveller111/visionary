@@ -1,10 +1,9 @@
 "use client"
 import dynamic from 'next/dynamic';
 import 'react-markdown-editor-lite/lib/index.css';
-import {useEffect, useState} from "react";
 import rootPluginsList from "@/components/MdEditor/plugins/root";
 import ReactMarkdown from "@/components/ReactMarkdown";
-
+import styles from "./index.module.scss";
 
 // 动态加载编辑器
 const loadMarkdownEditor = async () => {
@@ -35,10 +34,10 @@ const ReactEditor = (props: ReactEditorProps) => {
     const { value = '', onChange } = props;
     return <>
         <MdEditor
+            className={styles.mdEditorContainer}
             value={value}
             onChange={(e) => onChange(e.text)}
             shortcuts
-            style={{height: 'calc(100vh - 32px)'}}
             renderHTML={text => {
                 return <ReactMarkdown>{text}</ReactMarkdown>;
             }}

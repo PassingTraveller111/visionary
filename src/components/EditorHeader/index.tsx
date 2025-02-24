@@ -1,9 +1,10 @@
 import React from 'react'
-import {Button, Checkbox, Form, Input, Popover} from "antd";
+import {Button, Form, Input, Popover} from "antd";
 import styles from './index.module.scss';
 import Tags from "@/components/Tags";
 import {useDispatch} from "react-redux";
 import {draftType, setDraft} from "@/store/features/draftSlice";
+import {Profile} from "@/components/Profile";
 
 type EditorHeaderProps = {
     draft: draftType;
@@ -20,11 +21,14 @@ const EditorHeader= (props: EditorHeaderProps) => {
         <div className={styles.title}>
             <Input
                 value={draft.title}
+                placeholder="请输入标题"
+                maxLength={30}
                 onChange={(e) => onTitleChange(e.target.value)}
             />
         </div>
         <div className={styles.tools}>
             <Button
+                type="primary"
                 onClick={onSaveDraft}
             >保存到草稿箱</Button>
             <Popover
@@ -66,8 +70,9 @@ const EditorHeader= (props: EditorHeaderProps) => {
                     </Form>
                 </>}
             >
-                <Button>发布</Button>
+                <Button type="primary" >发布</Button>
             </Popover>
+            <Profile/>
         </div>
     </div>
 }

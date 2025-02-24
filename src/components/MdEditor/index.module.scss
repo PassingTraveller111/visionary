@@ -1,0 +1,5 @@
+@use '@/components/EditorHeader/index.module' as eidtorHeader;
+
+.mdEditorContainer{
+  height: calc(100vh - #{eidtorHeader.$editor-header-height});
+}
