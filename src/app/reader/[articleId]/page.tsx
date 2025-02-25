@@ -100,15 +100,15 @@ const AuthorBar = (props: AuthorBarProps) => {
     }, [authorId]);
     return <div className={styles.authorBar}>
         <div className={styles.avatar}>
-            {authorInfo.profile && <Image src={authorInfo.profile} width={60} height={60} alt='avatar'/>}
+            {authorInfo?.profile && <Image src={authorInfo.profile} width={60} height={60} alt='avatar'/>}
         </div>
         <div className={styles.authorInfo}>
             <div className={styles.nickName}
                  onClick={() => {
                      router.push('/profile/' + authorId);
                  }}
-            >{authorInfo.nick_name}</div>
-            <div>{authorInfo.email}</div>
+            >{authorInfo?.nick_name}</div>
+            <div>{authorInfo?.email}</div>
         </div>
     </div>
 }

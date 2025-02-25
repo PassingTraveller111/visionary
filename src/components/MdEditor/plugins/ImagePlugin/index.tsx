@@ -43,7 +43,7 @@ const ImagePlugin = (props: PluginProps) => {
                 })}
                 onClick={handleClick}
             >
-                <PluginIcon defaultIcon={ImageIcon} />
+                <PluginIcon defaultIcon={ImageIcon} width={17} height={17}/>
                 {/* 隐藏的文件输入元素 */}
                 <input
                     type="file"

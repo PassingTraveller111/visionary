@@ -12,7 +12,7 @@ const TitlePlugin = (props: PluginProps) => {
     const { editor } = props;
     const insertTitle = (h: number) => {
         const insertText = new Array(h + 1).join('#') + ' ';
-        insertToSelectLinePrevious(editor, insertText);
+        insertToSelectLinePrevious(editor, insertText, ['# ', '## ', '### ', '#### ', '##### ', '###### ']);
     }
     const numToText = ['一', '二', '三', '四', '五', '六']
     const items: MenuProps['items'] = new Array(6).fill(null).map(( _, index) => {
