@@ -63,10 +63,12 @@ $font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   ol {
     margin-bottom: 1em;
     padding-left: 2em;
-    list-style-type: decimal; /* 使用数字作为序号 */
     li {
       margin-bottom: 0.5em;
     }
+  }
+  ol {
+    list-style-type: decimal; /* 使用数字作为序号 */
   }
 
   // 代码块样式
