@@ -122,6 +122,19 @@ export const insertToPreAndLast = (editor: Editor, insertTextPre: string, insert
         const before = text.slice(0, start);
         const toInsert = text.slice(start, end);
         const after = text.slice(end);
+        // toInsert检测前后是否有冲突符号
+        if(before.slice(-insertTextPre.length) === insertTextPre && after.slice(0, insertTextLast.length) === insertTextLast) {
+            const newBefore = before.slice(0, before.length - insertTextPre.length);
+            const newAfter = after.slice(insertTextLast.length);
+            const newSelection = {
+                start: newBefore.length,
+                end: newBefore.length + toInsert.length,
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            editor.setText(`${newBefore}${toInsert}${newAfter}`, ()=>{}, newSelection);
+            return;
+        }
         const newSelection = {
             start: before.length + insertTextPre.length,
             end: before.length + insertTextPre.length + toInsert.length,
@@ -175,6 +188,19 @@ function sentenceSegmentation(markdown: string, cursorPosition: number, insertTe
     const before = markdown.slice(0, start);
     const toInsert = markdown.slice(start, end);
     const after = markdown.slice(end);
+    // toInsert检测前后是否有冲突符号
+    const res    = findSurroundingStrings(toInsert, cursorPosition - before.length, insertTextPre, insertTextLast);
+    if(res){
+        const { start, end } = res;
+        const newToInsert = toInsert.slice(0, start) + toInsert.slice(start + insertTextPre.length, end - insertTextLast.length + 1) + toInsert.slice(end + 1);
+        return {
+            newText: `${before}${newToInsert}${after}`,
+            newSelection: {
+                start: before.length,
+                end: before.length + newToInsert.length,
+            }
+        }
+    }
     const newSelection = {
         start: before.length + insertTextPre.length,
         end: before.length + insertTextPre.length + toInsert.length,
@@ -183,4 +209,37 @@ function sentenceSegmentation(markdown: string, cursorPosition: number, insertTe
         newText: `${before}${insertTextPre}${toInsert}${insertTextLast}${after}`,
         newSelection,
     }
+}
+
+/*
+* 给一个字符串和一个索引，从索引位置向前查找是否有frontStr，向后是否有backStr
+* */
+function findSurroundingStrings(str: string, index: number, frontStr: string, backStr: string) {
+    // 向前查找前部字符串
+    let startIndex = -1;
+    for (let i = index; i >= frontStr.length - 1; i--) {
+        if (str.slice(i - frontStr.length + 1, i + 1) === frontStr) {
+            startIndex = i - frontStr.length + 1;
+            break;
+        }
+    }
+
+    if (startIndex === -1) {
+        return null;
+    }
+
+    // 向后查找后部字符串
+    let endIndex = -1;
+    for (let i = index; i <= str.length - backStr.length; i++) {
+        if (str.slice(i, i + backStr.length) === backStr) {
+            endIndex = i + backStr.length - 1;
+            break;
+        }
+    }
+
+    if (endIndex === -1) {
+        return null;
+    }
+
+    return { start: startIndex, end: endIndex };
 }
