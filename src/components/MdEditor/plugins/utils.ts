@@ -200,8 +200,10 @@ function sentenceSegmentation(markdown: string, cursorPosition: number, insertTe
         return {
             newText: `${before}${newToInsert}${after}`,
             newSelection: {
+                // 中间部分开始索引 = before + 前面部分的长度
                 start: before.length + start,
-                end: before.length + newToInsert.length - insertTextPre.length - insertTextLast.length + 2,
+                // 中间部分结束的索引 = before + 前面部分的长度 + 中间部分的长度
+                end: before.length + start + toInsert.slice(start + insertTextPre.length, end - insertTextLast.length + 1).length,
             }
         }
     }
