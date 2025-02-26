@@ -192,15 +192,16 @@ function sentenceSegmentation(markdown: string, cursorPosition: number, insertTe
     const toInsert = markdown.slice(start, end);
     const after = markdown.slice(end);
     // toInsert检测前后是否有冲突符号
-    const res    = findSurroundingStrings(toInsert, cursorPosition - before.length, insertTextPre, insertTextLast);
+    const res = findSurroundingStrings(toInsert, cursorPosition - before.length, insertTextPre, insertTextLast);
     if(res){
         const { start, end } = res;
+        // 前面部分 ‘删除的符号部分’ 中间部分 ‘删除的符号部分’ 后面部分 newSelection的索引是中间部分的两端
         const newToInsert = toInsert.slice(0, start) + toInsert.slice(start + insertTextPre.length, end - insertTextLast.length + 1) + toInsert.slice(end + 1);
         return {
             newText: `${before}${newToInsert}${after}`,
             newSelection: {
-                start: before.length,
-                end: before.length + newToInsert.length,
+                start: before.length + start,
+                end: before.length + newToInsert.length - insertTextPre.length - insertTextLast.length + 2,
             }
         }
     }
