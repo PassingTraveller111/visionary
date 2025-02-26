@@ -55,14 +55,14 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string, d
     let newText = text;
     // 记录被修改区域的开始和结束位置
     let firstModifiedLineStart = Infinity;
-    let lastModifiedLineEnd = -Infinity;
+    let lastModifiedLineEnd = bounds[bounds.length - 1].end;
+    let insertOffset = 0;
     bounds.reverse().forEach((bound) => {
         // 从后往前
         const { start } = bound;
         const lineText = newText.slice(start);
         // 检测到的目标的长度
         let detectedTextLen = 0;
-        let insertOffset = insertText.length;
         if (
             detectedTexts.some(detectedText => {
                 if(lineText.startsWith(detectedText)) {
@@ -75,17 +75,20 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string, d
             // 如果包含关键字
             // 删掉关键字后进行拼接
             newText = newText.slice(0, start) + insertText + lineText.slice(detectedTextLen);
+            // 删掉关键字，偏移量变小
             insertOffset -= detectedTextLen;
+
         } else {
             // 如果不包含关键字
             // 给每行的第一个位置插入上符号
             newText = newText.slice(0, start) + insertText + newText.slice(start);
         }
+        // 插入目标符号，偏移量变大
+        insertOffset += insertText.length;
         // 更新第一行开始位置和最后一行结束位置
         firstModifiedLineStart = Math.min(firstModifiedLineStart, start);
-        const lineEnd = start + lineText.length + insertOffset;
-        lastModifiedLineEnd = Math.max(lastModifiedLineEnd, lineEnd);
     });
+    lastModifiedLineEnd += insertOffset;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     editor.setText(newText, ()=>{}, {
