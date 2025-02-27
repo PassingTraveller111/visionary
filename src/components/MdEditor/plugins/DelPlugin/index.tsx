@@ -25,7 +25,7 @@ const DelPlugin = (props: PluginProps) => {
                     insertDel();
                 }}
             >
-                <PluginIcon defaultIcon={delIcon} width={17} height={16} />
+                <PluginIcon defaultIcon={delIcon} width={15} height={15} />
             </span>
     </Tooltip>
 }

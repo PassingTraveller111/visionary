@@ -5,6 +5,7 @@ import ItalicPlugin from "@/components/MdEditor/plugins/ItalicPugin";
 import DelPlugin from "@/components/MdEditor/plugins/DelPlugin";
 import OlPlugin from "@/components/MdEditor/plugins/OlPlugin";
 import UlPlugin from "@/components/MdEditor/plugins/UlPlugin";
+import QuotePlugin from "@/components/MdEditor/plugins/QuotePlugin";
 
 
 const rootPluginsList = [
@@ -14,6 +15,7 @@ const rootPluginsList = [
     DelPlugin,
     UlPlugin,
     OlPlugin,
+    QuotePlugin,
     imagePlugin,
 ];
 
