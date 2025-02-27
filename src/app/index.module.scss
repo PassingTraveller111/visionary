@@ -3,9 +3,10 @@
   height: calc(100vh - #{var.$nav-container-height});
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   padding: 20px;
+  overflow: auto;
   .articleList {
-    overflow: scroll;
     width: calc(100% - 200px);
     background: #fff;
     .articleItem{

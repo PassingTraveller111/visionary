@@ -2,13 +2,14 @@ import {AppDispatch, useAppSelector} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected/article/getArticle/route";
 import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
 import {
     getPublishedArticleListRequestType,
     getPublishedArticleListResponseType, publishedItemType
 } from "@/app/api/protected/article/getPublishedArticleList/route";
+import useMessage from "antd/es/message/useMessage";
 
 
 export const useGetArticle = () => {
@@ -84,17 +85,43 @@ export const useGetArticleList = () => {
 type publishedArticleListType = publishedItemType[];
 export const useGetPublishedArticleList = () => {
     const [articleList, setArticleList] = useState<publishedArticleListType>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [pageInfo, setPageInfo] = useState({
-        page: 0,
-        limit: 10,
+        pageNum: 0,
+        pageSize: 8,
     });
-    const getPublishedArticleList = async () => {
-        const apiData: getPublishedArticleListRequestType = pageInfo;
+    const [messageApi, contextHandle] = useMessage();
+    const getPublishedArticleList = useCallback(async (pageNum = 0, pageSize = 8) => {
+        const apiData: getPublishedArticleListRequestType = {
+            pageNum,
+            pageSize,
+        };
+        setPageInfo({
+            pageNum,
+            pageSize,
+        });
         const res: getPublishedArticleListResponseType = await apiClient(apiList.post.protected.article.getPublishedArticleList, {
             method: 'POST',
             body: JSON.stringify(apiData)
         });
-        if (res.msg === 'success') setArticleList(res.data);
+        if (res.msg === 'success') {
+            if (res.data.length === 0) {
+                messageApi.info('没有更多数据了')
+                return;
+            }
+            setArticleList(preArticleList => [
+                ...preArticleList,
+                ...res.data,
+            ]);
+        }
+
+    }, []);
+    const loadMore = () => {
+        if(isLoading) return;
+        setIsLoading(true);
+        getPublishedArticleList(pageInfo.pageNum + 1, pageInfo.pageSize).then(() => {
+            setIsLoading(false);
+        })
     }
-    return { articleList, getPublishedArticleList, pageInfo, setPageInfo };
+    return { articleList, getPublishedArticleList, loadMore, messageContext: contextHandle };
 }
