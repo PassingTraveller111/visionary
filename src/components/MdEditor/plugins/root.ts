@@ -7,6 +7,10 @@ import OlPlugin from "@/components/MdEditor/plugins/OlPlugin";
 import UlPlugin from "@/components/MdEditor/plugins/UlPlugin";
 import QuotePlugin from "@/components/MdEditor/plugins/QuotePlugin";
 import DividerPlugin from "@/components/MdEditor/plugins/Divider";
+import LinkPlugin from "@/components/MdEditor/plugins/LinkPlugin";
+import LineCodePlugin from "@/components/MdEditor/plugins/LineCodePlugin";
+import BlockCodePlugin from "@/components/MdEditor/plugins/BlockCodePlugin";
+import FormulaPlugin from "@/components/MdEditor/plugins/FormulaPlugin";
 
 
 const rootPluginsList = [
@@ -16,8 +20,12 @@ const rootPluginsList = [
     DelPlugin,
     UlPlugin,
     OlPlugin,
+    LinkPlugin,
     QuotePlugin,
     DividerPlugin,
+    LineCodePlugin,
+    BlockCodePlugin,
+    FormulaPlugin,
     imagePlugin,
 ];
 

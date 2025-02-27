@@ -2,30 +2,30 @@
 import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
-import boldIcon from '../../../../../public/icon/pluginIcon/bold.svg';
+import Icon from '../../../../../public/icon/pluginIcon/blockCode.svg';
 import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
 import {insertToPreAndLast} from "@/components/MdEditor/plugins/utils";
 
-const BoldPlugin = (props: PluginProps) => {
+const BlockCodePlugin = (props: PluginProps) => {
     const { editor } = props;
-    const insertBold = () => {
-        insertToPreAndLast(editor, "**", "**")
+    const insert = () => {
+        insertToPreAndLast(editor, "`", "`");
     }
     return <Tooltip
-            title='粗体'
+            title='代码块'
         >
             <span
                 className={classNames({
                     'button': true,
-                    [styles.BoldPluginContainer]: true,
+                    [styles.BlockPluginContainer]: true,
                 })}
                 onClick={() => {
-                    insertBold()
+                    insert()
                 }}
             >
-                <PluginIcon defaultIcon={boldIcon} width={17} height={17}/>
+                <PluginIcon defaultIcon={Icon} width={17} height={17}/>
             </span>
         </Tooltip>
 }
@@ -33,8 +33,8 @@ const BoldPlugin = (props: PluginProps) => {
 // SavePlugin.defaultConfig = {
 //     articleId: 'new',
 // }
-BoldPlugin.align = 'left';
-BoldPlugin.pluginName = 'BoldPlugin';
+BlockCodePlugin.align = 'left';
+BlockCodePlugin.pluginName = 'BlockCodePlugin';
 
 
-export default BoldPlugin;
+export default BlockCodePlugin;
