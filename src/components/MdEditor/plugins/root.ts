@@ -6,6 +6,7 @@ import DelPlugin from "@/components/MdEditor/plugins/DelPlugin";
 import OlPlugin from "@/components/MdEditor/plugins/OlPlugin";
 import UlPlugin from "@/components/MdEditor/plugins/UlPlugin";
 import QuotePlugin from "@/components/MdEditor/plugins/QuotePlugin";
+import DividerPlugin from "@/components/MdEditor/plugins/Divider";
 
 
 const rootPluginsList = [
@@ -16,6 +17,7 @@ const rootPluginsList = [
     UlPlugin,
     OlPlugin,
     QuotePlugin,
+    DividerPlugin,
     imagePlugin,
 ];
 
