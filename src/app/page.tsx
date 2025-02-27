@@ -10,8 +10,8 @@ export default function Home() {
     const router = useRouter();
     const { articleList, getPublishedArticleList, loadMore, messageContext } = useGetPublishedArticleList();
     useEffect(() => {
-        getPublishedArticleList();
-    }, []);
+        getPublishedArticleList({ isInit: true });
+    }, [getPublishedArticleList]);
    return (
         <div>
             <NavLayout>

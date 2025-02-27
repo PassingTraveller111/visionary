@@ -91,15 +91,11 @@ export const useGetPublishedArticleList = () => {
         pageSize: 8,
     });
     const [messageApi, contextHandle] = useMessage();
-    const getPublishedArticleList = useCallback(async (pageNum = 0, pageSize = 8) => {
+    const getPublishedArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false }) => {
         const apiData: getPublishedArticleListRequestType = {
             pageNum,
             pageSize,
         };
-        setPageInfo({
-            pageNum,
-            pageSize,
-        });
         const res: getPublishedArticleListResponseType = await apiClient(apiList.post.protected.article.getPublishedArticleList, {
             method: 'POST',
             body: JSON.stringify(apiData)
@@ -109,18 +105,27 @@ export const useGetPublishedArticleList = () => {
                 messageApi.info('没有更多数据了')
                 return;
             }
+            if (isInit) {
+                setArticleList(res.data);
+                return;
+            }
             setArticleList(preArticleList => [
                 ...preArticleList,
                 ...res.data,
             ]);
         }
-
-    }, []);
+    }, [messageApi]);
     const loadMore = () => {
         if(isLoading) return;
         setIsLoading(true);
-        getPublishedArticleList(pageInfo.pageNum + 1, pageInfo.pageSize).then(() => {
+        getPublishedArticleList({ pageNum: pageInfo.pageNum + 1, pageSize: pageInfo.pageSize}).then(() => {
             setIsLoading(false);
+            setPageInfo(prePageInfo => {
+                return {
+                    ...prePageInfo,
+                    pageNum: prePageInfo.pageNum + 1,
+                }
+            });
         })
     }
     return { articleList, getPublishedArticleList, loadMore, messageContext: contextHandle };
