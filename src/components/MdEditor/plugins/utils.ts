@@ -46,7 +46,7 @@ const findLineBoundsInRange = (text: string, startIndex: number, endIndex: numbe
  * @param insertText 要插入的文本
  * @param detectedTexts 行首需要检测的符号，如果存在需要进行替换
  */
-export const insertToSelectLinePrevious = (editor: Editor, insertText: string, detectedTexts: string[] = []) => {
+export const insertToSelectLinePrevious = (editor: Editor, insertText: string | ((lineIndex: number) => string), detectedTexts: string[] = []) => {
     const selection = editor.getSelection();
     const text = editor.getMdValue()
     // 开始插入的位置是换行符的位置+1
@@ -57,10 +57,15 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string, d
     let firstModifiedLineStart = Infinity;
     let lastModifiedLineEnd = bounds[bounds.length - 1].end;
     let insertOffset = 0;
-    bounds.reverse().forEach((bound) => {
+    bounds.reverse().forEach((bound, index) => {
         // 从后往前
         const { start } = bound;
+        // 行号
+        const lineIndex = bounds.length - index;
+        // 从整体的文本中，截取当前行的内容
         const lineText = newText.slice(start);
+        // 插入的内容 可能是固定的文本，也可能是根据行号发生变化的文本
+        const insertContent = typeof insertText === 'string' ? insertText : insertText(lineIndex);
         // 检测到的目标的长度
         let detectedTextLen = 0;
         if (
@@ -74,17 +79,17 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string, d
         ) {
             // 如果包含关键字
             // 删掉关键字后进行拼接
-            newText = newText.slice(0, start) + insertText + lineText.slice(detectedTextLen);
+            newText = newText.slice(0, start) + insertContent + lineText.slice(detectedTextLen);
             // 删掉关键字，偏移量变小
             insertOffset -= detectedTextLen;
 
         } else {
             // 如果不包含关键字
             // 给每行的第一个位置插入上符号
-            newText = newText.slice(0, start) + insertText + newText.slice(start);
+            newText = newText.slice(0, start) + insertContent + newText.slice(start);
         }
         // 插入目标符号，偏移量变大
-        insertOffset += insertText.length;
+        insertOffset += insertContent.length;
         // 更新第一行开始位置和最后一行结束位置
         firstModifiedLineStart = Math.min(firstModifiedLineStart, start);
     });

@@ -3,9 +3,11 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  height: 100%;
+  overflow: auto;
+  padding: 20px;
   .profile-content{
     width: calc(100% - 200px);
-    margin-top: 20px;
     .profile-description{
       width: 100%;
       background: #fff;
