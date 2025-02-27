@@ -10,7 +10,7 @@ import classNames from "classnames";
 const DividerPlugin = (props: PluginProps) => {
     const { editor } = props;
     const insertDivider = () => {
-        editor.insertText('\n\n---\n');
+        editor.insertText('\n\n---\n', true);
     }
     return <Tooltip
         title='分割线'
