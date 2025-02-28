@@ -11,6 +11,7 @@ import LinkPlugin from "@/components/MdEditor/plugins/LinkPlugin";
 import LineCodePlugin from "@/components/MdEditor/plugins/LineCodePlugin";
 import BlockCodePlugin from "@/components/MdEditor/plugins/BlockCodePlugin";
 import FormulaPlugin from "@/components/MdEditor/plugins/FormulaPlugin";
+import TablePlugin from "@/components/MdEditor/plugins/TablePlugin";
 
 
 const rootPluginsList = [
@@ -26,6 +27,7 @@ const rootPluginsList = [
     LineCodePlugin,
     BlockCodePlugin,
     FormulaPlugin,
+    TablePlugin,
     imagePlugin,
 ];
 

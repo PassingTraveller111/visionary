@@ -1,6 +1,4 @@
-
 import Editor from "react-markdown-editor-lite";
-
 
 /**
  * 找到从开始索引到结束索引的所有行的开始位置和结束位置
@@ -253,4 +251,19 @@ function findSurroundingStrings(str: string, index: number, frontStr: string, ba
     }
 
     return { start: startIndex, end: endIndex };
+}
+
+/*
+* 在光标的开始位置插入内容
+* */
+export const insertInPoint = (editor: Editor, insertText: string) => {
+    const selection = editor.getSelection();
+    const text = editor.getMdValue();
+    const newText = text.slice(0, selection.start) + insertText + text.slice(selection.start);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    editor.setText(newText, () => {}, {
+        start: selection.start,
+        end: selection.start + insertText.length,
+    });
 }

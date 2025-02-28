@@ -9,6 +9,7 @@ import styles from "./index.module.scss";
 const loadMarkdownEditor = async () => {
     try {
         const { default: MarkdownEditor } = await import('react-markdown-editor-lite');
+        // MarkdownEditor.unuseAll();
         rootPluginsList.map(plugin => {
             MarkdownEditor.use(plugin);
         });

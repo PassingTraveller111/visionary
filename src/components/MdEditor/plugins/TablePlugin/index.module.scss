@@ -1,0 +1,23 @@
+@use '@/styles/variables' as var;
+
+.LinkPluginContainer {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background: var.$plugin_hover_bg_color;
+  }
+}
+.squareContainer{
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(20 * 6px + 4 * 5px);
+  position: relative;
+  .square{
+    display: inline-block;
+    background: #cdcdcf;
+  }
+  .square-hover{
+    background: #8f8f91 !important;
+  }
+}
