@@ -267,3 +267,27 @@ export const insertInPoint = (editor: Editor, insertText: string) => {
         end: selection.start + insertText.length,
     });
 }
+
+export const getSystemType = () => {
+    let os;
+    if (typeof window!== 'undefined') {
+        const platform = window.navigator.platform;
+        if (platform.indexOf('Win')!== -1) {
+            os = 'win';
+        } else if (platform.indexOf('Mac')!== -1) {
+            os = 'mac';
+        } else {
+            os = 'Other';
+        }
+    } else {
+        const osPlatform = process.platform;
+        if (osPlatform === 'win32') {
+            os = 'win';
+        } else if (osPlatform === 'darwin') {
+            os = 'mac';
+        } else {
+            os = 'Other';
+        }
+    }
+    return os;
+}

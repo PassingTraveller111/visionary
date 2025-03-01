@@ -23,6 +23,7 @@ const FullScreenPlugin = (props: PluginProps) => {
             <span className={classNames({
                 'button': true,
                 [styles.FullScreenPluginContainer]: true,
+                [styles.selected]: isFull,
             })}
                   onClick={() => {
                       changeScreen();

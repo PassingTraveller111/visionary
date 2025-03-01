@@ -7,9 +7,17 @@ import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
 import {insertToPreAndLast} from "@/components/MdEditor/plugins/utils";
+import {shortcutKeys} from "@/components/MdEditor/plugins/shortcutKeys";
 
 const DelPlugin = (props: PluginProps) => {
     const { editor } = props;
+    editor.onKeyboard({
+        ...shortcutKeys.del,
+        callback: (e) => {
+            console.log(e);
+            insertDel();
+        }
+    })
     const insertDel = () => {
         insertToPreAndLast(editor, "~~", "~~");
     }

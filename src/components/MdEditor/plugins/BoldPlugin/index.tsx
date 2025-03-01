@@ -6,16 +6,24 @@ import boldIcon from '../../../../../public/icon/pluginIcon/bold.svg';
 import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
-import {insertToPreAndLast} from "@/components/MdEditor/plugins/utils";
+import { insertToPreAndLast } from "@/components/MdEditor/plugins/utils";
+import { shortcutKeys, shortcutKeysToStrings } from "@/components/MdEditor/plugins/shortcutKeys";
+import {PluginTitle} from "@/components/MdEditor/PluginTitle";
 
 const BoldPlugin = (props: PluginProps) => {
     const { editor } = props;
+    editor.onKeyboard({
+            ...shortcutKeys.bold,
+            callback: () => {
+                insertBold();
+            }
+        })
     const insertBold = () => {
-        insertToPreAndLast(editor, "**", "**")
+        insertToPreAndLast(editor, "**", "**");
     }
     return <Tooltip
-            title='粗体'
-        >
+            title={<PluginTitle  title='粗体' keyName='bold' />}
+    >
             <span
                 className={classNames({
                     'button': true,
