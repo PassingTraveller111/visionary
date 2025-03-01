@@ -12,6 +12,7 @@ import LineCodePlugin from "@/components/MdEditor/plugins/LineCodePlugin";
 import BlockCodePlugin from "@/components/MdEditor/plugins/BlockCodePlugin";
 import FormulaPlugin from "@/components/MdEditor/plugins/FormulaPlugin";
 import TablePlugin from "@/components/MdEditor/plugins/TablePlugin";
+import ModeChangePlugin from "@/components/MdEditor/plugins/ModeChangePlugin";
 
 
 const rootPluginsList = [
@@ -29,6 +30,7 @@ const rootPluginsList = [
     FormulaPlugin,
     TablePlugin,
     imagePlugin,
+    ModeChangePlugin,
 ];
 
 export default rootPluginsList;

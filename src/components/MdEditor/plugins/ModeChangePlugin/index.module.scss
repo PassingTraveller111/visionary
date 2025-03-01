@@ -1,0 +1,13 @@
+@use '@/styles/variables' as var;
+
+.ModeChangePluginContainer {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background: var.$plugin_hover_bg_color;
+  }
+}
+.selected{
+  background: #a19f9f !important;
+}
