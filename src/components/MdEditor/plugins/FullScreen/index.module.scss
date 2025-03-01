@@ -1,0 +1,10 @@
+@use '@/styles/variables' as var;
+
+.FullScreenPluginContainer {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background: var.$plugin_hover_bg_color;
+  }
+}

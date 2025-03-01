@@ -13,6 +13,7 @@ import BlockCodePlugin from "@/components/MdEditor/plugins/BlockCodePlugin";
 import FormulaPlugin from "@/components/MdEditor/plugins/FormulaPlugin";
 import TablePlugin from "@/components/MdEditor/plugins/TablePlugin";
 import ModeChangePlugin from "@/components/MdEditor/plugins/ModeChangePlugin";
+import FullScreenPlugin from "@/components/MdEditor/plugins/FullScreen";
 
 
 const rootPluginsList = [
@@ -31,6 +32,7 @@ const rootPluginsList = [
     TablePlugin,
     imagePlugin,
     ModeChangePlugin,
+    FullScreenPlugin,
 ];
 
 export default rootPluginsList;
