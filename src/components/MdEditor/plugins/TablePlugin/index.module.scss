@@ -13,6 +13,7 @@
   flex-wrap: wrap;
   width: calc(20 * 6px + 4 * 5px);
   position: relative;
+  cursor: pointer;
   .square{
     display: inline-block;
     background: #cdcdcf;
