@@ -29,7 +29,10 @@
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
-    "sass": "^1.83.1"
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "sass": "^1.83.1",
+    "unified": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

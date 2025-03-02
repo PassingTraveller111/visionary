@@ -16,7 +16,7 @@ const FormulaPlugin = (props: PluginProps) => {
         insertToPreAndLast(editor, "$", "$");
     }
     const blockFormulaInsert = () => {
-        insertToPreAndLast(editor, "`", "`");
+        insertToPreAndLast(editor, "\n\n$$\n", "\n$$\n");
     }
     const items: MenuProps['items'] = [
         {

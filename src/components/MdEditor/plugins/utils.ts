@@ -1,4 +1,8 @@
 import Editor from "react-markdown-editor-lite";
+// import {unified} from "unified";
+// import remarkParse from "remark-parse";
+// import remarkMath from "remark-math";
+// import remarkStringify from "remark-stringify";
 
 /**
  * 找到从开始索引到结束索引的所有行的开始位置和结束位置
@@ -291,3 +295,94 @@ export const getSystemType = () => {
     }
     return os;
 }
+
+
+// /*
+// * 块级内容插入（适用于块级代码和块级公式）
+// * */
+// export const insertBlockCode = (editor: Editor) => {
+//     const selection = editor.getSelection();
+//     let markdown = editor.getMdValue();
+//     const processor = unified()
+//         .use(remarkParse) // 转换为语法树的插件
+//         .use(remarkMath) // 转换为语法树的时候用来分析数学公式的插件
+//         .use(remarkStringify); // 将语法树转换为markdown的插件
+//     const ast = processor.parse(markdown);
+//     console.log('ast', ast);
+//     let newSelection = {
+//         start: 0,
+//         end: 0,
+//     }
+//     const res = findNodeByIndex(ast, selection.start);
+//     if(res.node && res.node.type === 'code'){
+//         newSelection = {
+//             start: res.node.position.start.offset,
+//             end: res.node.position.start.offset,
+//         }
+//         // 创建一个新的段落节点
+//         const paragraph = {
+//             type: 'paragraph',
+//             children: [
+//                 {
+//                     type: 'text',
+//                     value: res.node.value
+//                 }
+//             ]
+//         };
+//         // 用新的段落节点替换原有的 code 节点
+//         if(res.parentNode)
+//             res.parentNode.children.splice(res.path[res.path.length - 1], 1, paragraph);
+//     }
+//     markdown = processor.stringify(ast);
+//     editor.setText(markdown, () => {}, newSelection);
+// }
+//
+// type nodeType = {
+//     position: {
+//         start: {
+//             offset: number;
+//         },
+//         end: {
+//             offset: number;
+//         },
+//     },
+//     type: string,
+//     children: nodeType[],
+//     value: string,
+// } | undefined;
+//
+// // 自定义函数：根据索引查找语法树中的节点
+// function findNodeByIndex(tree: nodeType, index: number) {
+//     let foundNode: nodeType | null = null;
+//     const foundPath: number[] = [];
+//     let foundParentNode: nodeType | null = null;
+//     // 先序递归遍历
+//     function traverse(node: nodeType, parentNode: nodeType | null, path: number) {
+//         // 结束条件
+//         if (node && node.position) {
+//             // 当前遍历节点的开始到结束的索引
+//             const start = node.position.start.offset;
+//             const end = node.position.end.offset;
+//             if (index < start || index > end) return;
+//         }
+//
+//         if (node && node.children) {
+//             for (let i = 0; i < node.children.length; i++) {
+//                 traverse(node.children[i], node, i);
+//                 // 如果找到节点，就直接break结束递归
+//                 if (foundNode) {
+//                     break;
+//                 }
+//             }
+//         } else {
+//             // 符合条件且没有子节点了
+//             foundNode = node;
+//             foundParentNode = parentNode;
+//         }
+//         // 记录路径 路径是children上的索引
+//         foundPath.unshift(path);
+//     }
+//
+//     traverse(tree, null, 0);
+//     return { node: foundNode, parentNode: foundParentNode, path: foundPath };
+// }

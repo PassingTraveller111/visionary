@@ -1,6 +1,6 @@
 'use client'
 import React, {useCallback, useState} from 'react';
-import { PluginProps, Plugins } from 'react-markdown-editor-lite';
+import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import Icon from '../../../../../public/icon/pluginIcon/table.svg';
 import PluginIcon from "@/components/MdEditor/PluginIcon";
