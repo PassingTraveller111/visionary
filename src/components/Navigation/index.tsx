@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import React from "react";
 import {Profile} from "@/components/Profile";
 import classNames from "classnames";
+import {ArticleSearch} from "@/components/Navigation/components/ArticleSearch";
 
 const Navigation = () => {
     const router = useRouter();
@@ -22,7 +23,7 @@ const Navigation = () => {
             </span>
         </span>
         <span className={styles['nav-right']}>
-            <Input.Search className={styles.search} placeholder='搜索'/>
+            <ArticleSearch/>
             <Button
                 onClick={() => {
                     router.push('/creator/content/article');

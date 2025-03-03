@@ -8,7 +8,7 @@ export type articleType = {
     authorName?: string; // 作者名
     publishTime?: string; // 发布时间
     views: number; // 浏览次数
-    likes: number; // 点赞次数
+    like_count: number; // 点赞次数
     is_published: 0 | 1; // 0:未发布；1:已发布；
     updated_time: string; // 更新时间
     draft_id?: number; // 草稿id
@@ -32,7 +32,7 @@ const initialState: InitialStateType = {
         title: '',
         content: '',
         views: 0,
-        likes: 0,
+        like_count: 0,
         is_published: 0,
         updated_time: "",
         draft_id: 0,

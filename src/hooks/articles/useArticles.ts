@@ -10,6 +10,11 @@ import {
     getPublishedArticleListResponseType, publishedItemType
 } from "@/app/api/protected/article/getPublishedArticleList/route";
 import useMessage from "antd/es/message/useMessage";
+import {
+    getArticleListByKeyWordRequestType,
+    getArticleListByKeyWordResponseType
+} from "@/app/api/protected/article/getArticleListByKeyWord/route";
+import {useSearchParams} from "next/navigation";
 
 
 export const useGetArticle = () => {
@@ -24,7 +29,7 @@ export const useGetArticle = () => {
             body: JSON.stringify(apiData)
         }) as getArticleResponseType;
         if (res.msg === 'success') {
-            const { title, id, content, author_nickname, author_id, published_time, views, is_published, updated_time, draft_id, likes, review_id, review_status, tags, summary, collects } = res.data;
+            const { title, id, content, author_nickname, author_id, published_time, views, is_published, updated_time, draft_id, review_id, review_status, tags, summary, collects } = res.data;
             dispatch(setArticle(
                 {
                     ...article,
@@ -38,7 +43,6 @@ export const useGetArticle = () => {
                     is_published,
                     updated_time,
                     draft_id,
-                    likes,
                     review_id,
                     review_status,
                     tags,
@@ -86,6 +90,7 @@ type publishedArticleListType = publishedItemType[];
 export const useGetPublishedArticleList = () => {
     const [articleList, setArticleList] = useState<publishedArticleListType>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [pageInfo, setPageInfo] = useState({
         pageNum: 0,
         pageSize: 8,
@@ -102,7 +107,8 @@ export const useGetPublishedArticleList = () => {
         });
         if (res.msg === 'success') {
             if (res.data.length === 0) {
-                messageApi.info('没有更多数据了')
+                messageApi.info('没有更多数据了');
+                setHasMore(false);
                 return;
             }
             if (isInit) {
@@ -116,7 +122,7 @@ export const useGetPublishedArticleList = () => {
         }
     }, [messageApi]);
     const loadMore = () => {
-        if(isLoading) return;
+        if(isLoading || !hasMore) return;
         setIsLoading(true);
         getPublishedArticleList({ pageNum: pageInfo.pageNum + 1, pageSize: pageInfo.pageSize}).then(() => {
             setIsLoading(false);
@@ -129,4 +135,57 @@ export const useGetPublishedArticleList = () => {
         })
     }
     return { articleList, getPublishedArticleList, loadMore, messageContext: contextHandle };
+}
+
+export const useGetPublishedArticleListByKeyWord = () => {
+    const [articleList, setArticleList] = useState<publishedArticleListType>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [pageInfo, setPageInfo] = useState({
+        pageNum: 0,
+        pageSize: 8,
+    });
+    const searchParams = useSearchParams();
+    const initKeyword = searchParams.get('keyword');
+    const [messageApi, contextHandle] = useMessage();
+    const getArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false }) => {
+        const apiData: getArticleListByKeyWordRequestType = {
+            pageNum,
+            pageSize,
+            keyword: initKeyword ?? '',
+        };
+        const res: getArticleListByKeyWordResponseType = await apiClient(apiList.post.protected.article.getArticleListByKeyWord, {
+            method: 'POST',
+            body: JSON.stringify(apiData)
+        });
+        if (res.msg === 'success') {
+            if (res.data.length === 0) {
+                messageApi.info('没有更多数据了');
+                setHasMore(false);
+                return;
+            }
+            if (isInit) {
+                setArticleList(res.data);
+                return;
+            }
+            setArticleList(preArticleList => [
+                ...preArticleList,
+                ...res.data,
+            ]);
+        }
+    }, [initKeyword, messageApi]);
+    const loadMore = () => {
+        if(isLoading || !hasMore) return;
+        setIsLoading(true);
+        getArticleList({ pageNum: pageInfo.pageNum + 1, pageSize: pageInfo.pageSize}).then(() => {
+            setIsLoading(false);
+            setPageInfo(prePageInfo => {
+                return {
+                    ...prePageInfo,
+                    pageNum: prePageInfo.pageNum + 1,
+                }
+            });
+        })
+    }
+    return { articleList, getArticleList, loadMore, messageContext: contextHandle };
 }

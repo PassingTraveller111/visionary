@@ -2,41 +2,41 @@ import {NextRequest, NextResponse} from "next/server";
 import {articleTableType} from "@/app/api/protected/article/type";
 import {article} from "@/app/api/sql/article";
 
-export type getPublishedArticleListRequestType = {
+export type getArticleListByKeyWordRequestType = {
     pageNum: number; // 从0开始
     pageSize: number;
+    keyword: string;
 }
 
-export type getPublishedArticleListResponseType = {
+export type getArticleListByKeyWordResponseType = {
     msg: 'success';
-    data: publishedItemType[];
+    data: ItemType[];
     total: number;
     pageNum: number;
     pageSize: number;
 } | {
     msg: 'error';
 }
-export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary'> & {
-    like_count: number;
-};
+export type ItemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary'>
+    & {
+        'like_count': number;
+    };
 
 export async function POST(req: NextRequest) {
     try {
-        const data: getPublishedArticleListRequestType = await req.json();
+        const data: getArticleListByKeyWordRequestType = await req.json();
         const {
             pageNum,
             pageSize,
+            keyword,
         } = data;
         // 获取所有公开文章
-        const results = await article.getPublishedArticlesList(pageNum, pageSize);
-        const total = await article.getPublishedArticleCount();
-        if (results && total) {
+        const results = await article.getArticleListByKeyWord(keyword, pageNum, pageSize);
+        if (results) {
             const [ rows ] = results;
-            const [ [ { recordCounts } ] ] = total;
             return NextResponse.json({
                 msg: 'success',
                 data: rows,
-                total: recordCounts,
             }, { status: 200 });
         }
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });

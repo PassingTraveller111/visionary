@@ -32,6 +32,7 @@ export const apiList = {
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片
                 delArticle: 'protected/article/delArticle', // 删除文章
                 getPublishedArticleList: 'protected/article/getPublishedArticleList', // 获取公开文章列表
+                getArticleListByKeyWord: 'protected/article/getArticleListByKeyWord', // 模糊搜索文章
             },
             draft: {
                 updateDraft: 'protected/draft/updateDraft', // 更新草稿

@@ -1,19 +1,18 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
-import { useGetPublishedArticleList } from "@/hooks/articles/useArticles";
+import { useGetPublishedArticleListByKeyWord } from "@/hooks/articles/useArticles";
 import { useEffect } from "react";
 import styles from './index.module.scss';
 import moment from "moment";
 import { useRouter } from "next/navigation";
-import {IconFont} from "@/components/IconFont";
 
-export default function Home() {
+export default function SearchArticlePage() {
     const router = useRouter();
-    const { articleList, getPublishedArticleList, loadMore, messageContext } = useGetPublishedArticleList();
+    const { articleList, getArticleList, loadMore, messageContext } = useGetPublishedArticleListByKeyWord();
     useEffect(() => {
-        getPublishedArticleList({ isInit: true });
-    }, [getPublishedArticleList]);
-   return (
+        getArticleList({ isInit: true });
+    }, [getArticleList]);
+    return (
         <div>
             <NavLayout>
                 {messageContext}
@@ -45,7 +44,6 @@ export default function Home() {
                                     <div className={styles.itemBottom}>
                                         <div className={styles.author}>{article.author_nickname}</div>
                                         <div className={styles.date}>{moment(article.updated_time).format('YYYY-MM-DD')}</div>
-                                        <div className={styles.like}><IconFont type='icon-like'/><span>{article.like_count}</span></div>
                                     </div>
                                 </div>
                             })
@@ -54,5 +52,5 @@ export default function Home() {
                 </div>
             </NavLayout>
         </div>
-   );
+    );
 }

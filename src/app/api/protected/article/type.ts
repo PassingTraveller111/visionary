@@ -12,7 +12,6 @@ export type articleTableType = {
     author_id: number;
     author_nickname: string;
     views: number;
-    likes: number;
     collects: number;
     draft_id?: number;
     review_id?: number;

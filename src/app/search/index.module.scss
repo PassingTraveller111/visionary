@@ -21,7 +21,6 @@
       }
       .summary{
         color: #888888;
-        height: 24px;
         max-width: 200px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -34,12 +33,6 @@
         }
         .date{
           margin-left: 10px;
-        }
-        .like{
-          margin-left: 10px;
-          span{
-            margin-left: 5px;
-          }
         }
       }
     }
