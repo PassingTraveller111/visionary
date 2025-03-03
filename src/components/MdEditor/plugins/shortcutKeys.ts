@@ -1,26 +1,62 @@
-import { KeyboardEventCondition } from "react-markdown-editor-lite/cjs/share/var";
 import {getSystemType} from "@/components/MdEditor/plugins/utils";
 
 const systemType = getSystemType();
-console.log(systemType);
+const controlKey = systemType === 'mac' ? 'metaKey' : 'ctrlKey' // meta就是command一般与win的ctrl键对应
+
+export type withKeyType = 'metaKey' | 'altKey' | 'ctrlKey' | 'shiftKey';
+export type ShortcutKeyType = {
+        key: string; // 按键
+        code: string; // 按键的code
+        withKey: withKeyType [] // mac的option就是alt
+    };
 
 export const shortcutKeys: {
-    [key: string]: KeyboardEventCondition;
+    [key: string]: ShortcutKeyType
 } = {
     bold: {
         key: 'b',
-        keyCode: 66,
-        withKey: systemType === 'mac' ? ['metaKey'] : ['ctrlKey']
+        code: 'KeyB',
+        withKey: [controlKey]
     },
     italic: {
         key: 'i',
-        keyCode: 0,
-        withKey: systemType === 'mac' ? ['metaKey'] : ['ctrlKey']
+        code: 'KeyI',
+        withKey: [controlKey]
     },
-    del: {
-        key: '5',
-        keyCode: 0,
-        withKey: ['shiftKey', 'altKey']
+    link: {
+        key: 'k',
+        code: 'KeyK',
+        withKey: [controlKey]
+    },
+    ol: {
+        key: 'o',
+        code: 'KeyO',
+        withKey: ['shiftKey', controlKey]
+    },
+    ul: {
+        key: 'u',
+        code: 'KeyU',
+        withKey: ['shiftKey', controlKey]
+    },
+    lineCode: {
+        key: 'k',
+        code: 'KeyK',
+        withKey: ['shiftKey', controlKey]
+    },
+    blockCode: {
+        key: 'c',
+        code: 'KeyC',
+        withKey: ['shiftKey', controlKey]
+    },
+    table: {
+        key: 't',
+        code: 'KeyT',
+        withKey: ['altKey', controlKey]
+    },
+    image: {
+        key: 'i',
+        code: 'KeyI',
+        withKey: ['shiftKey', controlKey]
     }
 }
 
@@ -28,9 +64,21 @@ export const shortcutKeysToStrings = Object.assign({}, ...Object.keys(shortcutKe
     const item = shortcutKeys[key];
     return {
         [key]: `${item.withKey?.map(key => {
-            return key.slice(0, key.length - 3);
-        }).join('，')}+${item.key}`,
+            return {
+                'metaKey': 'command',
+                'ctrlKey': 'ctrl',
+                'altKey': systemType === 'mac' ? 'option' : 'alt',
+                'shiftKey': 'shift',
+            }[key]
+        }).join('+')}+${item.key}`,
     }
 }))
 
-console.log(shortcutKeysToStrings);
+export const shortcutKeyAccess = (event: KeyboardEvent, shortcutKey: ShortcutKeyType )=>{
+    const { code, withKey } = shortcutKey;
+    return (['metaKey', 'altKey', 'ctrlKey', 'shiftKey'] as withKeyType[]).every(key => {
+        // withKey有的得是true并且没有的得是false
+        if(withKey.includes(key)) return event[key];
+        else return !event[key];
+    }) && event.code === code;
+}

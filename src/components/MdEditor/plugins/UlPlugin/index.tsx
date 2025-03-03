@@ -7,14 +7,17 @@ import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
 import { insertToSelectLinePrevious } from "@/components/MdEditor/plugins/utils";
+import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const UlPlugin = (props: PluginProps) => {
     const { editor } = props;
+    useEditorOnKeyDown(editor, 'ul', () => insertUl());
     const insertUl = () => {
         insertToSelectLinePrevious(editor, '- ');
     }
     return <Tooltip
-        title='无序列表'
+        title={<PluginTitle title='无序列表' keyName='ul' />}
     >
         <span className={classNames({
             'button': true,

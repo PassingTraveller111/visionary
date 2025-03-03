@@ -7,14 +7,17 @@ import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
 import {insertToPreAndLast} from "@/components/MdEditor/plugins/utils";
+import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const LinkPlugin = (props: PluginProps) => {
     const { editor } = props;
+    useEditorOnKeyDown(editor, 'link', () => insert());
     const insert = () => {
         insertToPreAndLast(editor, "[", "](url)");
     }
     return <Tooltip
-            title='链接'
+            title={<PluginTitle title='链接' keyName='link' />}
         >
             <span
                 className={classNames({

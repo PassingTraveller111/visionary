@@ -1,5 +1,5 @@
 'use client'
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import classNames from "classnames";
@@ -7,10 +7,16 @@ import ImageIcon from '../../../../../public/icon/pluginIcon/image.svg';
 import {apiClient, apiList} from "@/clientApi";
 import {Tooltip} from "antd";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
+import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const ImagePlugin = (props: PluginProps) => {
     const { editor } = props;
     const fileInputRef = useRef<HTMLInputElement>(null);
+    useEditorOnKeyDown(editor, 'image', (e) => {
+        e.preventDefault();
+        handleClick();
+    })
     const handleClick = () => {
         // 触发文件输入元素的点击事件
         if (fileInputRef.current)
@@ -34,7 +40,7 @@ const ImagePlugin = (props: PluginProps) => {
 
     return (
         <Tooltip
-            title='图片'
+            title={<PluginTitle title='图片' keyName='image' />}
         >
             <span
                 className={classNames({

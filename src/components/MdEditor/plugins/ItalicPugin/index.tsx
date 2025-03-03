@@ -7,17 +7,14 @@ import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
 import { insertToPreAndLast } from "@/components/MdEditor/plugins/utils";
-import {shortcutKeys} from "@/components/MdEditor/plugins/shortcutKeys";
 import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const ItalicPlugin = (props: PluginProps) => {
     const { editor } = props;
-    editor.onKeyboard({
-        ...shortcutKeys.italic,
-        callback: () => {
-            insertItalic();
-        }
-    })
+    useEditorOnKeyDown(editor, 'italic', () => {
+        insertItalic();
+    });
     const insertItalic = () => {
         insertToPreAndLast(editor, '*', '*');
     }

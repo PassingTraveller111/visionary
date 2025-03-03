@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import boldIcon from '../../../../../public/icon/pluginIcon/bold.svg';
@@ -7,17 +7,14 @@ import PluginIcon from "@/components/MdEditor/PluginIcon";
 import { Tooltip } from "antd";
 import classNames from "classnames";
 import { insertToPreAndLast } from "@/components/MdEditor/plugins/utils";
-import { shortcutKeys, shortcutKeysToStrings } from "@/components/MdEditor/plugins/shortcutKeys";
-import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import { PluginTitle } from "@/components/MdEditor/PluginTitle";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const BoldPlugin = (props: PluginProps) => {
     const { editor } = props;
-    editor.onKeyboard({
-            ...shortcutKeys.bold,
-            callback: () => {
-                insertBold();
-            }
-        })
+    useEditorOnKeyDown(editor, 'bold', () => {
+        insertBold();
+    })
     const insertBold = () => {
         insertToPreAndLast(editor, "**", "**");
     }

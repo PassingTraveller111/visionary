@@ -1,21 +1,77 @@
 'use client'
-import React, {useCallback, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import Icon from '../../../../../public/icon/pluginIcon/table.svg';
 import PluginIcon from "@/components/MdEditor/PluginIcon";
-import {Popover, Tooltip} from "antd";
+import {InputNumber, Popover, Tooltip} from "antd";
 import classNames from "classnames";
 import {insertInPoint} from "@/components/MdEditor/plugins/utils";
+import useModal from "antd/es/modal/useModal";
+import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const TablePlugin = (props: PluginProps) => {
+    const [modalApi, contextHandler] = useModal();
     const { editor } = props;
+    const [tableSize, setTableSize] = useState({
+        rows: 3,
+        cols: 4,
+    })
+    // 使用 useRef 来存储最新的 tableSize 值
+    const tableSizeRef = useRef(tableSize);
+    useEffect(() => {
+        tableSizeRef.current = tableSize;
+    }, [tableSize]);
+
+    useEditorOnKeyDown(editor, 'table', () => {
+        modalApi.confirm({
+            title: '插入表格',
+            content: <>
+                行：<InputNumber
+                min={1}
+                max={10}
+                defaultValue={tableSize.rows}
+                onChange={(value) => {
+                    setTableSize(pre => {
+                        return {
+                            ...pre,
+                            rows: Number(value),
+                        }
+                    })
+                }}
+            />
+                <span style={{marginLeft: '10px'}}/>
+                列：<InputNumber
+                min={1}
+                max={10}
+                defaultValue={tableSize.cols}
+                onChange={(value) => {
+                    setTableSize(pre => {
+                        return {
+                            ...pre,
+                            cols: Number(value),
+                        }
+                    })
+                }}
+            />
+            </>,
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+                const table = createTable(tableSizeRef.current.rows, tableSizeRef.current.rows);
+                insert(table);
+            },
+        })
+    });
+
     const insert = (table: string) => {
         insertInPoint(editor, table);
     }
     return <>
+        {contextHandler}
         <Tooltip
-            title='表格'
+            title={<PluginTitle title={'表格'} keyName={'table'} />}
         >
             <Popover
                 content={<>
@@ -34,7 +90,6 @@ const TablePlugin = (props: PluginProps) => {
             </Popover>
         </Tooltip>
     </>
-
 }
 // 如果需要的话，可以在这里定义默认选项
 // SavePlugin.defaultConfig = {
@@ -54,38 +109,6 @@ const TableCreate = (props: { rowCount?: number, colCount?: number, onCreatTable
     const squareWidth = 20, squareHeight = 20;
     const marginWidth = 4;
     // 生成 Markdown 表格的函数
-    const  createTable = useCallback((rows: number, columns: number) => {
-        // 换行
-        let table = '\n';
-
-        // 生成表头
-        let header = '|';
-        for (let i = 1; i <= columns; i++) {
-            header += ` Column ${i} |`;
-        }
-        table += header + '\n';
-
-        // 生成表格分隔线
-        let separator = '|';
-        for (let i = 1; i <= columns; i++) {
-            separator += ' --- |';
-        }
-        table += separator + '\n';
-
-        // 生成表格内容
-        for (let i = 1; i <= rows; i++) {
-            let row = '|';
-            for (let j = 1; j <= columns; j++) {
-                row += ` Cell ${i}-${j} |`;
-            }
-            table += row + '\n';
-        }
-
-        // 换行
-        table += '\n';
-
-        return table;
-    }, []);
     const squares = Array.from({ length: (rowCount * colCount) }, (_, index) => (
         <div
             key={index}
@@ -123,4 +146,37 @@ const TableCreate = (props: { rowCount?: number, colCount?: number, onCreatTable
     >
         {squares}
     </div>
+}
+
+const  createTable = (rows: number, columns: number) => {
+    // 换行
+    let table = '\n';
+
+    // 生成表头
+    let header = '|';
+    for (let i = 1; i <= columns; i++) {
+        header += ` Column ${i} |`;
+    }
+    table += header + '\n';
+
+    // 生成表格分隔线
+    let separator = '|';
+    for (let i = 1; i <= columns; i++) {
+        separator += ' --- |';
+    }
+    table += separator + '\n';
+
+    // 生成表格内容
+    for (let i = 1; i <= rows; i++) {
+        let row = '|';
+        for (let j = 1; j <= columns; j++) {
+            row += ` Cell ${i}-${j} |`;
+        }
+        table += row + '\n';
+    }
+
+    // 换行
+    table += '\n';
+
+    return table;
 }
