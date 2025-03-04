@@ -1,7 +1,7 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
 import { useGetPublishedArticleListByKeyWord } from "@/hooks/articles/useArticles";
-import { useEffect } from "react";
+import {Suspense, useEffect} from "react";
 import styles from './index.module.scss';
 import moment from "moment";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ export default function SearchArticlePage() {
         getArticleList({ isInit: true });
     }, [getArticleList]);
     return (
-        <div>
+        <Suspense fallback={<div>Loading...</div>}>
             <NavLayout>
                 {messageContext}
                 <div
@@ -51,6 +51,6 @@ export default function SearchArticlePage() {
                     </div>
                 </div>
             </NavLayout>
-        </div>
+        </Suspense>
     );
 }
