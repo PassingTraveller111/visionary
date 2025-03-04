@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
         const data: getArticleRequestType = await req.json();
         const cacheData = await redis.get(getArticleKey(data.articleId))
         if (cacheData) return NextResponse.json({msg: 'success', data: JSON.parse(cacheData)});
-
         const sql = `SELECT * FROM articles WHERE id = ?`;
         const values = [data.articleId];
         const [ rows ] = await connection.execute(sql, values);

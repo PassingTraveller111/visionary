@@ -57,6 +57,11 @@ export const shortcutKeys: {
         key: 'i',
         code: 'KeyI',
         withKey: ['shiftKey', controlKey]
+    },
+    tab: {
+        key: 'tab',
+        code: 'Tab',
+        withKey: [],
     }
 }
 

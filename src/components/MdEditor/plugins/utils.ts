@@ -1,8 +1,7 @@
 import Editor from "react-markdown-editor-lite";
-// import {unified} from "unified";
-// import remarkParse from "remark-parse";
-// import remarkMath from "remark-math";
-// import remarkStringify from "remark-stringify";
+import {unified} from "unified";
+import remarkParse from "remark-parse";
+import remarkStringify from "remark-stringify";
 
 /**
  * 找到从开始索引到结束索引的所有行的开始位置和结束位置
@@ -296,6 +295,83 @@ export const getSystemType = () => {
     return os;
 }
 
+
+export const insertTab = (editor: Editor) => {
+    const selection = editor.getSelection();
+    const markdown = editor.getMdValue();
+    // 选中状态下直接插入空格
+    if (selection.start !== selection.end) {
+        editor.insertText('    ', true, { // 四个空格
+            start: 4,
+            end: 4,
+        });
+        return;
+    }
+    const processor = unified()
+        .use(remarkParse) // 转换为语法树的插件
+        .use(remarkStringify); // 将语法树转换为markdown的插件
+    const ast = processor.parse(markdown);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const res =  isListItemAtIndex(ast, selection.start);
+    // 如果是listItem就进行降级操作
+    if (res.node) {
+        insertToSelectLinePrevious(editor, '\n    ');
+    } else {
+        editor.insertText('    ', true, { // 四个空格
+            start: 4,
+            end: 4,
+        });
+    }
+
+}
+type nodeType = {
+    position: {
+        start: {
+            offset: number;
+        },
+        end: {
+            offset: number;
+        },
+    },
+    type: string,
+    children: nodeType[],
+    value: string,
+} | undefined;
+/*
+* 根据在markdown中的索引判断当前所在行是不是listItem
+* */
+function isListItemAtIndex(tree: nodeType, index: number) {
+    let foundNode: nodeType | null = null;
+    const foundPath: number[] = [];
+    let foundParentNode: nodeType | null = null;
+    // 先序递归遍历
+    function traverse(node: nodeType, parentNode: nodeType | null, path: number) {
+        // 结束条件
+        if (node && node.position) {
+            // 当前遍历节点的开始到结束的索引
+            const start = node.position.start.offset;
+            const end = node.position.end.offset;
+            if (index < start || index > end) return;
+        }
+        if (node && node.type === 'listItem') {
+            foundNode = node;
+            foundParentNode = parentNode;
+        } else if (node && node.children) {
+            for (let i = 0; i < node.children.length; i++) {
+                traverse(node.children[i], node, i);
+                // 如果找到节点，就直接break结束递归
+                if (foundNode) {
+                    break;
+                }
+            }
+        }
+        // 记录路径 路径是children上的索引
+        foundPath.unshift(path);
+    }
+    traverse(tree, null, 0);
+    return { node: foundNode, parentNode: foundParentNode, path: foundPath };
+}
 
 // /*
 // * 块级内容插入（适用于块级代码和块级公式）

@@ -4,12 +4,18 @@ import 'react-markdown-editor-lite/lib/index.css';
 import rootPluginsList from "@/components/MdEditor/plugins/root";
 import ReactMarkdown from "@/components/ReactMarkdown";
 import styles from "./index.module.scss";
+import {Plugins} from "react-markdown-editor-lite";
 
 // 动态加载编辑器
 const loadMarkdownEditor = async () => {
     try {
         const { default: MarkdownEditor } = await import('react-markdown-editor-lite');
-        MarkdownEditor.unuseAll();
+        delete Plugins.Logger;
+        Object.keys(Plugins).forEach((key) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            MarkdownEditor.unuse(Plugins[key]);
+        });
         rootPluginsList.map(plugin => {
             MarkdownEditor.use(plugin);
         });

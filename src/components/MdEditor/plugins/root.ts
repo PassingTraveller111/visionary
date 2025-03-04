@@ -14,6 +14,7 @@ import FormulaPlugin from "@/components/MdEditor/plugins/FormulaPlugin";
 import TablePlugin from "@/components/MdEditor/plugins/TablePlugin";
 import ModeChangePlugin from "@/components/MdEditor/plugins/ModeChangePlugin";
 import FullScreenPlugin from "@/components/MdEditor/plugins/FullScreen";
+import TabInsertPlugin from "@/components/MdEditor/plugins/TabInsertPlugin";
 
 
 const rootPluginsList = [
@@ -33,6 +34,7 @@ const rootPluginsList = [
     imagePlugin,
     ModeChangePlugin,
     FullScreenPlugin,
+    TabInsertPlugin,
 ];
 
 export default rootPluginsList;
