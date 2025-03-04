@@ -1,10 +1,8 @@
 "use client"
 import {useParams, useRouter} from "next/navigation";
-import {AppDispatch, useAppSelector} from "@/store";
-import {useDispatch} from "react-redux";
-import {setArticle} from "@/store/features/articleSlice";
-import React, {useCallback, useEffect, useState} from "react";
-import {useGetArticle} from "@/hooks/articles/useArticles";
+import { useAppSelector } from "@/store";
+import React, { useEffect, useState } from "react";
+import {useArticleLike, useGetArticle} from "@/hooks/articles/useArticles";
 import ReaderHeader from "@/components/ReaderHeader";
 import NavLayout from "@/components/NavLayout";
 import ReactMarkdown from "@/components/ReactMarkdown";
@@ -12,26 +10,24 @@ import styles from './index.module.scss';
 import Image from "next/image";
 import {useGetAuthorInfo} from "@/hooks/users/useUsers";
 import { Anchor } from "antd";
+import {iconColors, IconFont} from "@/components/IconFont";
 
 const ReaderPage = () => {
     const { articleId } =  useParams();
+    const { isLoading, id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
+    const { getArticleIsLike, isLike, setArticleIsLike  } = useArticleLike();
     const scrollContainerRef = React.createRef<HTMLDivElement>();
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const getArticle = useGetArticle();
-    const dispatch = useDispatch<AppDispatch>();
     // 初始化article
-    const initArticle = useCallback(() => {
-        const id = articleId === 'new' ? articleId : Number(articleId);
-        dispatch(setArticle({
-            ...article,
-            articleId: id
-        }))
-        if(typeof id === 'number')
-            getArticle(id);
-    }, [articleId]);
     useEffect(() => {
-        initArticle();
-    }, [initArticle])
+        if(isLoading || !articleId) return;
+        const id = Number(articleId);
+        getArticle(id)
+    }, [isLoading, articleId, getArticle])
+    useEffect(() => {
+        getArticleIsLike(userId, Number(articleId));
+    }, [articleId, getArticleIsLike, userId]);
     return <>
         <NavLayout>
             <div
@@ -41,7 +37,18 @@ const ReaderPage = () => {
                     <div className={styles.operator}>
                         <div
                             className={styles.operatorFix}
-                        ></div>
+                        >
+                            <OperateButton
+                                type='icon-like'
+                                isActive={isLike}
+                                onClick={() => {
+                                    setArticleIsLike(userId, Number(articleId), !isLike);
+                                }}
+                            />
+                            <OperateButton type='icon-pinglun' isActive={false} />
+                            <OperateButton type='icon-shoucang' isActive={false} />
+                            <OperateButton type='icon-zhuanfa' isActive={false} />
+                        </div>
                     </div>
                     <div className={styles.readerContent}>
                         <ReaderHeader title={article.title} authorName={article.authorName} authorId={article.authorId}
@@ -96,6 +103,7 @@ const AuthorBar = (props: AuthorBarProps) => {
     const router = useRouter();
     const {authorInfo, getAuthorInfo} = useGetAuthorInfo();
     useEffect(() => {
+        if(authorId === 0) return;
         getAuthorInfo(authorId);
     }, [authorId]);
     return <div className={styles.authorBar}>
@@ -205,4 +213,20 @@ function parseMarkdownOutline(markdown: string) {
         stack.push(node);
     }
     return tree;
+}
+
+const OperateButton = (props: { type: string, isActive: boolean, onClick?: () => void }) => {
+    const { isActive = false, type, onClick } = props;
+    const [isHover, setIsHover] = useState(false);
+    return <div
+        className={styles.Button}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        onClick={onClick}
+    >
+        <IconFont
+            type={type}
+            style={{ color: iconColors[isActive ? 'active' : (isHover ? 'hover' : 'default')] }}
+        />
+    </div>
 }

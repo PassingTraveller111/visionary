@@ -15,14 +15,21 @@ import {
     getArticleListByKeyWordResponseType
 } from "@/app/api/protected/article/getArticleListByKeyWord/route";
 import {useSearchParams} from "next/navigation";
+import {
+    getArticleIsLikeRequestType,
+    getArticleIsLikeResponseType
+} from "@/app/api/protected/article_likes/getArticleIsLike/route";
+import {
+    setArticleIsLikeRequestType,
+    setArticleIsLikeResponseType
+} from "@/app/api/protected/article_likes/setArticleIsLike/route";
 
 
 export const useGetArticle = () => {
-    const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const dispatch = useDispatch<AppDispatch>();
-    return async (id?: number) => {
+    return useCallback(async (id: number) => {
         const apiData: getArticleRequestType = {
-            articleId: id ?? article.articleId as number,
+            articleId: id
         }
         const res = await apiClient(apiList.post.protected.article.getArticle,  {
             method: 'POST',
@@ -32,7 +39,6 @@ export const useGetArticle = () => {
             const { title, id, content, author_nickname, author_id, published_time, views, is_published, updated_time, draft_id, review_id, review_status, tags, summary, collects } = res.data;
             dispatch(setArticle(
                 {
-                    ...article,
                     articleId: id,
                     title,
                     views,
@@ -52,7 +58,7 @@ export const useGetArticle = () => {
             ));
         }
         return res;
-    }
+    }, [dispatch])
 }
 
 export const useDelArticle =() => {
@@ -72,7 +78,7 @@ export const useGetArticleList = () => {
     // 文章列表数据
     const [articleList, setArticleList] = useState<articleListType>([]);
     // 获取文章列表
-    const getArticleList =  (userId: number) => {
+    const getArticleList =  useCallback((userId: number) => {
         if(!userId) return [];
         apiClient(apiList.post.protected.article.getArticleList, {
             method: "POST",
@@ -82,7 +88,7 @@ export const useGetArticleList = () => {
         }).then((res: getArticleListResponseType) => {
             return setArticleList(res.data);
         })
-    };
+    }, []);
     return { articleList, getArticleList };
 }
 
@@ -188,4 +194,48 @@ export const useGetPublishedArticleListByKeyWord = () => {
         })
     }
     return { articleList, getArticleList, loadMore, messageContext: contextHandle };
+}
+
+
+export const useArticleLike = () => {
+    const [isLike, setIsLike] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState(false);
+    // 根据userId和articleId判断是否like该文章
+    const getArticleIsLike = useCallback((userId: number, articleId: number) => {
+        if(userId === 0 || articleId === 0) return;
+        const apiData: getArticleIsLikeRequestType = {
+            userId,
+            articleId: articleId as number,
+        }
+        apiClient(apiList.post.protected.article_likes.getArticleIsLike, {
+            method: 'POST',
+            body: JSON.stringify(apiData)
+        }).then((res: getArticleIsLikeResponseType) => {
+            if (res.msg === 'success') {
+                setIsLike(res.data.isLike);
+            }
+        })
+    }, [])
+    const setArticleIsLike = useCallback((userId: number, articleId: number, like: boolean) => {
+        console.log(isLoading);
+        if(isLoading) return;
+        setIsLoading(true);
+        const apiData: setArticleIsLikeRequestType = {
+            userId,
+            articleId,
+            isLike: like,
+        }
+        apiClient(apiList.post.protected.article_likes.setArticleIsLike, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        }).then((res: setArticleIsLikeResponseType) => {
+            console.log(res);
+            if (res.msg === 'success') {
+                setIsLoading(false);
+                setIsLike(res.data.isLike);
+            }
+
+        })
+    }, [isLoading]);
+    return { isLike, getArticleIsLike, setArticleIsLike, isLoading };
 }

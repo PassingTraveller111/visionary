@@ -16,3 +16,4 @@ export type articleTableType = {
     draft_id?: number;
     review_id?: number;
 }
+

@@ -10,8 +10,16 @@ $rightBarWidth: 260px;
   .operatorFix{
     position: fixed;
     width: $operatorWidth;
-    height: 300px;
     background: #fff;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    .Button{
+      cursor: pointer;
+      font-size: 30px;
+      transition: 0.2s;
+    }
   }
   .readerContent {
     padding: 20px;

@@ -34,6 +34,10 @@ export const apiList = {
                 getPublishedArticleList: 'protected/article/getPublishedArticleList', // 获取公开文章列表
                 getArticleListByKeyWord: 'protected/article/getArticleListByKeyWord', // 模糊搜索文章
             },
+            article_likes: {
+                getArticleIsLike: 'protected/article_likes/getArticleIsLike', // 获取是否喜欢该文章
+                setArticleIsLike: 'protected/article_likes/setArticleIsLike', // 点赞/取消赞
+            },
             draft: {
                 updateDraft: 'protected/draft/updateDraft', // 更新草稿
                 getDraft: 'protected/draft/getDraft', // 获取草稿

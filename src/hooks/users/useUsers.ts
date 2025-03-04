@@ -1,7 +1,7 @@
 import {useRouter} from "next/navigation";
 import {useAppSelector, AppDispatch} from "@/store";
 import {useDispatch} from "react-redux";
-import {logIn, logOut, setUserInfo} from "@/store/features/userSlice";
+import {logIn, logOut, setLoading, setUserInfo} from "@/store/features/userSlice";
 import {apiClient, apiList} from "@/clientApi";
 import {useState} from "react";
 import {
@@ -48,11 +48,18 @@ export const useUserLogout = () => {
 
 export const useGetUserInfo =  () => {
     const dispatch = useDispatch<AppDispatch>();
-    return async () => {
-        const res = await apiClient(apiList.get.protected.user.getUserInfo);
-        dispatch(setUserInfo(
-            res.data
-        ));
+    return () => {
+        setLoading({
+            isLoading: true,
+        });
+        apiClient(apiList.get.protected.user.getUserInfo).then(res => {
+            setLoading({
+                isLoading: false,
+            })
+            dispatch(setUserInfo(
+                res.data
+            ));
+        })
     }
 }
 // 用于判断是否是本人

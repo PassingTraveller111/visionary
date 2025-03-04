@@ -16,13 +16,14 @@ import {reviewStatusType} from "@/store/features/articleSlice";
 
 
 const ArticlePage = () => {
-    const { id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
+    const { id: userId, isLoading } = useAppSelector(state => state.rootReducer.userReducer.value);
     const [modalApi, modalContextHolder] = Modal.useModal();
     const [messageApi, messageContextHolder] = message.useMessage();
     const { articleList, getArticleList } = useGetArticleList();
     useEffect(() => {
-        getArticleList(Number(userId));
-    }, [userId]);
+        if(isLoading) return;
+        getArticleList(userId);
+    }, [getArticleList, userId, isLoading]);
     return <>
         {modalContextHolder}
         {messageContextHolder}

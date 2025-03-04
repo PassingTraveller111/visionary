@@ -1,6 +1,7 @@
 //根据分页查询用户列表
 import { query } from "@/app/api/utils";
 import { publishedItemType } from "@/app/api/protected/article/getPublishedArticleList/route";
+import {articleLikesTableType} from "@/app/api/protected/article_likes/type";
 
 const getPublishedArticlesList = async (pageNum: number, pageSize: number) => {
     const offset = pageNum * pageSize;
@@ -47,9 +48,13 @@ const getArticleListByKeyWord = async (keyword: string, pageNum: number, pageSiz
         , [keyword, keyword, keyword, keyword, keyword, keyword, fuzzyKeyword, fuzzyKeyword, fuzzyKeyword]) as null | publishedItemType[];
 }
 
+const getArticleIsLike = async (userId: number, articleId: number) => {
+    return await query(`SELECT * FROM article_likes WHERE article_id = ? AND user_id = ?`, [articleId, userId]) as articleLikesTableType[] | null;
+}
 
 export const article = {
     getPublishedArticlesList,
     getPublishedArticleCount,
-    getArticleListByKeyWord
+    getArticleListByKeyWord,
+    getArticleIsLike
 }

@@ -10,6 +10,7 @@ export type UserInfoType = {
     role: roleEnum;
     profile?: string; // 头像
     nick_name: string; // 昵称
+    isLoading: boolean; // 是否正在请求
 }
 
 enum roleEnum {
@@ -28,6 +29,7 @@ const initialState: InitialStateType = {
         id: 0,
         role: roleEnum.GUEST,
         nick_name: "",
+        isLoading: false,
     }
 };
 
@@ -35,6 +37,15 @@ export const userSlice = createSlice({
     name: "userInfo",
     initialState,
     reducers: {
+        setLoading: (state, action: PayloadAction<{isLoading: boolean}>) => {
+            return {
+                ...state,
+                value: {
+                    ...state.value,
+                    isLoading: action.payload.isLoading,
+                }
+            }
+        },
         logIn: (state, action: PayloadAction<UserInfoType>) => {
             return {
                 value: {
@@ -59,5 +70,5 @@ export const userSlice = createSlice({
     }
 })
 
-export const { logOut, logIn, setUserInfo } = userSlice.actions;
+export const { logOut, logIn, setUserInfo, setLoading } = userSlice.actions;
 export default userSlice.reducer;

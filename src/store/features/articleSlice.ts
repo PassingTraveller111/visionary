@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type articleType = {
-    articleId: number | 'new'; // 数字为编辑 new表示新建
+    articleId: number;
     authorId: number; // 作者id
     title: string; // 标题
     content: string; // 内容
@@ -27,7 +27,7 @@ type InitialStateType = {
 
 const initialState: InitialStateType = {
     value: {
-        articleId: 'new',
+        articleId: 0,
         authorId: 0,
         title: '',
         content: '',
@@ -48,7 +48,7 @@ export const articleSlice = createSlice({
     name: "article",
     initialState,
     reducers: {
-        setArticle: (state, action: PayloadAction<articleType>) => {
+        setArticle: (state, action: PayloadAction<Partial<articleType>>) => {
             return {
                 value: {
                     ...state.value,

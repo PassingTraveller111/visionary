@@ -19,7 +19,7 @@ const DraftPage = () => {
     const [messageApi, messageContextHolder] = message.useMessage();
     const { draftList, getDraftList } = useGetDraftList();
     useEffect(() => {
-        getDraftList(Number(userId));
+        getDraftList(userId);
     }, [userId]);
     return <>
         {modalContextHolder}
