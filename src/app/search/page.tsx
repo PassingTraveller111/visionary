@@ -5,6 +5,7 @@ import {Suspense, useEffect} from "react";
 import styles from './index.module.scss';
 import moment from "moment";
 import {useRouter, useSearchParams} from "next/navigation";
+import {Empty} from "antd";
 
 function SearchPage() {
     const router = useRouter();
@@ -30,6 +31,7 @@ function SearchPage() {
                     <div
                         className={styles.articleList}
                     >
+                        {articleList.length === 0 && <Empty />}
                         {
                             articleList.map((article) => {
                                 return <div
