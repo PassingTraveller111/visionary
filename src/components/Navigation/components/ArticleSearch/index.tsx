@@ -14,7 +14,8 @@ const ArticleSearch = () => {
     const initKeyword = searchParams.get('keyword');
     const onSearch = (keyword: string) => {
         if(!keyword) return;
-        localStorage.setItem('keywords', JSON.stringify([keyword, ...keywordsHistory]));
+        const newKeywords = [...new Set([keyword, ...keywordsHistory])];
+        localStorage.setItem('keywords', JSON.stringify(newKeywords));
         router.push("/search?keyword=" + keyword);
     }
     const items: MenuProps['items'] = keywordsHistory.map((keyword: string, index) => {
