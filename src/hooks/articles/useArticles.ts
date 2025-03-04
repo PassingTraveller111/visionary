@@ -14,7 +14,6 @@ import {
     getArticleListByKeyWordRequestType,
     getArticleListByKeyWordResponseType
 } from "@/app/api/protected/article/getArticleListByKeyWord/route";
-import {useSearchParams} from "next/navigation";
 import {
     getArticleIsLikeRequestType,
     getArticleIsLikeResponseType
@@ -151,14 +150,13 @@ export const useGetPublishedArticleListByKeyWord = () => {
         pageNum: 0,
         pageSize: 8,
     });
-    const searchParams = useSearchParams();
-    const initKeyword = searchParams.get('keyword');
+
     const [messageApi, contextHandle] = useMessage();
-    const getArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false }) => {
+    const getArticleList = useCallback(async ({keyword = '', pageNum = 0, pageSize = 8, isInit = false }) => {
         const apiData: getArticleListByKeyWordRequestType = {
             pageNum,
             pageSize,
-            keyword: initKeyword ?? '',
+            keyword,
         };
         const res: getArticleListByKeyWordResponseType = await apiClient(apiList.post.protected.article.getArticleListByKeyWord, {
             method: 'POST',
@@ -179,7 +177,7 @@ export const useGetPublishedArticleListByKeyWord = () => {
                 ...res.data,
             ]);
         }
-    }, [initKeyword, messageApi]);
+    }, [ messageApi ]);
     const loadMore = () => {
         if(isLoading || !hasMore) return;
         setIsLoading(true);

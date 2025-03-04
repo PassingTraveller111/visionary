@@ -1,12 +1,12 @@
 "use client"
-import {Button, Input} from "antd";
+import {Button} from "antd";
 import styles from './index.module.scss';
 import {LogoIcon} from "@/components/LogoIcon";
 import {useRouter} from "next/navigation";
 import React from "react";
 import {Profile} from "@/components/Profile";
 import classNames from "classnames";
-import {ArticleSearch} from "@/components/Navigation/components/ArticleSearch";
+import ArticleSearch from "@/components/Navigation/components/ArticleSearch";
 
 const Navigation = () => {
     const router = useRouter();

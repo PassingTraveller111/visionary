@@ -1,9 +1,9 @@
 import {Input} from "antd";
 import styles from "./index.module.scss";
-import React from "react";
+import React, {Suspense} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 
-export const ArticleSearch = () => {
+const ArticleSearch = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const initKeyword = searchParams.get('keyword');
@@ -18,3 +18,11 @@ export const ArticleSearch = () => {
         onSearch={onSearch}
     />
 }
+
+const SuspenseArticleSearch = () => {
+    return <Suspense>
+        <ArticleSearch />
+    </Suspense>
+}
+
+export default SuspenseArticleSearch;

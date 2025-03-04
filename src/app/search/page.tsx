@@ -4,17 +4,17 @@ import { useGetPublishedArticleListByKeyWord } from "@/hooks/articles/useArticle
 import {Suspense, useEffect} from "react";
 import styles from './index.module.scss';
 import moment from "moment";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 
-export default function SearchArticlePage() {
+function SearchPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const initKeyword = searchParams.get('keyword');
     const { articleList, getArticleList, loadMore, messageContext } = useGetPublishedArticleListByKeyWord();
     useEffect(() => {
-        getArticleList({ isInit: true });
-    }, [getArticleList]);
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <NavLayout>
+        getArticleList({keyword: initKeyword ?? '', isInit: true });
+    }, [getArticleList, initKeyword]);
+    return (<NavLayout>
                 {messageContext}
                 <div
                     className={styles.container}
@@ -51,6 +51,15 @@ export default function SearchArticlePage() {
                     </div>
                 </div>
             </NavLayout>
-        </Suspense>
     );
 }
+
+const SearchArticlePage = () =>{
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SearchPage />
+        </Suspense>
+    )
+}
+
+export default SearchArticlePage;
