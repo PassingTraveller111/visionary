@@ -8,6 +8,7 @@ import Image from "next/image";
 import moment from "moment";
 import {useIsUserOwn} from "@/hooks/users/useUsers";
 import { useGetArticleList } from "@/hooks/articles/useArticles";
+import {Empty} from "antd";
 
 
 
@@ -70,6 +71,7 @@ const ProfilePage = () => {
                     </div>
                 </div>
                 <div className={styles['articleList-container']}>
+                    {articleList.length === 0 && <Empty />}
                     {articleList.map((article) => {
                         return <div key={article.id} className={styles['articleList-item']}
                             onClick={() => {
