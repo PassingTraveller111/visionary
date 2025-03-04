@@ -10,6 +10,6 @@ export const iconColors = {
 
 export const IconFont = createFromIconfontCN({
     scriptUrl: [
-        '//at.alicdn.com/t/c/font_4844869_wg2tr37pyv.js',
+        '//at.alicdn.com/t/c/font_4844869_gnnjpfuy6ng.js',
     ],
 });
