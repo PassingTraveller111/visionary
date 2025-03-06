@@ -5,6 +5,7 @@ import { useState } from "react";
 import {apiClient, apiList} from "@/clientApi";
 import useMessage from "antd/es/message/useMessage";
 import {useRouter} from "next/navigation";
+import Link from "next/link";
 
 type FieldType = {
     username: string
@@ -140,7 +141,7 @@ const NoPassForm = () => {
     }
     const onGetVerificationCode = () => {
         setIsFirstClick(false);
-        setVCDisable(10);
+        setVCDisable(60);
         // 验证码发送逻辑
         const { email } = form.getFieldsValue();
         apiClient(apiList.post.user.register.sendCode, {
@@ -200,8 +201,10 @@ const NoPassForm = () => {
                     </Button>
                 </div>
             </Form.Item>
-            <Form.Item<FieldType> name="isRemember" valuePropName="checked" label={null}>
-                <Checkbox>注册登录即表示同意<a>用户协议</a></Checkbox>
+            <Form.Item
+                label={null}
+            >
+                登录或注册即表示同意<Link className={styles.userAgreementLink} href={'/userAgreement'}>用户协议</Link>
             </Form.Item>
             <Form.Item label={null}>
                 <Button block type="primary" htmlType="submit">
