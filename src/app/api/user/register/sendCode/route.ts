@@ -37,7 +37,7 @@ const verifySendTime = async (email: string) => {
     return true;
 }
 // 验证邮箱格式
-export const verifyRegex = (email: string) => {
+const verifyRegex = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
