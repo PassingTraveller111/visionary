@@ -11,6 +11,11 @@ export const apiList = {
         user: {
             jwt: 'user/jwt', // token解析
             login: 'user/login', // 用户登录
+            logout: 'user/logout',
+            register: {
+                sendCode: 'user/register/sendCode', // 发送邮箱验证码
+                verifyCode: 'user/register/verifyCode', // 验证邮箱验证码
+            }
         },
         // 受保护的请求
         protected: {
@@ -48,7 +53,7 @@ export const apiList = {
             },
             review: {
                 getReview: 'protected/review/getReview', // 获取审核文章
-            }
+            },
         },
     },
     get: {

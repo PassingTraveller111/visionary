@@ -10,9 +10,6 @@ const LoginPage = () => {
         return await login(username, password, isRemember);
     }
     return <div className={styles.container}>
-        <div>
-
-        </div>
         <LoginForm onLogin={onLogin} />
     </div>;
 }

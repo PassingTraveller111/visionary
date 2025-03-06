@@ -7,9 +7,17 @@
   background: linear-gradient(to bottom right, #B0E0E6, #98FB98);
   //opacity: 0.8;
   justify-content: center;
-  align-items: center;
   .form{
-    margin-top: -100px;
+    margin-top: calc(40% + 100px);
     width: 400px;
+  }
+  .verificationCode{
+    input{
+      width: calc(100% - 110px);
+    }
+    button{
+      margin-left: 10px;
+      width: 100px;
+    }
   }
 }

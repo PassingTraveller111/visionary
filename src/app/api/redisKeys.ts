@@ -31,9 +31,16 @@ function getArticleKey(articleId: number) {
 function getDraftKey(draftId: number) {
     return `draft:content:${draftId}`;
 }
+/*
+* 用于邮箱验证码发送时间的记录
+* */
+function getEmailTimeDownKey(email: string){
+    return `email:verify:${email}`;
+}
 
 export {
     getUserInfoKey,
     getArticleKey,
     getDraftKey,
+    getEmailTimeDownKey,
 }

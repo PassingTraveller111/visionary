@@ -68,7 +68,19 @@ async function editorAuthMiddleware(req: NextRequest) {
     }
 }
 
+function noAuthMiddleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
+    for (const url of noAuthPage) {
+        if (pathname === url) {
+            return true;
+        }
+    }
+    return false;
+}
+
 export async function middleware(req: NextRequest) {
+    // 免token页直接放行
+    if(noAuthMiddleware(req)) return NextResponse.next();
     // 程序使用权限
     let response = await jwtMiddleware(req);
     // 草稿编辑器权限
@@ -87,3 +99,8 @@ export const config = {
         '/((?!api|_next/static|_next/image|favicon.ico).*)', // 正则表达式过滤内部请求、静态资源
     ],
 };
+
+
+const noAuthPage = [
+    '/userAgreement',
+]
