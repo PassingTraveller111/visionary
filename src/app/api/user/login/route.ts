@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {createToken} from "@/utils/auth";
+import {userTableType} from "@/app/api/protected/user/type";
 
 export async function POST(req: NextRequest) {
     const connection = await pool.getConnection();

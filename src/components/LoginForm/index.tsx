@@ -6,6 +6,8 @@ import {apiClient, apiList} from "@/clientApi";
 import useMessage from "antd/es/message/useMessage";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import {useDispatch} from "react-redux";
+import {logIn} from "@/store/features/userSlice";
 
 type FieldType = {
     username: string
@@ -117,6 +119,7 @@ type noPasswordFieldType = {
 }
 const NoPassForm = () => {
     const [ form ]= Form.useForm<noPasswordFieldType>();
+    const dispatch = useDispatch();
     const router = useRouter();
     const [ messageApi, messageContext ] = useMessage();
     const [VCDisable, setVCDisable] = useState(0);
@@ -134,8 +137,10 @@ const NoPassForm = () => {
                 messageApi.error(res.message);
             } else {
                 messageApi.success(res.message);
+                dispatch(logIn({
+                    ...res.data,
+                }))
                 router.push('/');
-
             }
         })
     }

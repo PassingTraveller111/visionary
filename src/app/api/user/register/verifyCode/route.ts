@@ -5,6 +5,7 @@ import {email_verificationTableType} from "@/app/api/sql/type";
 import {userTableType} from "@/app/api/protected/user/type";
 import {createToken} from "@/utils/auth";
 import transporter from "@/lib/email";
+import {userInfo} from "node:os";
 
 type verifyCodeRequestType = {
     email: string;
@@ -26,14 +27,14 @@ export async function POST(req: NextRequest) {
             if(Array.isArray(rows) && rows.length > 0){
                 // 已注册
                 const userInfo = rows[0] as userTableType;
-                return login(userInfo.username, userInfo.id, userInfo.role);
+                return login(userInfo);
             }
         }
         // 未注册
         const userInfo = await createUser(email);
         if(userInfo){
             sendEmail(email, userInfo.username, userInfo.password);
-            return login(userInfo.username, userInfo.id, userInfo.role);
+            return login(userInfo);
         }
         return NextResponse.json({ status: 400, message: 'error' }, { status: 400 });
     } catch (error) {
@@ -116,9 +117,16 @@ function generateComplexPassword(length: number = 8) {
     return password;
 }
 
-const login = (username: string, id: number, role: 0 | 1 | 2) => {
-    const token = createToken(username, id, role);
-    const response = NextResponse.json({ status: 200, message: 'success' }, { status: 200});
+const login = (userInfo: Pick<userTableType, 'username' | 'role' | 'email' | 'password' | 'nick_name' | 'id'>) => {
+    const token = createToken(userInfo.username, userInfo.id, userInfo.role);
+    const response = NextResponse.json({
+            status: 200,
+            message: 'success',
+            data: {
+                ...userInfo,
+                password: undefined
+            } },
+        { status: 200});
     response.cookies.set('token', token, {
         expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60),
         httpOnly: true,
