@@ -3,6 +3,12 @@ import Editor from "react-markdown-editor-lite";
 import {shortcutKeyAccess, shortcutKeys} from "@/components/MdEditor/plugins/shortcutKeys";
 
 
+/**
+ * editor: Editor
+ * key: shortcutKeys对象的key
+ * handleFunction：触发快捷键后的回掉
+ */
+
 export const useEditorOnKeyDown = (editor: Editor, key: keyof typeof shortcutKeys, handleFunction: (event: KeyboardEvent) => void) => {
     const handleKeyDown = useCallback((event: KeyboardEvent)=>{
         if (shortcutKeyAccess(event, shortcutKeys[key])) {

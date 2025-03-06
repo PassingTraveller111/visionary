@@ -1,11 +1,11 @@
 'use client'
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import classNames from "classnames";
 import ImageIcon from '../../../../../public/icon/pluginIcon/image.svg';
 import {apiClient, apiList} from "@/clientApi";
-import {Tooltip} from "antd";
+import { Tooltip } from "antd";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
 import {PluginTitle} from "@/components/MdEditor/PluginTitle";
 import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
@@ -37,7 +37,33 @@ const ImagePlugin = (props: PluginProps) => {
             )
         }
     };
-
+    const handlePaste = (event: ClipboardEvent) => {
+        const clipboardData = event.clipboardData;
+        if (clipboardData && clipboardData.items) {
+            for (let i = 0; i < clipboardData.items.length; i++) {
+                const item = clipboardData.items[i];
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    if (!file) return;
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    editor.insertPlaceholder('![]()', apiClient(apiList.post.protected.article.uploadImage, {
+                            method: 'POST',
+                            body: formData
+                        }).then(res => {
+                            return `![](https://${res.data.Location})`
+                        })
+                    )
+                }
+            }
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('paste', handlePaste);
+        return () => {
+            document.removeEventListener('paste', handlePaste);
+        }
+    }, []);
     return (
         <Tooltip
             title={<PluginTitle title='图片' keyName='image' />}
