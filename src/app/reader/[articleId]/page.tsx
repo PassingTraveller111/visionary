@@ -232,7 +232,7 @@ const OperateButton = (props: { type: string, isActive: boolean, onClick?: () =>
     >
         <IconFont
             type={type}
-            style={{ color: iconColors[isActive ? 'active' : (isHover ? 'hover' : 'default')] }}
+            style={{ color: iconColors.gray[isActive ? 'active' : (isHover ? 'hover' : 'default')] }}
         />
     </div>
 }

@@ -3,13 +3,19 @@ import { createFromIconfontCN } from '@ant-design/icons';
 
 
 export const iconColors = {
-    default: '#bfbfbf',
-    hover: '#707070',
-    active: '#1296db',
+    gray: {
+        default: '#bfbfbf',
+        hover: '#707070',
+        active: '#1296db',
+    },
+    blue: {
+        default: '#707070',
+        hover: '#0057ff',
+    }
 }
 
 export const IconFont = createFromIconfontCN({
     scriptUrl: [
-        '//at.alicdn.com/t/c/font_4844869_gnnjpfuy6ng.js',
+        '//at.alicdn.com/t/c/font_4844869_62rb3j2xl76.js',
     ],
 });

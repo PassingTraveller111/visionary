@@ -5,6 +5,7 @@ import rootPluginsList from "@/components/MdEditor/plugins/root";
 import ReactMarkdown from "@/components/ReactMarkdown";
 import styles from "./index.module.scss";
 import {Plugins} from "react-markdown-editor-lite";
+import classNames from "classnames";
 
 // 动态加载编辑器
 const loadMarkdownEditor = async () => {
@@ -33,15 +34,16 @@ const MdEditor = dynamic(loadMarkdownEditor, {
 type ReactEditorProps = {
     value: string;
     onChange: (value: string) => void;
+    className?: string;
 }
 
 
 
 const ReactEditor = (props: ReactEditorProps) => {
-    const { value = '', onChange } = props;
+    const { value = '', onChange, className } = props;
     return <>
         <MdEditor
-            className={styles.mdEditorContainer}
+            className={classNames(styles.mdEditorContainer, className)}
             value={value}
             onChange={(e) => onChange(e.text)}
             shortcuts

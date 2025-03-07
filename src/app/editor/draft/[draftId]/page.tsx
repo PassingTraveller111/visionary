@@ -8,6 +8,8 @@ import {useDispatch} from "react-redux";
 import {setDraft} from "@/store/features/draftSlice";
 import {useGetDraft, usePublishDraft, useUpdateDraft} from "@/hooks/drafts/useDrafts";
 import useMessage from "antd/es/message/useMessage";
+import Assistant from "@/components/Assistant";
+import styles from './index.module.scss';
 
 const DraftPage = () => {
     const { draftId } =  useParams();
@@ -79,7 +81,14 @@ const DraftPage = () => {
             onSaveDraft={onSaveDraft}
             onPublicArticle={onPublicArticle}
         />
-        <MdEditor value={draft.content} onChange={onEditorChange} />
+        <div className={styles.content}>
+            <MdEditor
+                className={styles.editor}
+                value={draft.content}
+                onChange={onEditorChange}
+            />
+            <Assistant />
+        </div>
     </>
 }
 export default DraftPage;

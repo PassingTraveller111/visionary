@@ -54,6 +54,9 @@ export const apiList = {
             review: {
                 getReview: 'protected/review/getReview', // 获取审核文章
             },
+            ai: {
+                test: 'protected/ai/test',
+            }
         },
     },
     get: {
