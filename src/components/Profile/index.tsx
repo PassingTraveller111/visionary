@@ -33,8 +33,11 @@ const ProfilePopover = (props: ProfilePopoverProps) => {
     const content = <div className={styles.ProfilePopoverContent}>
         <div className={styles.contentTop}>
             {userInfo.profile && <Image className={styles.ProfileImg} src={userInfo.profile} alt="profile" width={50} height={50}/>}
-            <div className={styles.ProfileName}>
-                {userInfo.username}
+            <div className={styles.ProfileNickName}>
+                {userInfo.nick_name}
+                <div className={styles.ProfileUserName}>
+                    {userInfo.username}
+                </div>
             </div>
         </div>
         <Divider/>

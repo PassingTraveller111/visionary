@@ -13,10 +13,14 @@
       height: 50px;
       border-radius: 50%;
     }
-    .ProfileName{
+    .ProfileNickName{
       margin-left: 20px;
       font-size: 20px;
       font-weight: bold;
+      .ProfileUserName{
+        font-size: 16px;
+        color: #a19f9f;
+      }
     }
   }
   .contentCenter{
