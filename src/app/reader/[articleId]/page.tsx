@@ -142,10 +142,11 @@ const OutlineBar = (props: OutlineBarProps) => {
     }, [markdown]);
 
     useEffect(() => {
-        if(scrollContainerRef.current) setRenderAnchor(true);
-        setRenderAnchor(false);
+        if (scrollContainerRef.current) {
+            setRenderAnchor(true);
+        }
     }, [scrollContainerRef]);
-    if(!renderAnchor) <></>;
+    if(!renderAnchor) return <></>;
     if(outline.length === 0) return <></>;
 
     return <div className={styles.outlineBarContainer}>
@@ -166,7 +167,12 @@ const OutlineBar = (props: OutlineBarProps) => {
             }}
         >
             <Anchor
-                getContainer={() => scrollContainerRef.current as HTMLDivElement}
+                getContainer={() =>  {
+                    if (scrollContainerRef.current) {
+                        return scrollContainerRef.current as HTMLDivElement;
+                    }
+                    return document.body;
+                }}
                 items={outline}
             />
         </div>
