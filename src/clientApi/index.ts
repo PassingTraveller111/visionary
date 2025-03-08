@@ -60,6 +60,7 @@ export const apiList = {
             assistant: {
                 insertChatRecord: 'protected/assistant/insertChatRecord', // 新建聊天记录
                 getChatRecord: 'protected/assistant/getChatRecord', // 获取聊天记录
+                sendMessage: 'protected/assistant/sendMessage', // 发送消息
             }
         },
     },
