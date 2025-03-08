@@ -10,16 +10,18 @@ import {useGetDraft, usePublishDraft, useUpdateDraft} from "@/hooks/drafts/useDr
 import useMessage from "antd/es/message/useMessage";
 import Assistant from "@/components/Assistant";
 import styles from './index.module.scss';
+import {useInitAssistantChat} from "@/hooks/assistant_chat/useAssistantChant";
 
 const DraftPage = () => {
     const { draftId } =  useParams();
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const draft = useAppSelector(state => state.rootReducer.draftReducer.value);
     const [messageApi, contextHandle] = useMessage();
     const router = useRouter();
     const updateDraft = useUpdateDraft();
+    const initAssistant = useInitAssistantChat();
     const getDraft = useGetDraft();
     const publishDraft = usePublishDraft();
-    const draft = useAppSelector(state => state.rootReducer.draftReducer.value);
     const dispatch = useDispatch<AppDispatch>();
     const onEditorHeaderChange = (title: string) => {
         dispatch(setDraft(
@@ -37,21 +39,39 @@ const DraftPage = () => {
             }
         ))
     }
-    const initDraft = useCallback(async () => {
+    const initDraft = useCallback(() => {
         const id = draftId === 'new' ? draftId : Number(draftId);
         dispatch(setDraft({
             ...draft,
             id,
         }));
         if (typeof id === 'number') {
-            getDraft(id);
+            getDraft(id).then(async () => {
+                // 获取聊天记录
+                await initAssistant(id, false);
+            })
+        } else {
+            // 新建草稿记录
+            updateDraft(draft, userInfo)
+            .then(async (res) => {
+                // 新建聊天记录
+                await initAssistant(res.id);
+                return {
+                    draftId: res.id
+                }
+            }).then(res => {
+                console.log(res);
+                // 跳转到新页面
+                router.push('/editor/draft/' + res.draftId);
+            })
         }
-    }, [draftId]);
+    }, [dispatch, draft, draftId, getDraft, router, updateDraft, userInfo]);
     useEffect(() => {
+        if(userInfo.id === 0) return;
         initDraft();
-    }, [initDraft]);
+    }, [userInfo.id]);
     const onSaveDraft = async () => {
-        const res = await updateDraft();
+        const res = await updateDraft(draft, userInfo);
         if(res.msg === "success") {
             messageApi.success('更新成功');
         }else {
@@ -59,7 +79,7 @@ const DraftPage = () => {
         }
     }
     const onPublicArticle = () => {
-        updateDraft().then(res => {
+        updateDraft(draft, userInfo).then(res => {
             if(res.msg === "success") {
                 publishDraft().then(res => {
                     if(res.msg === "success") {

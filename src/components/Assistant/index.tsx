@@ -2,13 +2,14 @@
 import {Button, Input, Tooltip} from "antd";
 import {apiClient, apiList} from "@/clientApi";
 import styles from './index.module.scss';
-import React, {Dispatch, SetStateAction, useMemo, useRef, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {messageType} from "@/app/api/protected/ai/test/route";
 import MyReactMarkdown from "@/components/ReactMarkdown";
 import classNames from "classnames";
 import {IconFont} from "@/components/IconFont";
 import {useAppSelector} from "@/store";
 import Image from "next/image";
+import {chatContentType} from "@/app/api/sql/type";
 
 
 const Assistant = () => {
@@ -16,7 +17,7 @@ const Assistant = () => {
     const [messageList, setMessageList] = useState<messageType[]>([
         {
             role: 'assistant',
-            content: '你好',
+            content: '你好，我是写作助手',
         },
         {
             role: 'user',
@@ -108,6 +109,7 @@ const Assistant = () => {
                 '___'
         }
     ]);
+    const assistant = useAppSelector(state => state.rootReducer.assistantReducer.value);
     const [isLoading, setIsLoading] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const onClick = () => {
@@ -145,7 +147,7 @@ const Assistant = () => {
             })}
     >
         <div className={styles.content}>
-            <ChatBox messageList={messageList} />
+            <ChatBox messageList={assistant.chat_content} />
             <SendBox inputValue={inputValue} setInputValue={setInputValue} sendMessage={onClick}/>
             <OpenButton isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
@@ -154,11 +156,11 @@ const Assistant = () => {
 
 export default Assistant;
 
-const ChatBox = (props: { messageList: messageType[] }) => {
-    const { messageList } = props;
+const ChatBox = (props: { messageList: chatContentType }) => {
+    const { messageList = [] } = props;
     const { profile } = useAppSelector(state => state.rootReducer.userReducer.value);
     return <div className={styles.ChatContainer}>
-        {messageList.map((item, index) => {
+        {messageList && messageList.map((item, index) => {
             const { role, content } = item;
             const profileUrl = role === 'user' ? profile : 'https://visionary-1305469650.cos.ap-beijing.myqcloud.com/profile/logo.svg';
             return <div key={index} className={styles.messageItem}>
@@ -198,15 +200,19 @@ const OpenButton = (props: { isOpen: boolean, setIsOpen: Dispatch<SetStateAction
 const SendBox = (props: { inputValue: string, setInputValue: Dispatch<SetStateAction<string>>, sendMessage: () => void }) => {
     const { inputValue, setInputValue, sendMessage } = props;
     const [isFocus, setIsFocus] = useState(false);
-    const placeholder = useMemo(() => {
+    const [placeholder, setPlaceholder] = useState('');
+    useEffect(() => {
+        // 依赖判断系统的渲染要放在客户端挂载后做，不然会出现SSR和水合不匹配的问题
         const userAgent = navigator.userAgent;
         let shortcutKey = '';
         if (userAgent.indexOf('Windows')!== -1) {
             shortcutKey = 'shift'
         } else if (userAgent.indexOf('Macintosh')!== -1 || userAgent.indexOf('Mac OS')!== -1) {
             shortcutKey = 'cmd'
+        } else {
+            shortcutKey = '';
         }
-        return `通过${shortcutKey}+回车换行；`;
+        setPlaceholder(`通过${shortcutKey}+回车换行；`);
     }, []);
     return <div
         className={classNames({

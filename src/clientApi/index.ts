@@ -56,6 +56,10 @@ export const apiList = {
             },
             ai: {
                 test: 'protected/ai/test',
+            },
+            assistant: {
+                insertChatRecord: 'protected/assistant/insertChatRecord', // 新建聊天记录
+                getChatRecord: 'protected/assistant/getChatRecord', // 获取聊天记录
             }
         },
     },

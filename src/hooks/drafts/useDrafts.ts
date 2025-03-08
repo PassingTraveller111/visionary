@@ -1,19 +1,18 @@
 import {useAppSelector} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
 import {updateDraftDataType} from "@/app/api/protected/draft/updateDraft/route";
-import {setDraft} from "@/store/features/draftSlice";
+import {draftType, setDraft} from "@/store/features/draftSlice";
 import {useDispatch} from "react-redux";
 import {getDraftDataType, getDraftResponseType} from "@/app/api/protected/draft/getDraft/route";
 import {publishDraftDataType, publishDraftResponseType} from "@/app/api/protected/draft/publishDraft/route";
 import {useCallback, useState} from "react";
 import {getDraftListResponseType, itemType} from "@/app/api/protected/draft/getDraftList/route";
 import {delDraftRequestType} from "@/app/api/protected/draft/delDraft/route";
+import {UserInfoType} from "@/store/features/userSlice";
 
 export const useUpdateDraft = () => {
-    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value)
-    const draft = useAppSelector(state => state.rootReducer.draftReducer.value);
     const dispatch = useDispatch();
-    return async () => {
+    return useCallback(async (draft: draftType, userInfo: UserInfoType) => {
         const apiData: updateDraftDataType = {
             draftId: draft.id,
             summary: draft.summary,
@@ -23,6 +22,7 @@ export const useUpdateDraft = () => {
             author_id: userInfo.id,
             author_nickname: userInfo.nick_name,
         }
+        console.log('apiData', apiData);
         const res = await apiClient(apiList.post.protected.draft.updateDraft,  {
             method: 'POST',
             body: JSON.stringify(apiData),
@@ -42,7 +42,7 @@ export const useUpdateDraft = () => {
                 msg: "error",
             }
         }
-    }
+    }, [dispatch])
 }
 
 export const useGetDraft = () => {
@@ -62,7 +62,8 @@ export const useGetDraft = () => {
                 ...res.data,
             }))
             return {
-                msg: "success"
+                msg: "success",
+                data: res.data,
             }
         }
         return {
