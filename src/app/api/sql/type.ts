@@ -20,3 +20,9 @@ export type assistant_chat_recordTableType = {
     chat_content: chatContentType, // 聊天记录
     draft_id: number, // 草稿id
 }
+
+export type quotesTableType = {
+    id: number;
+    quote_text: string;
+    created_time: string;
+}

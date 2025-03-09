@@ -102,6 +102,14 @@ export const useGetPublishedArticleList = () => {
     });
     const [messageApi, contextHandle] = useMessage();
     const getPublishedArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false }) => {
+        if(isInit) {
+            setArticleList([]);
+            setPageInfo({
+                pageNum: 0,
+                pageSize: 8,
+            });
+            setHasMore(true);
+        }
         const apiData: getPublishedArticleListRequestType = {
             pageNum,
             pageSize,

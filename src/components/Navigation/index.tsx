@@ -28,7 +28,7 @@ const Navigation = () => {
                 onClick={() => {
                     router.push('/creator/content/article');
                 }}
-            >创作</Button>
+            >创作中心</Button>
             <Profile/>
         </span>
     </div>

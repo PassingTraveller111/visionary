@@ -38,9 +38,14 @@ function getEmailTimeDownKey(email: string){
     return `email:verify:${email}`;
 }
 
+function getArticleCountByUserId(userId: number) {
+    return `article:countByUserId:${userId}`;
+}
+
 export {
     getUserInfoKey,
     getArticleKey,
     getDraftKey,
     getEmailTimeDownKey,
+    getArticleCountByUserId,
 }

@@ -47,8 +47,13 @@ const getArticleListByKeyWord = async (keyword: string, pageNum: number, pageSiz
         , [keyword, keyword, keyword, keyword, keyword, keyword, fuzzyKeyword, fuzzyKeyword, fuzzyKeyword]) as null | publishedItemType[];
 }
 
+const getArticleCountByUserId = async (userId: number) => {
+    return (await query(`SELECT COUNT(*) as articleCounts FROM articles WHERE author_id = ?`, [userId])) as null | [[{ articleCounts: number }]];
+}
+
 export const article = {
     getPublishedArticlesList,
     getPublishedArticleCount,
     getArticleListByKeyWord,
+    getArticleCountByUserId,
 }

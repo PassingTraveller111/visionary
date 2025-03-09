@@ -46,10 +46,12 @@ const DraftPage = () => {
             id,
         }));
         if (typeof id === 'number') {
-            getDraft(id).then(async () => {
-                // 获取聊天记录
-                await initAssistant(id, false);
-            })
+            // 获取草稿数据
+            getDraft(id)
+                .then(async () => {
+                    // 获取聊天记录
+                    await initAssistant(id, false);
+                });
         } else {
             // 新建草稿记录
             updateDraft(draft, userInfo)

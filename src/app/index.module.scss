@@ -1,45 +1,106 @@
 @use '@/styles/variables' as var;
+$leftBarWidth: 300px;
 .container {
   height: calc(100vh - #{var.$nav-container-height});
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 20px;
+  padding: 20px 100px;
   overflow: auto;
-  .articleList {
-    width: calc(100% - 200px);
+  justify-content: space-between;
+  .tabContainer{
+    width: calc(100% - 40px - $leftBarWidth);
+    height: max-content;
+    padding: 20px;
     background: #fff;
-    .articleItem{
-      cursor: pointer;
-      padding: 20px;
-      &:hover{
-        background: #f7f8fa;
-      }
-      .title{
-        font-size: 28px;
-        font-weight: bold;
-      }
-      .summary{
-        color: #888888;
-        height: 24px;
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .itemBottom{
-        display: flex;
-        .author{
+    .tabLabel{
+      font-size: 20px;
+    }
+    .articleList {
+      width: 100%;
+      background: #fff;
+      .articleItem{
+        cursor: pointer;
+        padding: 20px;
+        &:hover{
+          background: #f7f8fa;
+        }
+        .title{
+          font-size: 28px;
+          font-weight: bold;
+        }
+        .summary{
+          color: #888888;
+          height: 24px;
+          max-width: 200px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .itemBottom{
+          display: flex;
+          .author{
 
-        }
-        .date{
-          margin-left: 10px;
-        }
-        .like{
-          margin-left: 10px;
-          span{
-            margin-left: 5px;
           }
+          .date{
+            margin-left: 10px;
+          }
+          .like{
+            margin-left: 10px;
+            span{
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .leftBar{
+    width: $leftBarWidth;
+    position: relative;
+    .leftBarFix{
+
+    }
+    .userBar{
+      background: #fff;
+      padding: 20px;
+      .top{
+        display: flex;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        .avatar{
+          width: 60px;
+          height: 60px;
+          img{
+            border-radius: 50%;
+          }
+        }
+        .userInfo{
+          margin-left: 20px;
+          width: 140px;
+          div{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .nickName{
+            cursor: pointer;
+            &:hover{
+              color: #1e80ff;
+            }
+          }
+        }
+      }
+      .center{
+        margin-top: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+      }
+      .bottom{
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        .bottomItem{
+          min-width: 40px;
+          text-align: center;
         }
       }
     }

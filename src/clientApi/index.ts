@@ -38,6 +38,7 @@ export const apiList = {
                 delArticle: 'protected/article/delArticle', // 删除文章
                 getPublishedArticleList: 'protected/article/getPublishedArticleList', // 获取公开文章列表
                 getArticleListByKeyWord: 'protected/article/getArticleListByKeyWord', // 模糊搜索文章
+                getArticleCountByUserId: 'protected/article/getArticleCountByUserId', // 获取文章数量
             },
             article_likes: {
                 getArticleIsLike: 'protected/article_likes/getArticleIsLike', // 获取是否喜欢该文章
@@ -54,9 +55,6 @@ export const apiList = {
             review: {
                 getReview: 'protected/review/getReview', // 获取审核文章
             },
-            ai: {
-                test: 'protected/ai/test',
-            },
             assistant: {
                 insertChatRecord: 'protected/assistant/insertChatRecord', // 新建聊天记录
                 getChatRecord: 'protected/assistant/getChatRecord', // 获取聊天记录
@@ -71,11 +69,14 @@ export const apiList = {
                 getUserInfo: 'protected/user/getUserInfo', // 获取用户信息
             },
             article: {
+            },
+            quotes: {
+                getQuoteRandom: 'protected/quotes/getQuoteRandom', // 随机获取格言
             }
         },
         user: {
             logout: 'user/logout', // 用户注销
-        }
+        },
     }
 }
 
