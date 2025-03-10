@@ -63,6 +63,7 @@ const ProfilePage = () => {
                         </span>
                         <span className={styles.descriptionRight}>
                             {renderUserName()}
+
                             {isMyProfile && <span
                                 className={styles.edit}
                                 onClick={gotoMyData}
@@ -91,3 +92,5 @@ const ProfilePage = () => {
 }
 
 export default ProfilePage;
+
+

@@ -15,24 +15,17 @@ const getPublishedArticlesList = async (pageNum: number, pageSize: number) => {
                                author_nickname,
                                author_id,
                                summary,
-                               COUNT(al.id)        AS like_count,
-                               COUNT(ar.record_id) AS look_count
+                               COUNT(DISTINCT al.id)   AS like_count,
+                               COUNT(DISTINCT ar.record_id) AS look_count
                         FROM articles a
                                  LEFT JOIN article_likes al ON a.id = al.article_id
                                  LEFT JOIN article_reading_records ar ON a.id = ar.article_id
                         WHERE is_published = 1
                         GROUP BY a.id,
-                                 a.title,
-                                 a.review_status,
-                                 a.review_id,
-                                 a.updated_time,
-                                 a.draft_id,
-                                 a.is_published,
-                                 a.published_time,
-                                 a.author_nickname,
-                                 a.author_id,
-                                 a.summary
-                        ORDER BY updated_time DESC LIMIT ${offset},${pageSize}`) as null | publishedItemType[];
+                                 a.updated_time
+                        ORDER BY updated_time
+                        DESC 
+                        LIMIT ${offset},${pageSize}`) as null | publishedItemType[];
 }
 
 const getPublishedArticleCount = async () => {
