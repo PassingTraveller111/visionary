@@ -6,6 +6,7 @@ import {useUserLogout} from "@/hooks/users/useUsers";
 import styles from './index.module.scss';
 import {useRouter} from "next/navigation";
 import Image from "next/image";
+import {IconFont} from "@/components/IconFont";
 
 type ProfileProps = {
     width?: number;
@@ -43,14 +44,18 @@ const ProfilePopover = (props: ProfilePopoverProps) => {
         <Divider/>
         <div className={styles.contentCenter}>
             <span
+                className={styles.menuItem}
                 onClick={() => router.push(`/userCenter/${userInfo.id}`)}
             >
-                我的主页
+                <IconFont type='icon-userCenter'/>
+                <span className={styles.label}>我的主页</span>
             </span>
             <span
+                className={styles.menuItem}
                 onClick={() => router.push(`/userCenter/readHistory`)}
             >
-                历史记录
+                <IconFont type='icon-history'/>
+                <span className={styles.label}>历史记录</span>
             </span>
         </div>
         <Divider/>

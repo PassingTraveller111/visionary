@@ -26,8 +26,8 @@
   }
   .contentCenter{
     width: 100%;
-    span{
-      display: inline-block;
+    .menuItem{
+      display: flex;
       width: 100%;
       font-size: 20px;
       line-height: 30px;
@@ -35,6 +35,9 @@
       cursor: pointer;
       &:hover{
         background-color: #f7f8fa;
+      }
+      .label{
+        margin-left: 10px;
       }
     }
   }
