@@ -60,6 +60,9 @@ export const apiList = {
                 insertChatRecord: 'protected/assistant/insertChatRecord', // 新建聊天记录
                 getChatRecord: 'protected/assistant/getChatRecord', // 获取聊天记录
                 sendMessage: 'protected/assistant/sendMessage', // 发送消息
+            },
+            article_reading_records: {
+                insert: 'protected/article_reading_records/insertArticleReadingRecord', // 插入浏览记录
             }
         },
     },

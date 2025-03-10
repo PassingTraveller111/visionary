@@ -8,6 +8,7 @@ export enum TableNames {
     email_verification = 'email_verification', // 邮箱验证表
     quotes = 'quotes', // 格言表
     reviews = 'reviews', // 审核稿表
+    article_reading_records = 'article_reading_records', // 浏览记录
 }
 
 export type email_verificationTableType = {
@@ -35,4 +36,11 @@ export type quotesTableType = {
     id: number;
     quote_text: string;
     created_time: string;
+}
+
+export type article_reading_recordsTableType = {
+    record_id: number,
+    article_id: number,
+    user_id: number,
+    read_time: string, // 阅读时间
 }

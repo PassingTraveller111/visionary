@@ -11,11 +11,13 @@ import Image from "next/image";
 import {useGetAuthorInfo} from "@/hooks/users/useUsers";
 import { Anchor } from "antd";
 import {iconColors, IconFont} from "@/components/IconFont";
+import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/useArticleReadingRecords";
 
 const ReaderPage = () => {
     const { articleId } =  useParams();
     const { isLoading, id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
     const { getArticleIsLike, isLike, setArticleIsLike  } = useArticleLike();
+    const insertArticleReadingRecord = useInsertArticleReadingRecord();
     const scrollContainerRef = React.createRef<HTMLDivElement>();
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const getArticle = useGetArticle();
@@ -23,11 +25,16 @@ const ReaderPage = () => {
     useEffect(() => {
         if(isLoading || !articleId) return;
         const id = Number(articleId);
-        getArticle(id)
+        getArticle(id);
     }, [isLoading, articleId, getArticle])
+    // 获取文章点赞数据
     useEffect(() => {
         getArticleIsLike(userId, Number(articleId));
     }, [articleId, getArticleIsLike, userId]);
+    // 插入文章阅读数据
+    useEffect(() => {
+        insertArticleReadingRecord(Number(articleId), userId);
+    }, [articleId, insertArticleReadingRecord, userId]);
     return <>
         <NavLayout>
             <div

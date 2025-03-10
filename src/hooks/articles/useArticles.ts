@@ -1,4 +1,4 @@
-import {AppDispatch, useAppSelector} from "@/store";
+import {AppDispatch} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";

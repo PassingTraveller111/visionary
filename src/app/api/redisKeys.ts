@@ -107,10 +107,10 @@ class RedisManager<Params extends Record<string, string | number>, Value> {
         }
     }
     deleteRedisValue = async (params: Params) => {
-        try{
+        try {
             await this.redisClient.del(this.getRedisKey(params));
             return true;
-        }catch(e) {
+        } catch(e) {
             console.error(`向 Redis 删除值时出错: ${e}`);
             return false;
         }
