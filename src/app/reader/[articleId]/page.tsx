@@ -1,7 +1,7 @@
 "use client"
 import {useParams, useRouter} from "next/navigation";
 import { useAppSelector } from "@/store";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useArticleLike, useGetArticle} from "@/hooks/articles/useArticles";
 import ReaderHeader from "@/components/ReaderHeader";
 import NavLayout from "@/components/NavLayout";
@@ -15,6 +15,7 @@ import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/use
 
 const ReaderPage = () => {
     const { articleId } =  useParams();
+    const hasInsertedData = useRef(false);
     const { isLoading, id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
     const { getArticleIsLike, isLike, setArticleIsLike  } = useArticleLike();
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
@@ -33,7 +34,11 @@ const ReaderPage = () => {
     }, [articleId, getArticleIsLike, userId]);
     // 插入文章阅读数据
     useEffect(() => {
+        if (hasInsertedData.current) {
+            return; // 如果已经插入过数据，直接退出
+        }
         insertArticleReadingRecord(Number(articleId), userId);
+        hasInsertedData.current = true;
     }, [articleId, insertArticleReadingRecord, userId]);
     return <>
         <NavLayout>
