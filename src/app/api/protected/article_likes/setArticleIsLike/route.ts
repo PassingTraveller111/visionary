@@ -1,5 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {article_likes} from "@/app/api/sql/article_likes";
+import {redisInstance} from "@/app/api/redisKeys";
 
 export type setArticleIsLikeRequestType = {
     userId: number;
@@ -27,6 +28,10 @@ export async function POST(req: NextRequest) {
         } = data;
         const results = await article_likes.setArticleIsLike(userId, articleId, isLike);
         if (results) {
+            // 清除获赞数据
+            await redisInstance.getArticleLikeCountByUserId.deleteRedisValue({
+                userId,
+            });
             return NextResponse.json({
                 msg: 'success',
                 data: {
