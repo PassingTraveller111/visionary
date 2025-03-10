@@ -15,6 +15,7 @@ import {getArticleCountByUserIdResponse} from "@/app/api/protected/article/getAr
 import {
     getArticleLikeCountByUserIdResponseType
 } from "@/app/api/protected/article_likes/getArticleLikeCountByUserId/route";
+import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticleReadingRecords";
 
 type tabKeysType = 'new' | 'hot';
 
@@ -79,8 +80,10 @@ export default function Home() {
 const UserBar = () => {
     const router = useRouter();
     const [quote, setQuote] = useState('');
+    const getLookCount = useGetLookCountByUserId();
     const [articleCount, setArticleCount] = useState(0);
     const [likeCount, setLikeCount] = useState(0);
+    const [lookCount, setLookCount] = useState(0);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const gotoUserCenter = () => {
         router.push('/userCenter/' + userInfo.id);
@@ -108,6 +111,9 @@ const UserBar = () => {
         }).then((res: getArticleLikeCountByUserIdResponseType) => {
             if(res.msg === 'success') setLikeCount(res.data.like_count);
         });
+        getLookCount(userInfo.id).then(res => {
+            if(res.msg === 'success') setLookCount(res.data.look_count);
+        })
     }, [userInfo.id]);
     return <div className={styles.userBar}>
         <div className={styles.top}>
@@ -142,7 +148,7 @@ const UserBar = () => {
                     gotoUserCenter();
                 }}
             >
-                <div>100</div>
+                <div>{lookCount}</div>
                 <div>阅读</div>
             </span>
             <span

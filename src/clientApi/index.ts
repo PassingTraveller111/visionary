@@ -64,6 +64,7 @@ export const apiList = {
             article_reading_records: {
                 insert: 'protected/article_reading_records/insertArticleReadingRecord', // 插入浏览记录
                 getByUserId: 'protected/article_reading_records/getArticleReadingRecordsByUserId', // 获取用户浏览历史记录
+                getLookCountByUserId: 'protected/article_reading_records/getLookCountsByUserId', // 获取用户的文章被阅读总量
             }
         },
     },

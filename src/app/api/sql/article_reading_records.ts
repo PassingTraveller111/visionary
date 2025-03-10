@@ -17,12 +17,13 @@ const getArticleReadingRecordsByUserId = async (userId: number, pageNum: number 
 const insertArticleReadingRecord = async (article_id: number, user_id: number) => {
     return (await query(`INSERT INTO article_reading_records (article_id, user_id) VALUES (?, ?)`, [article_id, user_id])) as [ { insertId: number } ] | null;
 }
-// 获取某文章的浏览量
-// const getArticleReadingRecordsByArticleId = async (article_id: number) => {
-//     return (await query(`SELECT article_id, COUNT(*) FROM article_reading_records WHERE article_id = ?`, [article_id]))
-// }
+// 获取某用户的文章被阅读总量
+const getArticleReadingRecordsCountByUserId = async (userId: number) => {
+    return (await query(`SELECT COUNT(*) as look_count, user_id FROM article_reading_records WHERE user_id = ? GROUP BY user_id`, [userId])) as [ [ { user_id: number, look_count:number } ] ] | null;
+}
 
 export const article_reading_records = {
     getArticleReadingRecordsByUserId,
     insertArticleReadingRecord,
+    getArticleReadingRecordsCountByUserId,
 }
