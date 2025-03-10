@@ -10,7 +10,7 @@ export type getArticleListResponseType = {
     msg: 'success' | 'error';
     data: itemType[];
 }
-export type itemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time'>;
+export type itemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time'>;
 
 export async function POST(req: NextRequest) {
     const connection = await pool.getConnection();
@@ -22,11 +22,11 @@ export async function POST(req: NextRequest) {
         const isOwn = userId === data.authorId;
         let sql, values: unknown[];
         if (isOwn) {
-            sql = `SELECT id, title, views, review_status, review_id, updated_time, draft_id, is_published, published_time FROM articles WHERE author_id = ? ORDER BY updated_time DESC`;
+            sql = `SELECT id, title, review_status, review_id, updated_time, draft_id, is_published, published_time FROM articles WHERE author_id = ? ORDER BY updated_time DESC`;
             values = [data.authorId];
         } else {
             // 非本人，过滤未公开文章
-            sql = `SELECT id, title, views, review_status, review_id, updated_time, draft_id, is_published, published_time
+            sql = `SELECT id, title, review_status, review_id, updated_time, draft_id, is_published, published_time
                    FROM articles 
                    WHERE author_id = ? And is_published = 1
                    ORDER BY updated_time DESC`;

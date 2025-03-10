@@ -35,12 +35,11 @@ export const useGetArticle = () => {
             body: JSON.stringify(apiData)
         }) as getArticleResponseType;
         if (res.msg === 'success') {
-            const { title, id, content, author_nickname, author_id, published_time, views, is_published, updated_time, draft_id, review_id, review_status, tags, summary, collects } = res.data;
+            const { title, id, content, author_nickname, author_id, published_time, is_published, updated_time, draft_id, review_id, review_status, tags, summary, collects } = res.data;
             dispatch(setArticle(
                 {
                     articleId: id,
                     title,
-                    views,
                     content,
                     publishTime: published_time,
                     authorId: author_id,

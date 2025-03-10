@@ -16,8 +16,9 @@ export type getPublishedArticleListResponseType = {
 } | {
     msg: 'error';
 }
-export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'views' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary'> & {
+export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary'> & {
     like_count: number;
+    look_count: number;
 };
 
 export async function POST(req: NextRequest) {

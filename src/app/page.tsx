@@ -82,6 +82,9 @@ const UserBar = () => {
     const [articleCount, setArticleCount] = useState(0);
     const [likeCount, setLikeCount] = useState(0);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const gotoUserCenter = () => {
+        router.push('/userCenter/' + userInfo.id);
+    }
     useEffect(() => {
         apiClient(apiList.get.protected.quotes.getQuoteRandom).then((res: getQuoteRandomResponseType) => {
             if(res.msg === 'success') setQuote(res.data.quote_text);
@@ -114,7 +117,7 @@ const UserBar = () => {
             <div className={styles.userInfo}>
                 <div className={styles.nickName}
                      onClick={() => {
-                         router.push('/userCenter/' + userInfo.id);
+                         gotoUserCenter();
                      }}
                 >{userInfo?.nick_name}</div>
                 <div>{userInfo?.email}</div>
@@ -124,15 +127,30 @@ const UserBar = () => {
             {quote}
         </div>}
         <div className={styles.bottom}>
-            <span className={styles.bottomItem}>
+            <span
+                className={styles.bottomItem}
+                onClick={() => {
+                    gotoUserCenter();
+                }}
+            >
                 <div>{articleCount}</div>
                 <div>文章</div>
             </span>
-            <span className={styles.bottomItem}>
+            <span
+                className={styles.bottomItem}
+                onClick={() => {
+                    gotoUserCenter();
+                }}
+            >
                 <div>100</div>
                 <div>阅读</div>
             </span>
-            <span className={styles.bottomItem}>
+            <span
+                className={styles.bottomItem}
+                onClick={() => {
+                    gotoUserCenter();
+                }}
+            >
                 <div>{likeCount}</div>
                 <div>获赞</div>
             </span>
@@ -147,6 +165,7 @@ type ArticleListItemType = {
     author_nickname: string;
     updated_time: string;
     like_count: number;
+    look_count: number;
 }
 
 const ArticleList = (props: {
@@ -173,8 +192,12 @@ const ArticleList = (props: {
                         <div className={styles.itemBottom}>
                             <div className={styles.author}>{article.author_nickname}</div>
                             <div className={styles.date}>{moment(article.updated_time).format('YYYY-MM-DD')}</div>
-                            <div className={styles.like}><IconFont
-                                type='icon-like'/><span>{article.like_count}</span></div>
+                            <div className={styles.like}>
+                                <IconFont type='icon-like'/><span>{article.like_count}</span>
+                            </div>
+                            <div className={styles.look}>
+                                <IconFont type='icon-look'/><span>{article.look_count}</span>
+                            </div>
                         </div>
                     </div>
                 })
