@@ -39,7 +39,7 @@ const ProfilePage = () => {
         </span>
     }
     const gotoMyData = () => {
-        router.push('/profile/myData');
+        router.push('/userCenter/myData');
     }
     useEffect(() => {
         apiClient(apiList.post.protected.profile.getProfile, {

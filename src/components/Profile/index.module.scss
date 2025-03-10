@@ -4,6 +4,7 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  width: 300px;
   .contentTop{
     width: 100%;
     display: flex;
@@ -33,7 +34,7 @@
       padding-left: 10px;
       cursor: pointer;
       &:hover{
-        background-color: lightgray;
+        background-color: #f7f8fa;
       }
     }
   }

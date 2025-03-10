@@ -114,7 +114,7 @@ const UserBar = () => {
             <div className={styles.userInfo}>
                 <div className={styles.nickName}
                      onClick={() => {
-                         router.push('/profile/' + userInfo);
+                         router.push('/userCenter/' + userInfo.id);
                      }}
                 >{userInfo?.nick_name}</div>
                 <div>{userInfo?.email}</div>

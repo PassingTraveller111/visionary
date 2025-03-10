@@ -86,7 +86,7 @@ const DraftPage = () => {
                 publishDraft().then(res => {
                     if(res.msg === "success") {
                         messageApi.success('发布成功').then(() => {
-                            router.push('/profile/' + userInfo.id);
+                            router.push('/userCenter/' + userInfo.id);
                         });
                     }else {
                         messageApi.error('发布失败');
