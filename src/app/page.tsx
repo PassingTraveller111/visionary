@@ -12,6 +12,9 @@ import {useAppSelector} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
 import {getQuoteRandomResponseType} from "@/app/api/protected/quotes/getQuoteRandom/route";
 import {getArticleCountByUserIdResponse} from "@/app/api/protected/article/getArticleCountByUserId/route";
+import {
+    getArticleLikeCountByUserIdResponseType
+} from "@/app/api/protected/article_likes/getArticleLikeCountByUserId/route";
 
 type tabKeysType = 'new' | 'hot';
 
@@ -77,12 +80,12 @@ const UserBar = () => {
     const router = useRouter();
     const [quote, setQuote] = useState('');
     const [articleCount, setArticleCount] = useState(0);
+    const [likeCount, setLikeCount] = useState(0);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     useEffect(() => {
         apiClient(apiList.get.protected.quotes.getQuoteRandom).then((res: getQuoteRandomResponseType) => {
             if(res.msg === 'success') setQuote(res.data.quote_text);
         });
-
     }, []);
     useEffect(() => {
         if(userInfo.id === 0) return;
@@ -93,7 +96,15 @@ const UserBar = () => {
             })
         }).then((res: getArticleCountByUserIdResponse) => {
             if(res.msg === 'success') setArticleCount(res.data.articleCounts);
-        })
+        });
+        apiClient(apiList.post.protected.article_likes.getArticleLikeCountByUserId, {
+            method: 'POST',
+            body: JSON.stringify({
+                userId: userInfo.id,
+            })
+        }).then((res: getArticleLikeCountByUserIdResponseType) => {
+            if(res.msg === 'success') setLikeCount(res.data.like_count);
+        });
     }, [userInfo.id]);
     return <div className={styles.userBar}>
         <div className={styles.top}>
@@ -122,8 +133,8 @@ const UserBar = () => {
                 <div>阅读</div>
             </span>
             <span className={styles.bottomItem}>
-                <div>1</div>
-                <div>点赞</div>
+                <div>{likeCount}</div>
+                <div>获赞</div>
             </span>
         </div>
     </div>

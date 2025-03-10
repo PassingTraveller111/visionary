@@ -16,7 +16,26 @@ const setArticleIsLike = async (userId: number, articleId: number, isLike: boole
     }
 }
 
+const getArticleLikeCountByUserId = async (userId: number) => {
+    return (await query(`SELECT
+                             u.id AS userId,
+                             COUNT(al.id) AS like_count
+                         FROM
+                             users u
+                                 LEFT JOIN
+                             articles a ON u.id = a.author_id
+                                 LEFT JOIN
+                             article_likes al ON a.id = al.article_id
+                         WHERE
+                             u.id = ?
+                         GROUP BY
+                             u.id;
+                        `, [userId])) as [ { userId: number, like_count: number }[] ] | null
+}
+
+
 export const article_likes = {
     getArticleIsLike,
     setArticleIsLike,
+    getArticleLikeCountByUserId,
 }

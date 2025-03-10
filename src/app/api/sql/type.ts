@@ -1,4 +1,14 @@
 
+export enum TableNames {
+    users = 'users', // 用户表
+    articles = 'articles', // 文章表
+    article_likes = 'article_likes', // 文章点赞记录表
+    assistant_chat_record = 'assistant_chat_record', // 助手聊天记录表
+    drafts = 'drafts', // 草稿表
+    email_verification = 'email_verification', // 邮箱验证表
+    quotes = 'quotes', // 格言表
+    reviews = 'reviews', // 审核稿表
+}
 
 export type email_verificationTableType = {
     email: string,

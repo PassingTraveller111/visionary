@@ -43,6 +43,7 @@ export const apiList = {
             article_likes: {
                 getArticleIsLike: 'protected/article_likes/getArticleIsLike', // 获取是否喜欢该文章
                 setArticleIsLike: 'protected/article_likes/setArticleIsLike', // 点赞/取消赞
+                getArticleLikeCountByUserId: 'protected/article_likes/getArticleLikeCountByUserId', // 获取用户的总获赞数
             },
             draft: {
                 updateDraft: 'protected/draft/updateDraft', // 更新草稿
