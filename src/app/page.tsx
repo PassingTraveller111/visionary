@@ -1,6 +1,6 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
-import { useGetPublishedArticleList } from "@/hooks/articles/useArticles";
+import {useGetArticleCountByUserId, useGetPublishedArticleList} from "@/hooks/articles/useArticles";
 import React, {useEffect, useState} from "react";
 import styles from './index.module.scss';
 import moment from "moment";
@@ -16,6 +16,7 @@ import {
     getArticleLikeCountByUserIdResponseType
 } from "@/app/api/protected/article_likes/getArticleLikeCountByUserId/route";
 import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticleReadingRecords";
+import {useGetArticleLikeCountByUserId} from "@/hooks/article_likes/useArticleLikes";
 
 type tabKeysType = 'new' | 'hot';
 
@@ -81,6 +82,8 @@ const UserBar = () => {
     const router = useRouter();
     const [quote, setQuote] = useState('');
     const getLookCount = useGetLookCountByUserId();
+    const getArticleCount = useGetArticleCountByUserId();
+    const getLikeCount = useGetArticleLikeCountByUserId();
     const [articleCount, setArticleCount] = useState(0);
     const [likeCount, setLikeCount] = useState(0);
     const [lookCount, setLookCount] = useState(0);
@@ -95,20 +98,10 @@ const UserBar = () => {
     }, []);
     useEffect(() => {
         if(userInfo.id === 0) return;
-        apiClient(apiList.post.protected.article.getArticleCountByUserId, {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: userInfo.id,
-            })
-        }).then((res: getArticleCountByUserIdResponse) => {
+        getArticleCount(userInfo.id).then((res: getArticleCountByUserIdResponse) => {
             if(res.msg === 'success') setArticleCount(res.data.articleCounts);
         });
-        apiClient(apiList.post.protected.article_likes.getArticleLikeCountByUserId, {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: userInfo.id,
-            })
-        }).then((res: getArticleLikeCountByUserIdResponseType) => {
+        getLikeCount(userInfo.id).then((res: getArticleLikeCountByUserIdResponseType) => {
             if(res.msg === 'success') setLikeCount(res.data.like_count);
         });
         getLookCount(userInfo.id).then(res => {

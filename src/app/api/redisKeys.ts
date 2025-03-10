@@ -69,9 +69,11 @@ class RedisManager<Params extends Record<string, string | number>, Value> {
         this.redisClient = redis;
         this.redisKeyPrefix = redisKeyPrefix;
         this.getRedisKey = (params) => {
-            return this.redisKeyPrefix
-                + ':'
-                + Object.keys(params).reduce((preValue, curValue) => preValue + ':' + params[curValue]);
+            let redisKey = redisKeyPrefix;
+            Object.keys(params).forEach((key) => {
+                redisKey +=  ':' + params[key];
+            });
+            return redisKey;
         }
     }
     // 获取其redis的key值

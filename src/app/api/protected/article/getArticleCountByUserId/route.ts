@@ -8,10 +8,12 @@ export type getArticleCountByUserIdRequest = {
 }
 
 export type getArticleCountByUserIdResponse = {
-    msg: 'success' | 'error';
+    msg: 'success';
     data: {
         articleCounts: number;
     };
+} | {
+    msg: 'error';
 }
 
 export async function POST(req: NextRequest) {

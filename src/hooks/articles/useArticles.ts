@@ -22,6 +22,7 @@ import {
     setArticleIsLikeRequestType,
     setArticleIsLikeResponseType
 } from "@/app/api/protected/article_likes/setArticleIsLike/route";
+import {getArticleCountByUserIdResponse} from "@/app/api/protected/article/getArticleCountByUserId/route";
 
 
 export const useGetArticle = () => {
@@ -243,4 +244,17 @@ export const useArticleLike = () => {
         })
     }, [isLoading]);
     return { isLike, getArticleIsLike, setArticleIsLike, isLoading };
+}
+
+
+export const useGetArticleCountByUserId = () => {
+    return useCallback(async (userId: number) => {
+        const res: getArticleCountByUserIdResponse = await apiClient(apiList.post.protected.article.getArticleCountByUserId, {
+            method: 'POST',
+            body: JSON.stringify({
+                userId: userId,
+            })
+        })
+        return res;
+    }, [])
 }
