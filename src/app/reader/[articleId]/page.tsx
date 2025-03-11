@@ -13,6 +13,7 @@ import { Anchor } from "antd";
 import {iconColors, IconFont} from "@/components/IconFont";
 import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import useMessage from "antd/es/message/useMessage";
+import classNames from "classnames";
 
 const ReaderPage = () => {
     const { articleId } =  useParams();
@@ -70,11 +71,10 @@ const ReaderPage = () => {
                                     setArticleIsLike(userId, Number(articleId), !isLike);
                                 }}
                             />
-                            <OperateButton type='icon-pinglun' isActive={false} />
+                            <OperateButton type='icon-pinglun' />
                             <OperateButton type='icon-shoucang' isActive={false} />
                             <OperateButton
                                 type='icon-zhuanfa'
-                                isActive={false}
                                 onClick={onShare}
                             />
                         </div>
@@ -189,11 +189,10 @@ const OutlineBar = (props: OutlineBarProps) => {
             </span>
         </div>
         <div
-            className={styles.outlineContent}
-            style={{
-                maxHeight: outlineOpen ? '400px' : '0px',
-                borderTop: outlineOpen ? '1px solid #ccc' : 'none',
-            }}
+            className={classNames({
+                [styles.outlineContent]: true,
+                [styles.outlineIsOpen]: outlineOpen,
+            })}
         >
             <Anchor
                 getContainer={() =>  {
@@ -248,7 +247,7 @@ function parseMarkdownOutline(markdown: string) {
     return tree;
 }
 
-const OperateButton = (props: { type: string, isActive: boolean, onClick?: () => void }) => {
+const OperateButton = (props: { type: string, isActive?: boolean, onClick?: () => void }) => {
     const { isActive = false, type, onClick } = props;
     const [isHover, setIsHover] = useState(false);
     return <div
