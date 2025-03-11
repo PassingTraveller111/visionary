@@ -4,6 +4,7 @@ import rehypeHighlight from "rehype-highlight";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import CodeBlockComponents from "./components/CodeBlock";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -13,6 +14,10 @@ const MyReactMarkdown = (props) => {
                 remarkPlugins={[remarkMath, remarkGfm]}
                 rehypePlugins={[rehypeHighlight, rehypeKatex]}
                 {...props}
+                components={{
+                    pre: CodeBlockComponents, // 通过pre标签获得代码块
+                    ...props.components,
+                }}
             />
     </span>
 };

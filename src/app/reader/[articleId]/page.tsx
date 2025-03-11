@@ -12,16 +12,28 @@ import {useGetAuthorInfo} from "@/hooks/users/useUsers";
 import { Anchor } from "antd";
 import {iconColors, IconFont} from "@/components/IconFont";
 import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/useArticleReadingRecords";
+import useMessage from "antd/es/message/useMessage";
 
 const ReaderPage = () => {
     const { articleId } =  useParams();
     const hasInsertedData = useRef(false);
+    const [ messageApi, MessageContext ] = useMessage();
     const { isLoading, id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
     const { getArticleIsLike, isLike, setArticleIsLike  } = useArticleLike();
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
     const scrollContainerRef = React.createRef<HTMLDivElement>();
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const getArticle = useGetArticle();
+    // 分享
+    const onShare = async () => {
+        try {
+            // 使用 Clipboard API 复制文本
+            await navigator.clipboard.writeText(window.location.href);
+            messageApi.success('复制成功');
+        } catch (err) {
+            console.error('复制时出错:', err);
+        }
+    }
     // 初始化article
     useEffect(() => {
         if(isLoading || !articleId) return;
@@ -42,6 +54,7 @@ const ReaderPage = () => {
     }, [articleId, insertArticleReadingRecord, userId]);
     return <>
         <NavLayout>
+            {MessageContext}
             <div
                 ref={scrollContainerRef}
                 className={styles.readerScroll}>
@@ -59,7 +72,11 @@ const ReaderPage = () => {
                             />
                             <OperateButton type='icon-pinglun' isActive={false} />
                             <OperateButton type='icon-shoucang' isActive={false} />
-                            <OperateButton type='icon-zhuanfa' isActive={false} />
+                            <OperateButton
+                                type='icon-zhuanfa'
+                                isActive={false}
+                                onClick={onShare}
+                            />
                         </div>
                     </div>
                     <div className={styles.readerContent}>
@@ -191,8 +208,6 @@ const OutlineBar = (props: OutlineBarProps) => {
     </div>
 }
 export default ReaderPage;
-
-
 function parseMarkdownOutline(markdown: string) {
     const lines = markdown.split('\n');
     const headers = [];
