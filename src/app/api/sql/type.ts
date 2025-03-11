@@ -9,6 +9,7 @@ export enum TableNames {
     quotes = 'quotes', // 格言表
     reviews = 'reviews', // 审核稿表
     article_reading_records = 'article_reading_records', // 浏览记录
+    article_collections = 'article_collections', // 收藏表
 }
 
 export type email_verificationTableType = {
@@ -43,4 +44,12 @@ export type article_reading_recordsTableType = {
     article_id: number,
     user_id: number,
     read_time: string, // 阅读时间
+}
+
+// 收藏表
+export type article_collectionsTableType = {
+    id: number,
+    user_id: number, // 收藏的用户id
+    article_id: number, // 收藏的文章id
+    collect_time: string, // 收藏的时间
 }

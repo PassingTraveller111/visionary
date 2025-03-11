@@ -14,17 +14,19 @@ import {iconColors, IconFont} from "@/components/IconFont";
 import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import useMessage from "antd/es/message/useMessage";
 import classNames from "classnames";
+import { useSetArticleIsCollected} from "@/hooks/article_collections/useArticleCollections";
 
 const ReaderPage = () => {
-    const { articleId } =  useParams();
+    const articleId =  Number(useParams().articleId);
     const hasInsertedData = useRef(false);
     const [ messageApi, MessageContext ] = useMessage();
     const { isLoading, id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
-    const { getArticleIsLike, isLike, setArticleIsLike  } = useArticleLike();
+    const { isLike, setArticleIsLike  } = useArticleLike();
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
     const scrollContainerRef = React.createRef<HTMLDivElement>();
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const getArticle = useGetArticle();
+    const { isCollected, setArticleIsCollected } = useSetArticleIsCollected();
     // 分享
     const onShare = async () => {
         try {
@@ -38,13 +40,8 @@ const ReaderPage = () => {
     // 初始化article
     useEffect(() => {
         if(isLoading || !articleId) return;
-        const id = Number(articleId);
-        getArticle(id);
+        getArticle(articleId);
     }, [isLoading, articleId, getArticle])
-    // 获取文章点赞数据
-    useEffect(() => {
-        getArticleIsLike(userId, Number(articleId));
-    }, [articleId, getArticleIsLike, userId]);
     // 插入文章阅读数据
     useEffect(() => {
         if (hasInsertedData.current) {
@@ -68,11 +65,17 @@ const ReaderPage = () => {
                                 type='icon-like'
                                 isActive={isLike}
                                 onClick={() => {
-                                    setArticleIsLike(userId, Number(articleId), !isLike);
+                                    setArticleIsLike(userId, articleId, !isLike);
                                 }}
                             />
                             <OperateButton type='icon-pinglun' />
-                            <OperateButton type='icon-shoucang' isActive={false} />
+                            <OperateButton
+                                type='icon-shoucang'
+                                isActive={isCollected}
+                                onClick={() => {
+                                    setArticleIsCollected(userId, articleId, !isCollected);
+                                }}
+                            />
                             <OperateButton
                                 type='icon-zhuanfa'
                                 onClick={onShare}
@@ -85,6 +88,7 @@ const ReaderPage = () => {
                                       publishTime={article.publishTime}/>
                         <ReactMarkdown
                             components={{
+                                // 给标题添加id，用来做目录的定位
                                 h1: ({children, ...props}: { children: string}) => {
                                     const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
                                     return <h1 id={id} {...props}>{children}</h1>;

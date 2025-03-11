@@ -1,8 +1,8 @@
-import {AppDispatch} from "@/store";
+import {AppDispatch, useAppSelector} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected/article/getArticle/route";
 import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
 import {
@@ -206,9 +206,12 @@ export const useGetPublishedArticleListByKeyWord = () => {
 export const useArticleLike = () => {
     const [isLike, setIsLike] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     // 根据userId和articleId判断是否like该文章
     const getArticleIsLike = useCallback((userId: number, articleId: number) => {
-        if(userId === 0 || articleId === 0) return;
+        if(isLoading) return;
+        setIsLoading(true);
         const apiData: getArticleIsLikeRequestType = {
             userId,
             articleId: articleId as number,
@@ -221,9 +224,9 @@ export const useArticleLike = () => {
                 setIsLike(res.data.isLike);
             }
         })
-    }, [])
+        setIsLoading(false);
+    }, [isLoading])
     const setArticleIsLike = useCallback((userId: number, articleId: number, like: boolean) => {
-        console.log(isLoading);
         if(isLoading) return;
         setIsLoading(true);
         const apiData: setArticleIsLikeRequestType = {
@@ -243,7 +246,11 @@ export const useArticleLike = () => {
 
         })
     }, [isLoading]);
-    return { isLike, getArticleIsLike, setArticleIsLike, isLoading };
+    useEffect(() => {
+        if(userInfo.id === 0 || article.articleId === 0) return;
+        getArticleIsLike(userInfo.id, article.articleId);
+    }, [article.articleId, getArticleIsLike, userInfo.id])
+    return { isLike, setArticleIsLike };
 }
 
 
