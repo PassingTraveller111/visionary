@@ -1,6 +1,6 @@
 @use '@/components/EditorHeader/index.module' as var;
 $sendContainerHeight: 180px;
-
+$assistantWidth: 500px;
 .container{
   width: 0;
   height: calc(100vh - #{var.$editor-header-height});
@@ -79,7 +79,6 @@ $sendContainerHeight: 180px;
       top: 50%;
     }
   }
-
 }
 .isOpen{
   width: 500px;
