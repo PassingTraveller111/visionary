@@ -11,13 +11,14 @@
     background-color: #eee;
   }
   .leftBar{
-    width: calc(100% - 40px);
+    flex: 1 1 auto;
     .title{
       font-size: 20px;
     }
     .summary{
       font-size: 14px;
       color: #666666;
+      height: 22px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

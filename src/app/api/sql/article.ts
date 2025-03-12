@@ -15,6 +15,7 @@ const getPublishedArticlesList = async (pageNum: number, pageSize: number) => {
                                author_nickname,
                                author_id,
                                summary,
+                               tags,
                                COUNT(DISTINCT al.id)   AS like_count,
                                COUNT(DISTINCT ar.record_id) AS look_count
                         FROM articles a

@@ -17,6 +17,7 @@ import {
 } from "@/app/api/protected/article_likes/getArticleLikeCountByUserId/route";
 import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import {useGetArticleLikeCountByUserId} from "@/hooks/article_likes/useArticleLikes";
+import ArticleItem from "@/components/ArticleItem";
 
 type tabKeysType = 'new' | 'hot';
 
@@ -165,12 +166,12 @@ type ArticleListItemType = {
     updated_time: string;
     like_count: number;
     look_count: number;
+    tags: string[];
 }
 
 const ArticleList = (props: {
     articleList: ArticleListItemType[] }) => {
     const {articleList} = props;
-    const router = useRouter();
     return <div
         className={styles.articleList}
     >
@@ -179,26 +180,17 @@ const ArticleList = (props: {
                 <Skeleton active/>
                 :
                 articleList.map((article) => {
-                    return <div
+                    return <ArticleItem
                         key={article.id}
-                        className={styles.articleItem}
-                        onClick={() => {
-                            router.push('/reader/' + article.id);
-                        }}
-                    >
-                        <div className={styles.title}>{article.title}</div>
-                        <div className={styles.summary}>{article.summary}</div>
-                        <div className={styles.itemBottom}>
-                            <div className={styles.author}>{article.author_nickname}</div>
-                            <div className={styles.date}>{moment(article.updated_time).format('YYYY-MM-DD')}</div>
-                            <div className={styles.like}>
-                                <IconFont type='icon-like'/><span>{article.like_count}</span>
-                            </div>
-                            <div className={styles.look}>
-                                <IconFont type='icon-look'/><span>{article.look_count}</span>
-                            </div>
-                        </div>
-                    </div>
+                        title={article.title}
+                        articleId={article.id}
+                        author={article.author_nickname}
+                        updateTime={article.updated_time}
+                        likes_count={article.like_count}
+                        looks_count={article.look_count}
+                        summary={article.summary}
+                        tags={article.tags}
+                    />
                 })
         }
     </div>
