@@ -69,6 +69,7 @@ export const apiList = {
             article_collections: {
                 setArticleIsCollected: 'protected/article_collections/setArticleIsCollected', // 设置是否收藏
                 getArticleIsCollected: 'protected/article_collections/getArticleIsCollected', // 获取收藏数据
+                getArticleCollectionsByUserId: 'protected/article_collections/getArticleCollectionsByUserId', // 获取收藏列表
             }
         },
     },

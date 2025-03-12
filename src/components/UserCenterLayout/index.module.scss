@@ -1,3 +1,6 @@
+$profile-content-height: 160px;
+$tabs-height: 82px;
+$tabs-marginTop: 20px;
 .profile-container{
   width: 100%;
   display: flex;
@@ -5,9 +8,10 @@
   align-items: center;
   height: 100%;
   overflow: auto;
-  padding: 20px;
+  padding: 20px 200px;
   .profile-content{
-    width: calc(100% - 200px);
+    width: 100%;
+    height: $profile-content-height;
     min-width: 500px;
     .profile-description{
       width: 100%;
@@ -59,30 +63,11 @@
       padding: 20px;
     }
   }
-  .articleList-container{
-    width: calc(100% - 200px);
-    min-width: 500px;
+  .tabsNav{
+    margin-top: $tabs-marginTop;
+    padding: 10px 20px;
+    height: 82px;
+    width: 100%;
     background: #fff;
-    margin-top: 20px;
-    .articleList-item{
-      padding: 20px;
-      box-sizing: content-box;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      &:hover{
-        background: rgba(0,0,0,.1);
-      }
-      .article-title{
-        font-weight: bold;
-      }
-      .article-date{
-        color: #666666;
-      }
-      .article-menu{
-        display: flex;
-        align-items: center;
-      }
-    }
   }
 }

@@ -9,6 +9,9 @@ import {
     getArticleIsCollectedResponseType
 } from "@/app/api/protected/article_collections/getArticleIsCollected/route";
 import {useAppSelector} from "@/store";
+import {
+    getArticleCollectionsByUserIdRequestType, getArticleCollectionsByUserIdResponseType
+} from "@/app/api/protected/article_collections/getArticleCollectionsByUserId/route";
 
 
 export const useSetArticleIsCollected = () => {
@@ -51,4 +54,28 @@ export const useSetArticleIsCollected = () => {
         getArticleIsCollected(userInfo.id, article.articleId);
     }, [article.articleId, getArticleIsCollected, userInfo.id]);
     return { isCollected, setArticleIsCollected };
+}
+
+
+export const useArticleCollections = () => {
+    const [ collectionList, setCollectionList ] = useState<getArticleCollectionsByUserIdResponseType['data']>([]);
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const getArticleCollections = useCallback(async (userId: number) => {
+        const apiData: getArticleCollectionsByUserIdRequestType = {
+            userId,
+        };
+        const res: getArticleCollectionsByUserIdResponseType = await apiClient(apiList.post.protected.article_collections.getArticleCollectionsByUserId, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        });
+        if(res.msg === 'success') {
+            setCollectionList(res.data);
+        }
+        return res;
+    }, []);
+    useEffect(() => {
+        if(userInfo.id === 0) return;
+        getArticleCollections(userInfo.id)
+    }, [getArticleCollections, userInfo.id]);
+    return { collectionList, getArticleCollections };
 }

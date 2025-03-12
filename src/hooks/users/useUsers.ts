@@ -3,7 +3,7 @@ import {useAppSelector, AppDispatch} from "@/store";
 import {useDispatch} from "react-redux";
 import {logIn, logOut, setLoading, setUserInfo} from "@/store/features/userSlice";
 import {apiClient, apiList} from "@/clientApi";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {
     AuthorInfoType,
     getAuthorInfoRequestType,
@@ -65,12 +65,12 @@ export const useGetUserInfo =  () => {
 // 用于判断是否是本人
 export const useIsUserOwn = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
-    return (idOrUserName: number | string) => {
+    return useCallback((idOrUserName: number | string) => {
         if(typeof idOrUserName === "string") {
             return idOrUserName === userInfo.username;
         }
         return idOrUserName === userInfo.id;
-    }
+    }, [userInfo.id, userInfo.username])
 }
 
 export const useGetAuthorInfo = () => {

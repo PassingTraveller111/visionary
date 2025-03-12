@@ -89,7 +89,7 @@ const UserBar = () => {
     const [lookCount, setLookCount] = useState(0);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const gotoUserCenter = () => {
-        router.push('/userCenter/' + userInfo.id);
+        router.push('/userCenter/' + userInfo.id + '/article');
     }
     useEffect(() => {
         apiClient(apiList.get.protected.quotes.getQuoteRandom).then((res: getQuoteRandomResponseType) => {

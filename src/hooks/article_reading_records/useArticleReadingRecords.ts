@@ -25,7 +25,6 @@ export const useInsertArticleReadingRecord = () => {
             method: "POST",
             body: JSON.stringify(apiData)
         });
-        console.log(res);
     }, [])
 }
 

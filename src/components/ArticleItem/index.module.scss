@@ -1,0 +1,52 @@
+
+.ArticleItemContainer{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  cursor: pointer;
+  &+&{
+    border-top: 1px solid #eee;
+  }
+  &:hover{
+    background-color: #eee;
+  }
+  .leftBar{
+    width: calc(100% - 40px);
+    .title{
+      font-size: 20px;
+    }
+    .summary{
+      font-size: 14px;
+      color: #666666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .bottom{
+      display: flex;
+      justify-content: space-between;
+      .bottomLeft{
+        font-size: 14px;
+        color: #666666;
+        &>span+span{
+          border-left: 1px solid #666666;
+          padding-left: 10px;
+          margin-left: 10px;
+        }
+      }
+      .bottomRight{
+
+      }
+
+    }
+  }
+  .rightBar{
+    width: 40px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    svg{
+      font-size: 40px;
+    }
+  }
+}

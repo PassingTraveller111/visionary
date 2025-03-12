@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {useDispatch} from "react-redux";
 import {logIn} from "@/store/features/userSlice";
+import {IconFont} from "@/components/IconFont";
 
 type FieldType = {
     username: string
@@ -40,6 +41,10 @@ const Index = (props: {
     ];
     return <div className={styles.container}>
         <div className={styles.form}>
+            <span className={styles.title}>
+                <IconFont type={'icon-logo'} />
+                创见
+            </span>
             <Tabs
                 defaultActiveKey="1"
                 centered
@@ -60,8 +65,11 @@ const PassForm = (props: {
 }) => {
     const { onLogin } = props;
     const [ form ]= Form.useForm<FieldType>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+        setIsLoading(true);
         const res = await onLogin(values.username, values.password, values.isRemember);
+        setIsLoading(false);
         if(res.status !== 200){
             form.validateFields(['password']).then((values) => {
                 form.setFields([
@@ -105,7 +113,12 @@ const PassForm = (props: {
                 <Checkbox>记住密码</Checkbox>
             </Form.Item>
             <Form.Item label={null}>
-                <Button block type="primary" htmlType="submit">
+                <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isLoading}
+                >
                     登录
                 </Button>
             </Form.Item>

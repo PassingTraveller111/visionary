@@ -1,14 +1,12 @@
 .container{
   display: inline-flex;
-  position: absolute;
-  right: 0;
   width: 500px;
-  height: 100vh;
-  background: linear-gradient(to bottom right, #B0E0E6, #98FB98);
-  //opacity: 0.8;
+  background: linear-gradient(to right, #F0F4F8, #E0E8F0);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
   justify-content: center;
   .form{
-    margin-top: calc(40% + 100px);
     width: 400px;
   }
   .verificationCode{
@@ -24,5 +22,29 @@
     color: #1e80ff;
     cursor: pointer;
     margin-left: 5px;
+  }
+  .title{
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    border-bottom: 1px solid #fff;
+    padding-bottom: 10px;
+    svg{
+      font-size: 40px;
+    }
+  }
+  button {
+    background: linear-gradient(135deg, #6699CC, #99CCFF);
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: linear-gradient(135deg, #77AADD, #A0D0FF) !important;
   }
 }

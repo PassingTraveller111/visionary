@@ -45,7 +45,7 @@ const ProfilePopover = (props: ProfilePopoverProps) => {
         <div className={styles.contentCenter}>
             <span
                 className={styles.menuItem}
-                onClick={() => router.push(`/userCenter/${userInfo.id}`)}
+                onClick={() => router.push(`/userCenter/${userInfo.id}/article`)}
             >
                 <IconFont type='icon-userCenter'/>
                 <span className={styles.label}>我的主页</span>

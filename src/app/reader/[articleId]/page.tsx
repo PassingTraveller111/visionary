@@ -146,7 +146,7 @@ const AuthorBar = (props: AuthorBarProps) => {
         <div className={styles.authorInfo}>
             <div className={styles.nickName}
                  onClick={() => {
-                     router.push('/userCenter/' + authorId);
+                     router.push('/userCenter/' + authorId + '/article');
                  }}
             >{authorInfo?.nick_name}</div>
             <div>{authorInfo?.email}</div>

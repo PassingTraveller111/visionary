@@ -1,0 +1,27 @@
+@use '@/components/UserCenterLayout/index.module.scss' as var;
+.articleList-container{
+  max-height: calc(100% - #{var.$profile-content-height} - #{var.$tabs-marginTop} - #{var.$tabs-height});
+  overflow: auto;
+  width: 100%;
+  background: #fff;
+  .articleList-item{
+    padding: 20px;
+    box-sizing: content-box;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    &:hover{
+      background: rgba(0,0,0,.1);
+    }
+    .article-title{
+      font-weight: bold;
+    }
+    .article-date{
+      color: #666666;
+    }
+    .article-menu{
+      display: flex;
+      align-items: center;
+    }
+  }
+}
