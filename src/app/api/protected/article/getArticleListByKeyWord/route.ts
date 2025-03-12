@@ -9,15 +9,13 @@ export type getArticleListByKeyWordRequestType = {
 }
 
 export type getArticleListByKeyWordResponseType = {
-    msg: 'success';
+    msg: 'success' | 'error';
     data: ItemType[];
     total: number;
     pageNum: number;
     pageSize: number;
-} | {
-    msg: 'error';
 }
-export type ItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary'>
+export type ItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags'>
     & {
         like_count: number;
         look_count: number;

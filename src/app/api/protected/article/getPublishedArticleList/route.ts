@@ -8,13 +8,11 @@ export type getPublishedArticleListRequestType = {
 }
 
 export type getPublishedArticleListResponseType = {
-    msg: 'success';
+    msg: 'success' | 'error';
     data: publishedItemType[];
     total: number;
     pageNum: number;
     pageSize: number;
-} | {
-    msg: 'error';
 }
 export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags'> & {
     like_count: number;

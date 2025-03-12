@@ -7,7 +7,7 @@ import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected
 import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
 import {
     getPublishedArticleListRequestType,
-    getPublishedArticleListResponseType, publishedItemType
+    getPublishedArticleListResponseType
 } from "@/app/api/protected/article/getPublishedArticleList/route";
 import useMessage from "antd/es/message/useMessage";
 import {
@@ -91,9 +91,8 @@ export const useGetArticleList = () => {
     return { articleList, getArticleList };
 }
 
-type publishedArticleListType = publishedItemType[];
 export const useGetPublishedArticleList = () => {
-    const [articleList, setArticleList] = useState<publishedArticleListType>([]);
+    const [articleList, setArticleList] = useState<getPublishedArticleListResponseType['data']>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [pageInfo, setPageInfo] = useState({
@@ -151,7 +150,7 @@ export const useGetPublishedArticleList = () => {
 }
 
 export const useGetPublishedArticleListByKeyWord = () => {
-    const [articleList, setArticleList] = useState<publishedArticleListType>([]);
+    const [articleList, setArticleList] = useState<getArticleListByKeyWordResponseType['data']>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [pageInfo, setPageInfo] = useState({
