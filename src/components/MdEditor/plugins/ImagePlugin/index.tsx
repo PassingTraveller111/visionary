@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef } from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import classNames from "classnames";
@@ -14,7 +14,6 @@ const ImagePlugin = (props: PluginProps) => {
     const { editor } = props;
     const fileInputRef = useRef<HTMLInputElement>(null);
     useEditorOnKeyDown(editor, 'image', (e) => {
-        e.preventDefault();
         handleClick();
     })
     const handleClick = () => {
@@ -37,12 +36,15 @@ const ImagePlugin = (props: PluginProps) => {
             )
         }
     };
-    const handlePaste = (event: ClipboardEvent) => {
+    const handlePaste = useCallback((event: ClipboardEvent) => {
         const clipboardData = event.clipboardData;
         if (clipboardData && clipboardData.items) {
             for (let i = 0; i < clipboardData.items.length; i++) {
                 const item = clipboardData.items[i];
                 if (item.type.startsWith('image/')) {
+                    // 阻止默认事件，不然会在文章末位插入文件名
+                    event.stopPropagation();
+                    event.preventDefault();
                     const file = item.getAsFile();
                     if (!file) return;
                     const formData = new FormData();
@@ -57,13 +59,14 @@ const ImagePlugin = (props: PluginProps) => {
                 }
             }
         }
-    };
+    }, [editor]);
     useEffect(() => {
-        document.addEventListener('paste', handlePaste);
+        const editorElm =  getEditorElm();
+        if(editorElm) editorElm.addEventListener('paste', handlePaste);
         return () => {
-            document.removeEventListener('paste', handlePaste);
+            if(editorElm) editorElm.removeEventListener('paste', handlePaste);
         }
-    }, []);
+    }, [handlePaste]);
     return (
         <Tooltip
             title={<PluginTitle title='图片' keyName='image' />}
@@ -97,3 +100,10 @@ ImagePlugin.pluginName = 'imagePlugin';
 
 
 export default ImagePlugin;
+
+// 获取编辑器元素
+const getEditorElm = () => {
+    const editorElms = document.querySelectorAll('textarea.section-container.input');
+    if (editorElms.length > 0) return editorElms[0] as HTMLTextAreaElement;
+    else return null;
+}

@@ -140,7 +140,6 @@ const SendBox = (props: { inputValue: string, setInputValue: Dispatch<SetStateAc
     >
         <Input.TextArea
             value={inputValue}
-            maxLength={1000}
             onFocus={() => {
                 setIsFocus(true);
             }}

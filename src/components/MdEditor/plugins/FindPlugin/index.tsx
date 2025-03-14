@@ -1,8 +1,8 @@
 'use client'
-import React, { useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
-import {Input, Popover, Tooltip} from "antd";
+import {Input, InputRef, Popover, Tooltip} from "antd";
 import classNames from "classnames";
 import {IconFont} from "@/components/IconFont";
 import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
@@ -15,6 +15,7 @@ const FindPlugin = (props: PluginProps) => {
     // 匹配项，针对的是转义后的内容
     const [matches, setMatches] = useState<number[]>([]);
     const [findInputValue, setFindInputValue] = useState('');
+    const findInputRef = useRef<InputRef>(null);
     const [replaceInputValue, setReplaceInputValue] = useState('');
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [isCaseSensitive, setIsCaseSensitive] = useState(false); // 区分大小写，后续加
@@ -84,7 +85,12 @@ const FindPlugin = (props: PluginProps) => {
         if(showFind) closeFindBox();
         else openFindBox();
     });
-
+    // 用于打开查找框时聚焦到findInput上
+    useEffect(() => {
+        if(showFind && findInputRef.current){
+            findInputRef.current.focus();
+        }
+    }, [showFind]);
     return <Tooltip
         title='查找'
     >
@@ -92,13 +98,16 @@ const FindPlugin = (props: PluginProps) => {
             open={showFind}
             trigger='click'
             onOpenChange={(open) => {
-                if(open) openFindBox();
+                if(open) {
+                    openFindBox();
+                }
                 else closeFindBox();
             }}
             placement='bottom'
             content={<div className={styles.findContainer}>
                 <div className={styles.findLine}>
                     <Input
+                        ref={findInputRef}
                         placeholder='查找'
                         value={findInputValue}
                         onChange={(e) => {
