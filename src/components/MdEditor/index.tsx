@@ -6,6 +6,7 @@ import ReactMarkdown from "@/components/ReactMarkdown";
 import styles from "./index.module.scss";
 import {Plugins} from "react-markdown-editor-lite";
 import classNames from "classnames";
+import {useEffect} from "react";
 
 // 动态加载编辑器
 const loadMarkdownEditor = async () => {
@@ -41,6 +42,10 @@ type ReactEditorProps = {
 
 const ReactEditor = (props: ReactEditorProps) => {
     const { value = '', onChange, className } = props;
+    useEffect(() => {
+        const html = document.documentElement;
+        html.style.overflow = 'hidden';
+    }, []);
     return <>
         <MdEditor
             className={classNames(styles.mdEditorContainer, className)}

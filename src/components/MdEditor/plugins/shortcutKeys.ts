@@ -62,6 +62,11 @@ export const shortcutKeys: {
         key: 'tab',
         code: 'Tab',
         withKey: [],
+    },
+    find: {
+        key: 'f',
+        code: 'KeyF',
+        withKey: [controlKey],
     }
 }
 
