@@ -62,7 +62,6 @@ const DraftPage = () => {
                     draftId: res.id
                 }
             }).then(res => {
-                console.log(res);
                 // 跳转到新页面
                 router.push('/editor/draft/' + res.draftId);
             })
@@ -86,7 +85,7 @@ const DraftPage = () => {
                 publishDraft().then(res => {
                     if(res.msg === "success") {
                         messageApi.success('发布成功').then(() => {
-                            router.push('/userCenter/' + userInfo.id);
+                            router.push('/userCenter/' + userInfo.id + '/article');
                         });
                     }else {
                         messageApi.error('发布失败');

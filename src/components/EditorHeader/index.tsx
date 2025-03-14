@@ -17,6 +17,7 @@ type EditorHeaderProps = {
 const EditorHeader= (props: EditorHeaderProps) => {
     const { draft, onTitleChange, onSaveDraft, onPublicArticle } = props;
     const dispatch = useDispatch();
+
     return <div className={styles.editorHeaderContainer}>
         <div className={styles.title}>
             <Input
@@ -34,13 +35,16 @@ const EditorHeader= (props: EditorHeaderProps) => {
             <Popover
                 title='发布'
                 trigger='click'
-                content={<>
+                content={<div className={styles.publishContainer}>
                     <Form
                         labelCol={{span: 4}}
                         wrapperCol={{span: 16}}
                     >
                         <Form.Item
+                            required
                             label='标签'
+                            validateStatus={ draft.tags.length ? '' : 'error' }
+                            help={ draft.tags.length ? '' : '至少要有一个标签'}
                         >
                             <Tags
                                 tags={draft.tags}
@@ -53,10 +57,15 @@ const EditorHeader= (props: EditorHeaderProps) => {
                             />
                         </Form.Item>
                         <Form.Item
+                            required
                             label='摘要'
+                            validateStatus={ draft.summary ? '' : 'error' }
+                            help={ draft.summary ? '' : '摘要不能为空'}
                         >
                             <Input.TextArea
                                 rows={4}
+                                maxLength={100}
+                                showCount
                                 value={draft.summary}
                                 onChange={(e) => {
                                     dispatch(setDraft({
@@ -66,9 +75,12 @@ const EditorHeader= (props: EditorHeaderProps) => {
                                 }}
                             />
                         </Form.Item>
-                        <Button onClick={onPublicArticle}>确定并发布</Button>
+                        <Button onClick={() => {
+                            if(!draft.summary || draft.tags.length === 0) return;
+                            onPublicArticle()
+                        }}>确定并发布</Button>
                     </Form>
-                </>}
+                </div>}
             >
                 <Button type="primary" >发布</Button>
             </Popover>

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
 import { Flex, Input, Tag, theme, Tooltip } from 'antd';
-import {tag} from "postcss-selector-parser";
 
 const tagInputStyle: React.CSSProperties = {
     width: 64,
@@ -103,7 +102,7 @@ const Tags = (props: TagsProps) => {
                 const tagElem = (
                     <Tag
                         key={tag}
-                        closable={index !== 0}
+                        closable={true}
                         style={{ userSelect: 'none' }}
                         onClose={() => handleClose(tag)}
                     >

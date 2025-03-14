@@ -22,20 +22,26 @@ export const useUpdateDraft = () => {
             author_id: userInfo.id,
             author_nickname: userInfo.nick_name,
         }
-        console.log('apiData', apiData);
         const res = await apiClient(apiList.post.protected.draft.updateDraft,  {
             method: 'POST',
             body: JSON.stringify(apiData),
         });
         if(res.msg === "success") {
-            const newId = res.data.insertId;
-            dispatch(setDraft({
-                ...draft,
-                id: newId,
-            }))
-            return {
-                id: newId,
-                msg: "success"
+            if(res.data.insertId){
+                // 新建的会带insertId,更新操作的insertId是0
+                dispatch(setDraft({
+                    ...draft,
+                    id: res.data.insertId,
+                }))
+                return {
+                    id: res.data.insertId,
+                    msg: "success"
+                }
+            } else{
+                return {
+                    id: draft.id,
+                    msg: "success"
+                }
             }
         } else {
             return {
@@ -57,6 +63,7 @@ export const useGetDraft = () => {
             body: JSON.stringify(apiData),
         });
         if (res.msg === "success") {
+            console.log('res', draft, res.data);
             dispatch(setDraft({
                 ...draft,
                 ...res.data,
