@@ -27,7 +27,7 @@ const ArticleItem = (props: ArticleItemProps) => {
     >
         <div className={styles.leftBar}>
             <div className={styles.title}>{title}</div>
-            <div className={styles.summary}>{summary}{summary}</div>
+            <div className={styles.summary}>{summary}</div>
             <div className={styles.bottom}>
                 <div className={styles.bottomLeft}>
                     {author && <span className={styles.author}>{author}</span>}

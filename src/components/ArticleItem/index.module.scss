@@ -1,3 +1,5 @@
+$rightBarWidth: 40px;
+
 
 .ArticleItemContainer{
   display: flex;
@@ -12,8 +14,12 @@
   }
   .leftBar{
     flex: 1 1 auto;
+    max-width: calc(100% - #{$rightBarWidth});
     .title{
       font-size: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .summary{
       font-size: 14px;
@@ -42,7 +48,7 @@
     }
   }
   .rightBar{
-    width: 40px;
+    width: $rightBarWidth;
     display: flex;
     align-items: center;
     cursor: pointer;
