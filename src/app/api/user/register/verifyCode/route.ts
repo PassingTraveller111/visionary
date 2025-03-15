@@ -5,7 +5,6 @@ import {email_verificationTableType} from "@/app/api/sql/type";
 import {userTableType} from "@/app/api/protected/user/type";
 import {createToken} from "@/utils/auth";
 import transporter from "@/lib/email";
-import {userInfo} from "node:os";
 
 type verifyCodeRequestType = {
     email: string;

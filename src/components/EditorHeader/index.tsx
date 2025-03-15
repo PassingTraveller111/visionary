@@ -23,7 +23,7 @@ const EditorHeader= (props: EditorHeaderProps) => {
             <Input
                 value={draft.title}
                 placeholder="请输入标题"
-                maxLength={30}
+                maxLength={100}
                 onChange={(e) => onTitleChange(e.target.value)}
             />
         </div>
