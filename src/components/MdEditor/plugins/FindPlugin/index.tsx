@@ -7,6 +7,7 @@ import classNames from "classnames";
 import {IconFont} from "@/components/IconFont";
 import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 import {debounce} from "next/dist/server/utils";
+import {PluginTitle} from "@/components/MdEditor/PluginTitle";
 
 
 const FindPlugin = (props: PluginProps) => {
@@ -92,7 +93,7 @@ const FindPlugin = (props: PluginProps) => {
         }
     }, [showFind]);
     return <Tooltip
-        title='查找'
+        title={<PluginTitle title='查找' keyName='find' />}
     >
         <Popover
             open={showFind}

@@ -148,9 +148,7 @@ export const insertToPreAndLast = (editor: Editor, insertTextPre: string, insert
             start: before.length + insertTextPre.length,
             end: before.length + insertTextPre.length + toInsert.length,
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        editor.setText(`${before}${insertTextPre}${toInsert}${insertTextLast}${after}`, ()=>{}, newSelection);
+        editor.insertText(`${insertTextPre}${toInsert}${insertTextLast}`, true, newSelection);
     }
 }
 
@@ -261,14 +259,10 @@ function findSurroundingStrings(str: string, index: number, frontStr: string, ba
 * */
 export const insertInPoint = (editor: Editor, insertText: string) => {
     const selection = editor.getSelection();
-    const text = editor.getMdValue();
-    const newText = text.slice(0, selection.start) + insertText + text.slice(selection.start);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    editor.setText(newText, () => {}, {
+    editor.insertText(insertText, true, {
         start: selection.start,
         end: selection.start + insertText.length,
-    });
+    })
 }
 
 export const getSystemType = () => {

@@ -13,7 +13,7 @@ import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 const ImagePlugin = (props: PluginProps) => {
     const { editor } = props;
     const fileInputRef = useRef<HTMLInputElement>(null);
-    useEditorOnKeyDown(editor, 'image', (e) => {
+    useEditorOnKeyDown(editor, 'image', () => {
         handleClick();
     })
     const handleClick = () => {

@@ -2,7 +2,7 @@ import {shortcutKeys, shortcutKeysToStrings} from "@/components/MdEditor/plugins
 import React from "react";
 
 
-export const PluginTitle = (props: {title: string, keyName: keyof typeof shortcutKeys}) => {
+export const PluginTitle = (props: {title: string, keyName?: keyof typeof shortcutKeys}) => {
     const {title, keyName} = props;
     return <div
         style={{
@@ -10,6 +10,6 @@ export const PluginTitle = (props: {title: string, keyName: keyof typeof shortcu
         }}
     >
         <div>{title}</div>
-        <div>{shortcutKeysToStrings[keyName]}</div>
+        {keyName && <div>{shortcutKeysToStrings[keyName]}</div>}
     </div>
 }

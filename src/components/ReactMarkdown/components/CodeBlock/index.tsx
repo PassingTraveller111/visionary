@@ -11,7 +11,7 @@ const CodeComponents: ComponentType  = ({children, className}) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const match = /language-(\w+)/.exec(children && children.props.className || "");
-    const languageLable = match ? match[1] : '';
+    const languageLabel = match ? match[1] : '';
     const handleCopy = async () => {
         try {
             const text = document.getElementById(uniqueId)?.innerText || "";
@@ -31,7 +31,7 @@ const CodeComponents: ComponentType  = ({children, className}) => {
                         setIsUnFold(pre => !pre);
                     }}
                 >
-                    <span>{languageLable}</span>
+                    <span>{languageLabel}</span>
                     <IconFont
                         type={isUnFold ? 'icon-topArrow' : 'icon-bottomArrow' }
                     />
