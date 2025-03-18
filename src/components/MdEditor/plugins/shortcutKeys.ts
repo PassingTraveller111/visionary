@@ -67,7 +67,42 @@ export const shortcutKeys: {
         key: 'f',
         code: 'KeyF',
         withKey: [controlKey],
-    }
+    },
+    title0: {
+        key: '0',
+        code: 'Digit0',
+        withKey: [controlKey]
+    },
+    title1: {
+        key: '1',
+        code: 'Digit1',
+        withKey: [controlKey]
+    },
+    title2: {
+        key: '2',
+        code: 'Digit2',
+        withKey: [controlKey]
+    },
+    title3: {
+        key: '3',
+        code: 'Digit3',
+        withKey: [controlKey]
+    },
+    title4: {
+        key: '4',
+        code: 'Digit4',
+        withKey: [controlKey]
+    },
+    title5: {
+        key: '5',
+        code: 'Digit5',
+        withKey: [controlKey]
+    },
+    title6: {
+        key: '6',
+        code: 'Digit6',
+        withKey: [controlKey]
+    },
 }
 
 export const shortcutKeysToStrings = Object.assign({}, ...Object.keys(shortcutKeys).map(key => {

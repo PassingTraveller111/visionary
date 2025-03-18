@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
         const {
             userId,
         } = data;
-        const cacheData = await redisInstance.getArticleLikeCountByUserId.getRedisValue({ userId });
-        if (cacheData) return NextResponse.json({ msg: 'success', data: cacheData });
+        // const cacheData = await redisInstance.getArticleLikeCountByUserId.getRedisValue({ userId });
+        // if (cacheData) return NextResponse.json({ msg: 'success', data: cacheData });
         const results = await article_likes.getArticleLikeCountByUserId(userId);
         if (results) {
             const [ rows ] = results;

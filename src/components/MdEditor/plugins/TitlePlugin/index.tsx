@@ -7,11 +7,41 @@ import PluginIcon from "@/components/MdEditor/PluginIcon";
 import {Dropdown, MenuProps} from "antd";
 import classNames from "classnames";
 import { insertToSelectLinePrevious } from "@/components/MdEditor/plugins/utils";
+import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 
 const TitlePlugin = (props: PluginProps) => {
     const { editor } = props;
+    useEditorOnKeyDown(editor, 'title0', (event) => {
+        insertTitle(0);
+        event.preventDefault();
+    })
+    useEditorOnKeyDown(editor, 'title1', (event) => {
+        insertTitle(1);
+        event.preventDefault();
+    })
+    useEditorOnKeyDown(editor, 'title2', (event) => {
+        insertTitle(2);
+        event.preventDefault();
+    })
+    useEditorOnKeyDown(editor, 'title3', (event) => {
+        insertTitle(3);
+        event.preventDefault();
+    })
+    useEditorOnKeyDown(editor, 'title4', (event) => {
+        insertTitle(4);
+        event.preventDefault();
+    })
+    useEditorOnKeyDown(editor, 'title5', (event) => {
+        insertTitle(5);
+        event.preventDefault();
+    })
+    useEditorOnKeyDown(editor, 'title6', (event) => {
+        insertTitle(6);
+        event.preventDefault();
+    })
+
     const insertTitle = (h: number) => {
-        const insertText = new Array(h + 1).join('#') + ' ';
+        const insertText = new Array(h + 1).join('#') + (h > 0 ? ' ' : '');
         insertToSelectLinePrevious(editor, insertText, ['# ', '## ', '### ', '#### ', '##### ', '###### ']);
     }
     const numToText = ['一', '二', '三', '四', '五', '六']

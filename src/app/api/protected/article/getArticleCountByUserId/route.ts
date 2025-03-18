@@ -19,10 +19,10 @@ export type getArticleCountByUserIdResponse = {
 export async function POST(req: NextRequest) {
     try {
         const data: getArticleCountByUserIdRequest = await req.json();
-        const CacheData = await redis.get(getArticleCountByUserId(data.userId));
-        if (CacheData) {
-            return NextResponse.json({ msg: 'success', data: { articleCounts: CacheData } },{ status: 200 });
-        }
+        // const CacheData = await redis.get(getArticleCountByUserId(data.userId));
+        // if (CacheData) {
+        //     return NextResponse.json({ msg: 'success', data: { articleCounts: CacheData } },{ status: 200 });
+        // }
         const result = await article.getArticleCountByUserId(data.userId);
         if(result) {
             const [ [ { articleCounts } ] ] = result;
