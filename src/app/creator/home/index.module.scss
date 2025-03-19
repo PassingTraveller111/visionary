@@ -1,0 +1,60 @@
+.container{
+  width: 100%;
+  padding: 0 20px 20px 20px;
+  .content{
+    width: 100%;
+    .userInfo{
+      width: 100%;
+      .left{
+        display: flex;
+        .avatar{
+          width: 100px;
+          height: 100px;
+          img{
+            border-radius: 50%;
+          }
+        }
+        .info{
+          margin-left: 20px;
+          margin-top: 10px;
+          div{
+            width: 100%;
+          }
+          .nickname{
+            font-size: 20px;
+            font-weight: bold;
+          }
+          .username{
+            margin-top: -5px;
+            font-size: 17px;
+            color: #a19f9f;
+          }
+          .email{
+            margin-top: -5px;
+            font-size: 17px;
+            color: #a19f9f;
+          }
+        }
+      }
+      .days{
+        height: 100px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        .top{
+          width: 100%;
+          font-size: 25px;
+        }
+        .bottom{
+          width: 100%;
+          font-size: 30px;
+          font-weight: bold;
+        }
+      }
+    }
+    .statistic{
+      margin-top: 20px;
+      width: 100%;
+    }
+  }
+}
