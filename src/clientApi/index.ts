@@ -78,6 +78,7 @@ export const apiList = {
         protected: {
             user: {
                 getUserInfo: 'protected/user/getUserInfo', // 获取用户信息
+                getUserStatistic: 'protected/user/getUserStatistic', // 获取用户数据
             },
             article: {
             },

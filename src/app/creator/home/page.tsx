@@ -5,10 +5,28 @@ import styles from './index.module.scss';
 import {useAppSelector} from "@/store";
 import Image from "next/image";
 import {Card, Col, Row, Statistic} from "antd";
+import {useEffect, useState} from "react";
+import {apiClient, apiList} from "@/clientApi";
+import {getUserStatisticResType} from "@/app/api/protected/user/getUserStatistic/route";
 
 const HomePage = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
-
+    const [userStatistic, setUserStatistic] = useState<{
+        days_count: number;
+        articles_count: number;
+        likes_count: number;
+        looks_count: number;
+        collections_count: number;
+    }>({
+        days_count: 0, articles_count: 0, collections_count: 0, likes_count: 0, looks_count: 0
+    });
+    useEffect(() => {
+        apiClient(apiList.get.protected.user.getUserStatistic).then((res: getUserStatisticResType)  => {
+            if(res.msg === 'success'){
+                setUserStatistic(res.data);
+            }
+        })
+    }, []);
     return  <NavLayout>
         <CreatorSideBarLayout
             selectedMenuKey='home'
@@ -44,7 +62,7 @@ const HomePage = () => {
                             <Card>
                                 <div className={styles.days}>
                                     <div className={styles.top}>来到创见已经</div>
-                                    <div className={styles.bottom}>100天</div>
+                                    <div className={styles.bottom}>{userStatistic.days_count}天</div>
                                 </div>
                             </Card>
                         </Col>
@@ -56,8 +74,7 @@ const HomePage = () => {
                             <Card>
                                 <Statistic
                                     title="总文章数"
-                                    value={11}
-                                    precision={2}
+                                    value={userStatistic.articles_count}
                                 />
                             </Card>
                         </Col>
@@ -65,8 +82,7 @@ const HomePage = () => {
                             <Card>
                                 <Statistic
                                     title="总点赞数"
-                                    value={11}
-                                    precision={2}
+                                    value={userStatistic.likes_count}
                                 />
                             </Card>
                         </Col>
@@ -74,8 +90,17 @@ const HomePage = () => {
                             <Card>
                                 <Statistic
                                     title="总阅读数"
-                                    value={11}
-                                    precision={2}
+                                    value={userStatistic.likes_count}
+                                />
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={8}>
+                            <Card>
+                                <Statistic
+                                    title="总收藏数"
+                                    value={userStatistic.collections_count}
                                 />
                             </Card>
                         </Col>

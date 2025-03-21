@@ -26,7 +26,7 @@ const Navigation = () => {
             <ArticleSearch/>
             <Button
                 onClick={() => {
-                    router.push('/creator/content/article');
+                    router.push('/creator/home');
                 }}
             >创作中心</Button>
             <Profile/>
