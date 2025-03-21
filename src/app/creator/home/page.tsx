@@ -8,6 +8,7 @@ import {Card, Col, Row, Statistic} from "antd";
 import {useEffect, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
 import {getUserStatisticResType} from "@/app/api/protected/user/getUserStatistic/route";
+import StatisticLineChart from "@/components/StatisticLineChart";
 
 const HomePage = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
@@ -90,7 +91,7 @@ const HomePage = () => {
                             <Card>
                                 <Statistic
                                     title="总阅读数"
-                                    value={userStatistic.likes_count}
+                                    value={userStatistic.looks_count}
                                 />
                             </Card>
                         </Col>
@@ -104,7 +105,20 @@ const HomePage = () => {
                                 />
                             </Card>
                         </Col>
+                        {/*<Col span={8}>*/}
+                        {/*    <Card>*/}
+                        {/*        <Statistic*/}
+                        {/*            title="总评论数"*/}
+                        {/*            value={userStatistic.collections_count}*/}
+                        {/*        />*/}
+                        {/*    </Card>*/}
+                        {/*</Col>*/}
                     </Row>
+                </div>
+                <div className={styles.statisticCharts}>
+                    <Card>
+                        <StatisticLineChart/>
+                    </Card>
                 </div>
             </div>
         </div>
