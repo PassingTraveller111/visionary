@@ -71,3 +71,14 @@ export type article_collectionsTableType = {
     article_id: number, // 收藏的文章id
     collect_time: string, // 收藏的时间
 }
+
+export type article_commentsTableType = {
+    comment_id: number,
+    article_id: number,
+    user_id: number,
+    comment_text: string,
+    parent_comment_id: number,
+    created_at: string,
+    updated_at: string,
+    is_deleted: 0 | 1,
+}

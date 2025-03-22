@@ -28,12 +28,76 @@ $rightBarWidth: 260px;
       transition: 0.2s;
     }
   }
-  .readerContent {
-    padding: 20px;
+  .centerContent {
     width: calc(100% - #{$operatorWidth} - 20px - #{$rightBarWidth} - 20px);
     margin-left: $operatorWidth + 20px;
     min-width: 400px;
-    background: #fff;
+    .readerContent{
+      background: #fff;
+      padding: 0 30px 20px 30px;
+    }
+    .comments{
+      width: 100%;
+      background: #fff;
+      margin-top: 20px;
+      padding: 40px;
+      .sendComments{
+        .title{
+          font-size: 18px;
+          font-weight: 600;
+        }
+        .Input{
+          display: flex;
+          padding: 20px 0;
+          .avatar{
+            img{
+              width: 60px;
+              height: 60px;
+              border-radius: 50%;
+            }
+          }
+        }
+      }
+      .commentsList{
+        .topCommentContainer{
+          .childCommentContainer{
+            padding-left: 40px;
+          }
+        }
+        .commentItem{
+          display: flex;
+          margin-top: 10px;
+          .left{
+            img{
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+            }
+          }
+          .right{
+            width: calc(100% - 60px);
+            padding: 0 0 0 10px;
+            .nickName{
+              line-height: 40px;
+              font-size: 18px;
+              color: #515767;
+            }
+            .commentText{
+              line-height: 40px;
+              font-size: 18px;
+            }
+            .bottom{
+              span{
+                margin-right: 10px;
+              }
+              .commentButton{
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
+    }
   }
   .rightBar{
     position: fixed;
@@ -94,5 +158,35 @@ $rightBarWidth: 260px;
     max-height: 400px;
     border-top: 1px solid #ccc;
     padding: 10px 0;
+  }
+}
+
+.sendInput{
+  margin-left: 20px;
+  width: calc(100% - 60px - 20px);
+  .sendContainer{
+    height: 135px;
+    border-radius: 20px;
+    padding: 10px;
+    textarea{
+      border: none;
+      box-shadow: none;
+    }
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d9d9d9;
+    .bottom{
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      .count{
+        margin-right: 10px;
+      }
+    }
+  }
+  .isFocus{
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+    outline: 0;
   }
 }

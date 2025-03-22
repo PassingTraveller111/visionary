@@ -1,7 +1,7 @@
 "use client"
 import {useParams, useRouter} from "next/navigation";
 import { useAppSelector } from "@/store";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useArticleLike, useGetArticle} from "@/hooks/articles/useArticles";
 import ReaderHeader from "@/components/ReaderHeader";
 import NavLayout from "@/components/NavLayout";
@@ -9,12 +9,19 @@ import ReactMarkdown from "@/components/ReactMarkdown";
 import styles from './index.module.scss';
 import Image from "next/image";
 import {useGetAuthorInfo} from "@/hooks/users/useUsers";
-import { Anchor } from "antd";
+import {Anchor, Button, Input} from "antd";
 import {iconColors, IconFont} from "@/components/IconFont";
 import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import useMessage from "antd/es/message/useMessage";
 import classNames from "classnames";
 import { useSetArticleIsCollected} from "@/hooks/article_collections/useArticleCollections";
+import {apiClient, apiList} from "@/clientApi";
+import {sendCommentReqType} from "@/app/api/protected/article_comments/sendComment/route";
+import {
+    commentItem,
+    getCommentListByArticleIdResType
+} from "@/app/api/protected/article_comments/getCommentListByArticleId/route";
+import dayjs from "dayjs";
 
 const ReaderPage = () => {
     const articleId =  Number(useParams().articleId);
@@ -82,39 +89,42 @@ const ReaderPage = () => {
                             />
                         </div>
                     </div>
-                    <div className={styles.readerContent}>
-                        <ReaderHeader title={article.title} authorName={article.authorName} authorId={article.authorId}
-                                      draft_id={article.draft_id} views={article.views}
-                                      publishTime={article.publishTime}/>
-                        <ReactMarkdown
-                            components={{
-                                // 给标题添加id，用来做目录的定位
-                                h1: ({children, ...props}: { children: string}) => {
-                                    const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
-                                    return <h1 id={id} {...props}>{children}</h1>;
-                                },
-                                h2: ({children, ...props}: { children: string}) => {
-                                    const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
-                                    return <h2 id={id} {...props}>{children}</h2>;
-                                },
-                                h3: ({children, ...props}: { children: string}) => {
-                                    const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
-                                    return <h3 id={id} {...props}>{children}</h3>;
-                                },
-                                h4: ({children, ...props}: { children: string}) => {
-                                    const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
-                                    return <h4 id={id} {...props}>{children}</h4>;
-                                },
-                                h5: ({children, ...props}: { children: string}) => {
-                                    const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
-                                    return <h5 id={id} {...props}>{children}</h5>;
-                                },
-                                h6: ({children, ...props}: { children: string}) => {
-                                    const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
-                                    return <h6 id={id} {...props}>{children}</h6>;
-                                }
-                            }}
-                        >{article.content}</ReactMarkdown>
+                    <div className={styles.centerContent}>
+                        <div className={styles.readerContent}>
+                            <ReaderHeader title={article.title} authorName={article.authorName} authorId={article.authorId}
+                                          draft_id={article.draft_id} views={article.views}
+                                          publishTime={article.publishTime}/>
+                            <ReactMarkdown
+                                components={{
+                                    // 给标题添加id，用来做目录的定位
+                                    h1: ({children, ...props}: { children: string}) => {
+                                        const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
+                                        return <h1 id={id} {...props}>{children}</h1>;
+                                    },
+                                    h2: ({children, ...props}: { children: string}) => {
+                                        const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
+                                        return <h2 id={id} {...props}>{children}</h2>;
+                                    },
+                                    h3: ({children, ...props}: { children: string}) => {
+                                        const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
+                                        return <h3 id={id} {...props}>{children}</h3>;
+                                    },
+                                    h4: ({children, ...props}: { children: string}) => {
+                                        const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
+                                        return <h4 id={id} {...props}>{children}</h4>;
+                                    },
+                                    h5: ({children, ...props}: { children: string}) => {
+                                        const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
+                                        return <h5 id={id} {...props}>{children}</h5>;
+                                    },
+                                    h6: ({children, ...props}: { children: string}) => {
+                                        const id = React.Children.toArray(children).join('').replace(/\s/g, '-').toLowerCase();
+                                        return <h6 id={id} {...props}>{children}</h6>;
+                                    }
+                                }}
+                            >{article.content}</ReactMarkdown>
+                        </div>
+                        <Comments articleId={articleId} />
                     </div>
                     <div className={styles.rightBar}>
                         <AuthorBar
@@ -138,7 +148,7 @@ const AuthorBar = (props: AuthorBarProps) => {
     useEffect(() => {
         if(authorId === 0) return;
         getAuthorInfo(authorId);
-    }, [authorId]);
+    }, [authorId, getAuthorInfo]);
     return <div className={styles.authorBar}>
         <div className={styles.avatar}>
             {authorInfo?.profile && <Image src={authorInfo.profile} width={60} height={60} alt='avatar'/>}
@@ -266,3 +276,221 @@ const OperateButton = (props: { type: string, isActive?: boolean, onClick?: () =
         />
     </div>
 }
+
+
+const Comments = ({ articleId }: { articleId: number } ) => {
+    const [commentList, setCommentList] = useState<commentItem[]>([]);
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    // 获取评论列表
+    const initCommentList = useCallback(() => {
+        apiClient(apiList.post.protected.article_comments.getCommentListByArticleId, {
+            method: 'POST',
+            body: JSON.stringify({
+                article_id: articleId,
+            })
+        }).then((res: getCommentListByArticleIdResType) => {
+            if (res.msg === 'success') setCommentList(res.data);
+        })
+    }, [articleId]);
+    useEffect(() => {
+        initCommentList();
+    }, [initCommentList]);
+    return <div className={styles.comments} >
+        <SendComment articleId={articleId} userId={userInfo.id} avatar={userInfo.profile ?? ''} initCommentList={initCommentList}/>
+        <CommentsList articleId={articleId} commentList={commentList} userId={userInfo.id} initCommentList={initCommentList} />
+    </div>
+}
+
+const SendComment = ({ articleId, parentCommentId, avatar, userId, initCommentList }: { articleId: number, parentCommentId?: number, avatar: string, userId: number, initCommentList: () => void }) => {
+    return <div className={styles.sendComments}>
+        <div className={styles.title}>评论</div>
+        <div className={styles.Input}>
+            <div className={styles.avatar}>
+                {avatar && <Image src={avatar} alt={''} width={60} height={60}/>}
+            </div>
+            <SendCommentInput articleId={articleId} parentCommentId={parentCommentId} userId={userId} onSendComment={initCommentList} />
+        </div>
+    </div>
+}
+
+const SendCommentInput = (props: { userId: number, articleId: number, parentCommentId?: number, onSendComment?: () => void, onFocus?: () => void, onBlur?: () => void }) => {
+    const { userId, parentCommentId, articleId, onSendComment, onFocus, onBlur } = props;
+    const [commentText, setCommentText] = useState('');
+    const [messageApi, contextHandle] = useMessage();
+    const [isFocus, setIsFocus] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const sendComment = () => {
+        setIsLoading(true);
+        const apiData: sendCommentReqType = {
+            userId,
+            articleId,
+            parentCommentId,
+            commentText,
+        }
+        apiClient(apiList.post.protected.article_comments.sendArticleComment, {
+            method: 'POST',
+            body: JSON.stringify(apiData)
+        }).then(res => {
+            if(res.msg === 'success') {
+                messageApi.success('评论成功');
+            } else {
+                messageApi.error('评论失败');
+            }
+            // 清除评论内容
+            setCommentText('');
+            // 评论回调触发
+            if(onSendComment) onSendComment();
+            setIsLoading(false);
+        })
+    }
+    return <div className={styles.sendInput}>
+        {contextHandle}
+        <div
+            className={classNames({
+                [styles.sendContainer]: true,
+                [styles.isFocus]: isFocus,
+            })}
+        >
+            <Input.TextArea
+                value={commentText}
+                maxLength={100}
+                autoFocus={true}
+                onFocus={() => {
+                    setIsFocus(true);
+                    if (onFocus) onFocus();
+                }}
+                onBlur={() => {
+                    setIsFocus(false);
+                    if (onBlur) onBlur();
+                }}
+                style={{height: 80, resize: 'none'}}
+                placeholder={'发表评论'}
+                onChange={(e) => {
+                    setCommentText(e.target.value);
+                }}
+            />
+            <div
+                className={styles.bottom}
+            >
+                <span className={styles.count}>{commentText.length + '/100'}</span>
+                <Button
+                    type="primary"
+                    disabled={commentText.length === 0 || isLoading}
+                    onClick={sendComment}
+                    loading={isLoading}
+                >
+                    发送
+                </Button>
+            </div>
+        </div>
+    </div>
+}
+
+const CommentsList = ({ commentList, articleId, userId, initCommentList }: { commentList: commentItem[], articleId: number, userId: number, initCommentList: () => void }) => {
+
+    return <div className={styles.commentsList}>
+        {
+            commentList.map(topLevelComment => {
+                const flatComments = flattenComments(topLevelComment);
+                return <div key={topLevelComment.comment_id} className={styles.topCommentContainer}>
+                    <Comment userId={userId} comment={topLevelComment} articleId={articleId} initCommentList={initCommentList}/>
+                    <div className={styles.childCommentContainer}>
+                        {flatComments.map(childComment => {
+                            return <Comment
+                                userId={userId}
+                                key={childComment.comment_id}
+                                comment={childComment}
+                                topLevelCommentId={topLevelComment.comment_id}
+                                articleId={articleId}
+                                initCommentList={initCommentList}
+                            />
+                            })}
+                        </div>
+                    </div>
+                }
+            )}
+    </div>
+}
+
+
+const Comment = ({userId, articleId, comment, topLevelCommentId, initCommentList}: {
+    userId: number,
+    articleId: number,
+    comment: commentItem,
+    topLevelCommentId?: number
+    initCommentList: () => void
+}) => {
+    const [showReply, setShowReply] = useState(false);
+    return (
+        <div className={styles.commentItem}>
+            <div className={styles.left}>
+                {comment.userInfo.avatar &&
+                    <Image src={comment.userInfo.avatar} alt={''} width={40} height={40}/>}
+            </div>
+            <div className={styles.right}>
+                {
+                    topLevelCommentId
+                        ?
+                        // 子评论
+                        (
+                            comment.replyComment && comment.replyComment.id !== topLevelCommentId
+                                ?
+                                // 子评论的子评论
+                                <>
+                                    <span>
+                                        <span className={styles.nickName}>{comment.userInfo.nickname}</span>
+                                        回复
+                                        <span
+                                            className={styles.nickName}>{comment.replyComment.userInfo.nickname}：</span>
+                                    </span>
+                                    <span className={styles.commentText}>{comment.comment_text}</span>
+                                </>
+                                :
+                                // 顶级评论的子评论
+                                <>
+                                    <span className={styles.nickName}>{comment.userInfo.nickname}：</span>
+                                    <span className={styles.commentText}>{comment.comment_text}</span>
+                                </>
+                        )
+                        :
+                        // 顶级评论
+                        (
+                            <>
+                            <div className={styles.nickName}>{comment.userInfo.nickname}</div>
+                                <div className={styles.commentText}>{comment.comment_text}</div>
+                            </>
+                        )
+                }
+                <div className={styles.bottom}>
+                    <span>{dayjs(comment.created_at).format('YYYY-MM-DD')}</span>
+                    <span className={styles.commentButton} onClick={() => { setShowReply(!showReply) }} >回复</span>
+                </div>
+                {
+                    showReply && (
+                        <div style={{marginTop: '10px'}}>
+                            <SendCommentInput
+                                userId={userId}
+                                articleId={articleId}
+                                parentCommentId={comment.parent_comment_id}
+                                onSendComment={() => {
+                                    initCommentList();
+                                    setShowReply(false);
+                                }}
+                                onBlur={() => setShowReply(false)}
+                            />
+                        </div>
+                    )
+                }
+            </div>
+        </div>
+    );
+};
+
+// 递归函数，用于拍平评论
+const flattenComments = (topComment: commentItem, flatComments: commentItem[] = []) => {
+    topComment.children.forEach(child => {
+        flatComments.push(child);
+        flattenComments(child, flatComments);
+    });
+    return flatComments;
+};

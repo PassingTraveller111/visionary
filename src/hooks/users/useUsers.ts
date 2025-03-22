@@ -77,7 +77,7 @@ export const useGetAuthorInfo = () => {
     const [authorInfo, setAuthorInfo] = useState<AuthorInfoType>({
         id: 0, email: "", nick_name: "", profile: ""
     });
-    const getAuthorInfo = (id: number) => {
+    const getAuthorInfo = useCallback((id: number) => {
         const apiData: getAuthorInfoRequestType = {
             authorId: id,
         }
@@ -87,6 +87,6 @@ export const useGetAuthorInfo = () => {
         }).then((res: getAuthorInfoResponseType) => {
             setAuthorInfo(res.data);
         })
-    }
+    }, [])
     return { authorInfo, getAuthorInfo };
 }
