@@ -7,19 +7,13 @@ import Image from "next/image";
 import {Card, Col, Row, Statistic} from "antd";
 import {useEffect, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
-import {getUserStatisticResType} from "@/app/api/protected/user/getUserStatistic/route";
+import {getUserStatisticResType, statisticDataType} from "@/app/api/protected/user/getUserStatistic/route";
 import StatisticLineChart from "@/components/StatisticLineChart";
 
 const HomePage = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
-    const [userStatistic, setUserStatistic] = useState<{
-        days_count: number;
-        articles_count: number;
-        likes_count: number;
-        looks_count: number;
-        collections_count: number;
-    }>({
-        days_count: 0, articles_count: 0, collections_count: 0, likes_count: 0, looks_count: 0
+    const [userStatistic, setUserStatistic] = useState<statisticDataType>({
+        days_count: 0, articles_count: 0, collections_count: 0, likes_count: 0, looks_count: 0, comments_count: 0
     });
     useEffect(() => {
         apiClient(apiList.get.protected.user.getUserStatistic).then((res: getUserStatisticResType)  => {
@@ -105,14 +99,14 @@ const HomePage = () => {
                                 />
                             </Card>
                         </Col>
-                        {/*<Col span={8}>*/}
-                        {/*    <Card>*/}
-                        {/*        <Statistic*/}
-                        {/*            title="总评论数"*/}
-                        {/*            value={userStatistic.collections_count}*/}
-                        {/*        />*/}
-                        {/*    </Card>*/}
-                        {/*</Col>*/}
+                        <Col span={8}>
+                            <Card>
+                                <Statistic
+                                    title="总评论数"
+                                    value={userStatistic.comments_count}
+                                />
+                            </Card>
+                        </Col>
                     </Row>
                 </div>
                 <div className={styles.statisticCharts}>

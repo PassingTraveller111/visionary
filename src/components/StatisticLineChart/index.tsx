@@ -105,9 +105,9 @@ const StatisticLineChart = () => {
                 <YAxis />
                 <Tooltip/>
                 <Legend height={36} />  {/*最下面的用来指示label对应的线条颜色*/}
-                <Line type="monotone" dataKey='like' stroke="#C4D79B" name='点赞' activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey='like' stroke="#C4D79B" name='点赞' />
                 <Line type="monotone" dataKey='collect' stroke="#F9DDA4" name='收藏' />
-                {/*<Line type="monotone" dataKey={statisticKeyEnum.comment} stroke="#A2C8EC" />*/}
+                <Line type="monotone" dataKey='comment' stroke="#A2C8EC" name='评论' />
                 <Line type="monotone" dataKey='look' stroke="#E6BCCF"  name='阅读' />
             </LineChart>
         </ResponsiveContainer>

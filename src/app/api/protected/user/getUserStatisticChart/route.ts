@@ -8,6 +8,7 @@ export type chartDataItemType = {
     like_count: number;
     read_count: number;
     collection_count: number;
+    comment_count: number;
 }
 export type getUserStatisticChartReqType = {
     startDate: string; // 开始日期 YYYY-MM-DD

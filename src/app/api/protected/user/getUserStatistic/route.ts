@@ -9,6 +9,7 @@ export type statisticDataType = {
     likes_count: number;
     collections_count: number;
     looks_count: number;
+    comments_count: number;
 }
 
 export type getUserStatisticResType = {

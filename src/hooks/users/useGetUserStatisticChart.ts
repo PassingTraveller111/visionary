@@ -11,7 +11,7 @@ export type chartListItemType = {
     look: number, // 阅读数
     like: number, // 点赞
     collect: number, // 收藏
-    // comment: number, // 评论
+    comment: number, // 评论
 }
 
 export const useGetUserStatisticChart = () => {
@@ -32,6 +32,7 @@ export const useGetUserStatisticChart = () => {
                     like: item.like_count,
                     look: item.read_count,
                     collect: item.collection_count,
+                    comment: item.comment_count,
                 }
             }));
         });
