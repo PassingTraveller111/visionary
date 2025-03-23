@@ -42,8 +42,10 @@ export async function POST(req: NextRequest){
                 });
                 rows.forEach(comment => {
                     if (comment.parent_comment_id === null) {
-                        result.push(comment);
+                        // push顶级评论
+                        if(comment.is_deleted === 0) result.push(comment);
                     } else {
+                        // 记录父评论
                         const parentComment = commentMap[comment.parent_comment_id];
                         if (parentComment) {
                             parentComment.children.push(comment);
@@ -52,6 +54,7 @@ export async function POST(req: NextRequest){
                                 userInfo: parentComment.userInfo,
                             };
                         }
+
                     }
                 });
                 return NextResponse.json({ msg: 'success', data: result }, { status: 200 });

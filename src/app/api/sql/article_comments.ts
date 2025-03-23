@@ -14,11 +14,19 @@ const getCommentListByArticleId = async (articleId: number) => {
                 FROM article_comments AS ac
                          LEFT JOIN
                      users AS u ON ac.user_id = u.id
-                WHERE article_id = ?`
+                WHERE article_id = ? AND is_deleted = 0`
         , [articleId])) as [ commentItem[] ] | null
+}
+
+const deleteComment = async (comment_id: number, userId: number) => {
+    return (await query(`UPDATE article_comments
+                         SET is_deleted = 1
+                         WHERE comment_id = ? AND user_id = ?
+                    `, [comment_id, userId]));
 }
 
 export const article_comments = {
     sendArticleComment,
     getCommentListByArticleId,
+    deleteComment,
 }

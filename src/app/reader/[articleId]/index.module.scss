@@ -86,12 +86,15 @@ $rightBarWidth: 260px;
               line-height: 40px;
               font-size: 18px;
             }
-            .bottom{
+            .commentBottom{
               span{
                 margin-right: 10px;
               }
               .commentButton{
                 cursor: pointer;
+                &:hover{
+                  color: #1e80ff;
+                }
               }
             }
           }

@@ -9,7 +9,7 @@ import ReactMarkdown from "@/components/ReactMarkdown";
 import styles from './index.module.scss';
 import Image from "next/image";
 import {useGetAuthorInfo} from "@/hooks/users/useUsers";
-import {Anchor, Button, Input} from "antd";
+import {Anchor, Button, Input, Popconfirm} from "antd";
 import {iconColors, IconFont} from "@/components/IconFont";
 import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import useMessage from "antd/es/message/useMessage";
@@ -22,6 +22,7 @@ import {
     getCommentListByArticleIdResType
 } from "@/app/api/protected/article_comments/getCommentListByArticleId/route";
 import dayjs from "dayjs";
+import {delCommentReqType} from "@/app/api/protected/article_comments/delComment/route";
 
 const ReaderPage = () => {
     const articleId =  Number(useParams().articleId);
@@ -313,8 +314,8 @@ const SendComment = ({ articleId, parentCommentId, avatar, userId, initCommentLi
     </div>
 }
 
-const SendCommentInput = (props: { userId: number, articleId: number, parentCommentId?: number, onSendComment?: () => void, onFocus?: () => void, onBlur?: () => void }) => {
-    const { userId, parentCommentId, articleId, onSendComment, onFocus, onBlur } = props;
+const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?: boolean, parentCommentId?: number, onSendComment?: () => void, onFocus?: () => void, onBlur?: () => void }) => {
+    const { userId, parentCommentId, articleId, onSendComment, onFocus, onBlur, autoFocus = false } = props;
     const [commentText, setCommentText] = useState('');
     const [messageApi, contextHandle] = useMessage();
     const [isFocus, setIsFocus] = useState(false);
@@ -354,7 +355,7 @@ const SendCommentInput = (props: { userId: number, articleId: number, parentComm
             <Input.TextArea
                 value={commentText}
                 maxLength={100}
-                autoFocus={true}
+                autoFocus={autoFocus}
                 onFocus={() => {
                     setIsFocus(true);
                     if (onFocus) onFocus();
@@ -418,9 +419,20 @@ const Comment = ({userId, articleId, comment, topLevelCommentId, initCommentList
     articleId: number,
     comment: commentItem,
     topLevelCommentId?: number
-    initCommentList: () => void
+    initCommentList:  () => void
 }) => {
     const [showReply, setShowReply] = useState(false);
+    const delComment = () => {
+        const apiData: delCommentReqType = {
+            comment_id: comment.comment_id
+        }
+        apiClient(apiList.post.protected.article_comments.delComment, {
+            method: 'POST',
+            body: JSON.stringify(apiData)
+        }).then(() => {
+            initCommentList();
+        });
+    }
     return (
         <div className={styles.commentItem}>
             <div className={styles.left}>
@@ -440,8 +452,7 @@ const Comment = ({userId, articleId, comment, topLevelCommentId, initCommentList
                                     <span>
                                         <span className={styles.nickName}>{comment.userInfo.nickname}</span>
                                         回复
-                                        <span
-                                            className={styles.nickName}>{comment.replyComment.userInfo.nickname}：</span>
+                                        <span className={styles.nickName}>{comment.replyComment.userInfo.nickname}：</span>
                                     </span>
                                     <span className={styles.commentText}>{comment.comment_text}</span>
                                 </>
@@ -461,9 +472,18 @@ const Comment = ({userId, articleId, comment, topLevelCommentId, initCommentList
                             </>
                         )
                 }
-                <div className={styles.bottom}>
+                <div className={styles.commentBottom}>
                     <span>{dayjs(comment.created_at).format('YYYY-MM-DD')}</span>
-                    <span className={styles.commentButton} onClick={() => { setShowReply(!showReply) }} >回复</span>
+                    <span className={styles.commentButton} onClick={() => { setShowReply(!showReply) }} >{!showReply ? '回复' : '取消回复'}</span>
+                    {userId === comment.user_id
+                        &&
+                        <Popconfirm
+                            title={'确定删除这条评论吗？'}
+                            onConfirm={delComment}
+                        >
+                            <span className={styles.commentButton}>删除</span>
+                        </Popconfirm>
+                    }
                 </div>
                 {
                     showReply && (
@@ -471,12 +491,12 @@ const Comment = ({userId, articleId, comment, topLevelCommentId, initCommentList
                             <SendCommentInput
                                 userId={userId}
                                 articleId={articleId}
-                                parentCommentId={comment.parent_comment_id}
+                                autoFocus={true}
+                                parentCommentId={comment.comment_id}
                                 onSendComment={() => {
                                     initCommentList();
                                     setShowReply(false);
                                 }}
-                                onBlur={() => setShowReply(false)}
                             />
                         </div>
                     )
