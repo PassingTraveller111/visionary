@@ -1,6 +1,6 @@
 import {query} from "@/app/api/utils";
 import {article_reading_recordsTableType} from "@/app/api/sql/type";
-import {articleTableType} from "@/app/api/protected/article/type";
+import {articleTableType} from "@/app/api/sql/type";
 
 // 获取某用户的浏览记录
 const getArticleReadingRecordsByUserId = async (userId: number, pageNum: number = 0, pageSize: number = 8) => {
