@@ -6,8 +6,7 @@ import {useCallback, useState} from "react";
 import {
     getArticleReadingRecordsByUserIdRequestType, getArticleReadingRecordsByUserIdResponseType
 } from "@/app/api/protected/article_reading_records/getArticleReadingRecordsByUserId/route";
-import {article_reading_recordsTableType} from "@/app/api/sql/type";
-import {articleTableType} from "@/app/api/protected/article/type";
+import {article_reading_recordsTableType, articleTableType} from "@/app/api/sql/type";
 import useMessage from "antd/es/message/useMessage";
 import {
     getLookCountsByUserIdRequestType, getLookCountsByUserIdResponseType

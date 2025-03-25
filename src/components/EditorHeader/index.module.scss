@@ -28,4 +28,8 @@ $editor-header-height: 70px;
 .publishContainer{
   display: inline-block;
   width: 400px;
+  .publishContainerBottom{
+    padding-top: 20px;
+    float: right;
+  }
 }

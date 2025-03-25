@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {article_reading_records} from "@/app/api/sql/article_reading_records";
 import {article_reading_recordsTableType} from "@/app/api/sql/type";
-import {articleTableType} from "@/app/api/protected/article/type";
+import {articleTableType} from "@/app/api/sql/type";
 
 export type getArticleReadingRecordsByUserIdRequestType = {
     userId: number;

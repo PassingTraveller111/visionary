@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
-import {userTableType} from "@/app/api/protected/user/type";
+import {userTableType} from "@/app/api/sql/type";
 import {getUserInfoKey} from "@/app/api/redisKeys";
 import redis from "@/lib/redis";
 

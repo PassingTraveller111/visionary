@@ -1,8 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
-import {draftTableType} from "@/app/api/protected/draft/type";
+import {draftTableType, reviewStatusType} from "@/app/api/sql/type";
 import {PoolConnection} from "mysql2/promise";
-import {reviewStatusType} from "@/app/api/protected/review/type";
 import redis from "@/lib/redis";
 import {getArticleKey, getDraftKey} from "@/app/api/redisKeys";
 
@@ -59,8 +58,8 @@ export async function POST(req: NextRequest) {
 }
 
 const insertReview = async (draft: draftTableType, connection: PoolConnection): Promise<number> => {
-    const sql = `INSERT INTO reviews (content, title, summary, tags, draft_id, author_id, status) VALUES (?,?,?,?,?,?,?)`;
-    const values = [draft.content, draft.title, draft.summary, draft.tags, draft.id, draft.author_id, 'reviewing'];
+    const sql = `INSERT INTO reviews (content, title, summary, tags, draft_id, author_id, status, cover) VALUES (?,?,?,?,?,?,?,?)`;
+    const values = [draft.content, draft.title, draft.summary, draft.tags, draft.id, draft.author_id, 'reviewing', draft.cover];
     const [ rows ] = await connection.execute(sql, values);
     const insertId = (rows as { insertId: number }).insertId;
     return insertId ?? 0;
@@ -83,8 +82,8 @@ const insertArticle = async (draft: draftTableType, review_id: number, connectio
     // 文章发布状态设为未发布
     // 文章审核状态设为待审核
     const sql = `INSERT INTO articles 
-    (is_published, review_status, title, summary, content, author_id, published_time, updated_time, tags, author_nickname, draft_id, review_id)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
+    (is_published, review_status, title, summary, content, author_id, published_time, updated_time, tags, author_nickname, draft_id, review_id, cover)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
     const values = [
         0,
         'pending_review',
@@ -97,7 +96,9 @@ const insertArticle = async (draft: draftTableType, review_id: number, connectio
         draft.tags,
         draft.author_nickname,
         draft.id,
-        review_id];
+        review_id,
+        draft.cover
+    ];
     const [ rows ] = await connection.execute(sql, values);
     const insertId = (rows as { insertId: number }).insertId;
     return insertId ?? 0;
@@ -136,7 +137,8 @@ const auditArticle = (draft: draftTableType, article_id: number, review_id: numb
                     published_time = ?,
                     updated_time = ?,
                     tags = ?,
-                    author_nickname = ?
+                    author_nickname = ?,
+                    cover = ?
                 WHERE id = ?`;
         const values = [1, 'already_review',
             draft.title,
@@ -147,6 +149,7 @@ const auditArticle = (draft: draftTableType, article_id: number, review_id: numb
             new Date(),
             draft.tags,
             draft.author_nickname,
+            draft.cover,
             article_id];
         await connection.execute(sql, values);
         await redis.del(getArticleKey(article_id ?? 0));

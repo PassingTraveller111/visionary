@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {verifyToken} from "@/utils/auth";
-import {articleTableType} from "@/app/api/protected/article/type";
+import {articleTableType} from "@/app/api/sql/type";
 
 export type getArticleListRequestType = {
     authorId: number;

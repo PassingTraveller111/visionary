@@ -12,7 +12,7 @@ export enum TableNames {
     article_collections = 'article_collections', // 收藏表
 }
 
-
+// 文章表
 export type articleTableType = {
     id: number;
     content: string;
@@ -28,8 +28,10 @@ export type articleTableType = {
     collects: number;
     draft_id?: number;
     review_id?: number;
+    cover?: string;
 }
 
+// 邮箱验证码表
 export type email_verificationTableType = {
     email: string,
     verificationCode: string,
@@ -72,6 +74,7 @@ export type article_collectionsTableType = {
     collect_time: string, // 收藏的时间
 }
 
+// 文章评论表
 export type article_commentsTableType = {
     comment_id: number,
     article_id: number,
@@ -82,3 +85,58 @@ export type article_commentsTableType = {
     updated_at: string,
     is_deleted: 0 | 1,
 }
+
+// 文章点赞表
+export type articleLikesTableType = {
+    id: number;
+    user_id: number;
+    article_id: number;
+    like_at: string;
+}
+
+// 草稿表
+export type draftTableType = {
+    id: number;
+    content: string;
+    title: string;
+    summary: string;
+    tags: string[];
+    status: 'onlyDraft' | 'hasArticle';
+    author_id: number;
+    author_nickname: string;
+    article_id?: number;
+    review_id?: number;
+    cover?: string;
+}
+
+// 审核表
+export type reviewTableType = {
+    id: number;
+    content: string;
+    title: string;
+    summary: string;
+    tags: string[];
+    status: reviewStatusType;
+    author_id: number;
+    author_nickname: string;
+    article_id?: number;
+    draft_id?: number;
+    cover?: string;
+}
+
+export type reviewStatusType = 'reviewing' | 'review_fail' | 'review_success';
+
+// 用户表
+export type userTableType = {
+    id: number,
+    username: string,
+    email: string,
+    password: string,
+    first_name: string,
+    last_name: string,
+    create_time: string,
+    role: 0 | 1 | 2,
+    profile: string, // 头像
+    nick_name: string,
+}
+

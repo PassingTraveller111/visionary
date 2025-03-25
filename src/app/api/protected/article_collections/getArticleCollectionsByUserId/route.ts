@@ -1,7 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {article_collections} from "@/app/api/sql/article_collections";
 import {article_collectionsTableType, articleTableType} from "@/app/api/sql/type";
-import {article_likes} from "@/app/api/sql/article_likes";
 
 export type getArticleCollectionsByUserIdRequestType = {
     userId: number;
@@ -9,7 +8,7 @@ export type getArticleCollectionsByUserIdRequestType = {
 
 export type getArticleCollectionsByUserIdResponseType = {
     msg: 'success' | 'error';
-    data: (Pick<article_collectionsTableType, 'article_id' | 'collect_time'> & Pick<articleTableType, 'title' | 'tags' | 'summary'>
+    data: (Pick<article_collectionsTableType, 'article_id' | 'collect_time'> & Pick<articleTableType, 'title' | 'tags' | 'summary' | 'cover'>
         & { author_name: string, like_count: number, look_count: number })[];
 }
 

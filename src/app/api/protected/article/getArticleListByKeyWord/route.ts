@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {articleTableType} from "@/app/api/protected/article/type";
+import {articleTableType} from "@/app/api/sql/type";
 import {article} from "@/app/api/sql/article";
 
 export type getArticleListByKeyWordRequestType = {

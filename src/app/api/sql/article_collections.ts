@@ -31,6 +31,7 @@ const getArticleCollectionsByUserId = async (userId: number) => {
                             a.title,
                             a.tags,
                             a.summary,
+                            a.cover,
                             u.nick_name AS author_name,
                             COALESCE(like_subquery.like_count, 0) AS like_count,
                             COALESCE(look_subquery.look_count, 0) AS look_count

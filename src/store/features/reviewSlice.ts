@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {reviewTableType} from "@/app/api/protected/review/type";
+import {reviewTableType} from "@/app/api/sql/type";
 
 export type reviewType = reviewTableType;
 

@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {articleTableType} from "@/app/api/protected/article/type";
+import {articleTableType} from "@/app/api/sql/type";
 import {article} from "@/app/api/sql/article";
 
 export type getPublishedArticleListRequestType = {
@@ -14,7 +14,7 @@ export type getPublishedArticleListResponseType = {
     pageNum: number;
     pageSize: number;
 }
-export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags'> & {
+export type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags' | 'cover'> & {
     like_count: number;
     look_count: number;
 };

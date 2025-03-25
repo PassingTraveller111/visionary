@@ -1,5 +1,5 @@
 import {query} from "@/app/api/utils";
-import {articleLikesTableType} from "@/app/api/protected/article_likes/type";
+import {articleLikesTableType} from "@/app/api/sql/type";
 
 
 const getArticleIsLike = async (userId: number, articleId: number) => {

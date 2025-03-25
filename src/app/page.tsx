@@ -167,6 +167,7 @@ type ArticleListItemType = {
     like_count: number;
     look_count: number;
     tags: string[];
+    cover?: string;
 }
 
 const ArticleList = (props: {
@@ -190,6 +191,7 @@ const ArticleList = (props: {
                         looks_count={article.look_count}
                         summary={article.summary}
                         tags={article.tags}
+                        cover={article.cover}
                     />
                 })
         }

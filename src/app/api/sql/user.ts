@@ -1,5 +1,5 @@
 import {query} from "@/app/api/utils";
-import {userTableType} from "@/app/api/protected/user/type";
+import {userTableType} from "@/app/api/sql/type";
 import {statisticDataType} from "@/app/api/protected/user/getUserStatistic/route";
 
 

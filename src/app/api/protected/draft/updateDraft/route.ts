@@ -11,6 +11,7 @@ export type updateDraftDataType = {
     tags: string[];
     author_id: number;
     author_nickname: string;
+    cover?: string;
 };
 
 
@@ -18,14 +19,14 @@ export async function POST(req: NextRequest) {
     const connection = await pool.getConnection();
     try {
         const data: updateDraftDataType = await req.json();
-        const { title, content, summary, tags, author_id, draftId, author_nickname } = data;
+        const { title, content, summary, tags, author_id, draftId, author_nickname, cover } = data;
         let sql, values: unknown[];
         if (draftId === 'new') {
-            sql = `INSERT INTO drafts (title, content, summary, tags, author_id, author_nickname) VALUES (?,?,?,?,?,?)`;
-            values = [title, content, summary, tags, author_id, author_nickname];
+            sql = `INSERT INTO drafts (title, content, summary, tags, author_id, author_nickname, cover) VALUES (?,?,?,?,?,?,?)`;
+            values = [title, content, summary, tags, author_id, author_nickname, cover];
         } else {
-            sql = `UPDATE drafts SET content = ?, title = ?, summary = ?, tags = ? WHERE id = ?;`;
-            values = [content, title, summary, tags, draftId];
+            sql = `UPDATE drafts SET content = ?, title = ?, summary = ?, tags = ?, cover = ? WHERE id = ?;`;
+            values = [content, title, summary, tags, cover, draftId];
             await redis.del(getDraftKey(draftId));
         }
         const [ rows ] = await connection.execute(sql, values);

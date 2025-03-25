@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
-import {draftTableType} from "@/app/api/protected/draft/type";
+import {draftTableType} from "@/app/api/sql/type";
 import redis from "@/lib/redis";
 import {getDraftKey} from "@/app/api/redisKeys";
 

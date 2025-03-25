@@ -21,6 +21,7 @@ export const useUpdateDraft = () => {
             content: draft.content,
             author_id: userInfo.id,
             author_nickname: userInfo.nick_name,
+            cover: draft.cover,
         }
         const res = await apiClient(apiList.post.protected.draft.updateDraft,  {
             method: 'POST',

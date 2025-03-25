@@ -1,0 +1,12 @@
+
+
+.upload{
+  :global(.ant-upload){
+    width: 192px !important;
+    height: 128px !important;
+  }
+  :global(.ant-upload-list-item){
+    width: 192px !important;
+    height: 128px !important;
+  }
+}

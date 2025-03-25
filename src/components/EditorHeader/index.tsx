@@ -5,6 +5,7 @@ import Tags from "@/components/Tags";
 import {useDispatch} from "react-redux";
 import {draftType, setDraft} from "@/store/features/draftSlice";
 import {Profile} from "@/components/Profile";
+import UploadCover from "@/components/UploadCover";
 
 type EditorHeaderProps = {
     draft: draftType;
@@ -75,11 +76,27 @@ const EditorHeader= (props: EditorHeaderProps) => {
                                 }}
                             />
                         </Form.Item>
+                        <Form.Item
+                            label='封面'
+                            help={draft.cover ? '' : '建议图片大小为192*128px'}
+                        >
+                            <UploadCover
+                                initValue={draft.cover}
+                                onChange={(coverList) => {
+                                const cover = (coverList.length > 0 && coverList[0].response) ? ('https://' + coverList[0].response.data.Location) : undefined;
+                                dispatch(setDraft({
+                                    ...draft,
+                                    cover,
+                                }))
+                            }} />
+                        </Form.Item>
+                    </Form>
+                    <div className={styles.publishContainerBottom}>
                         <Button onClick={() => {
                             if(!draft.summary || draft.tags.length === 0) return;
                             onPublicArticle()
                         }}>确定并发布</Button>
-                    </Form>
+                    </div>
                 </div>}
             >
                 <Button type="primary" >发布</Button>

@@ -52,6 +52,7 @@ const CollectPage = () => {
                         likes_count={item.like_count}
                         looks_count={item.look_count}
                         tags={item.tags}
+                        cover={item.cover}
                         operateMenuItems={items}
                     />
                 })}

@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {verifyToken} from "@/utils/auth";
-import {draftTableType} from "@/app/api/protected/draft/type";
+import {draftTableType} from "@/app/api/sql/type";
 
 export type getDraftListRequestType = {
     authorId: number;

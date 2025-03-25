@@ -36,6 +36,7 @@ export const apiList = {
                 getArticle: 'protected/article/getArticle', // 获取文章
                 getArticleList: 'protected/article/getArticleList', // 获取文章列表
                 uploadImage: 'protected/article/uploadImage', // 上传文章图片
+                uploadCover: 'protected/article/uploadCover', // 上传文章封面
                 delArticle: 'protected/article/delArticle', // 删除文章
                 getPublishedArticleList: 'protected/article/getPublishedArticleList', // 获取公开文章列表
                 getArticleListByKeyWord: 'protected/article/getArticleListByKeyWord', // 模糊搜索文章

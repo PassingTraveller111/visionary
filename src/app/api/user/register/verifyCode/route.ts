@@ -1,8 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {user} from "@/app/api/sql/user";
 import {email_verification} from "@/app/api/sql/email_verification";
-import {email_verificationTableType} from "@/app/api/sql/type";
-import {userTableType} from "@/app/api/protected/user/type";
+import {email_verificationTableType, userTableType} from "@/app/api/sql/type";
 import {createToken} from "@/utils/auth";
 import transporter from "@/lib/email";
 

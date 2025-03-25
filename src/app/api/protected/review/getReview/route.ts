@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
-import {reviewTableType} from "@/app/api/protected/review/type";
+import {reviewTableType} from "@/app/api/sql/type";
 
 export type getReviewRequestType = {
     review_id: number;

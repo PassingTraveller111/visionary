@@ -10,6 +10,7 @@ export type draftType = {
     article_id: number; // 文章id
     review_id: number; // 审核id
     author_id: number; // 作者id
+    cover?: string; // 封面
 }
 
 type InitialStateType = {
@@ -27,6 +28,7 @@ const initialState: InitialStateType = {
         article_id: 0,
         review_id: 0,
         author_id: 0,
+        cover: '',
     }
 };
 
