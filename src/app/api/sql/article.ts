@@ -37,7 +37,7 @@ const getPublishedArticleCount = async () => {
 const getArticleListByKeyWord = async (keyword: string, pageNum: number, pageSize: number) => {
     const offset = pageNum * pageSize;
     const fuzzyKeyword = `%${keyword}%`;
-    return await query(`SELECT id, title, review_status, review_id, updated_time, draft_id, is_published, published_time, author_nickname, author_id, summary, cover,
+    return await query(`SELECT id, title, review_status, review_id, updated_time, draft_id, is_published, published_time, author_nickname, author_id, summary, cover, tags,
                         (
                             -- 标题中关键字出现次数得分，权重设为 3
                             (LENGTH(title) - LENGTH(REPLACE(title, ?, ''))) / LENGTH(?) * 3 +

@@ -15,7 +15,7 @@ export type getArticleListByKeyWordResponseType = {
     pageNum: number;
     pageSize: number;
 }
-export type ItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags'>
+export type ItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags' | 'cover'>
     & {
         like_count: number;
         look_count: number;

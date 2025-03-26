@@ -6,6 +6,7 @@ import styles from './index.module.scss';
 import moment from "moment";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Empty} from "antd";
+import ArticleItem from "@/components/ArticleItem";
 
 function SearchPage() {
     const router = useRouter();
@@ -34,20 +35,18 @@ function SearchPage() {
                         {articleList.length === 0 && <Empty />}
                         {
                             articleList.map((article) => {
-                                return <div
+                                return <ArticleItem
                                     key={article.id}
-                                    className={styles.articleItem}
-                                    onClick={() => {
-                                        router.push('/reader/' + article.id);
-                                    }}
-                                >
-                                    <div className={styles.title}>{article.title}</div>
-                                    <div className={styles.summary}>{article.summary}</div>
-                                    <div className={styles.itemBottom}>
-                                        <div className={styles.author}>{article.author_nickname}</div>
-                                        <div className={styles.date}>{moment(article.updated_time).format('YYYY-MM-DD')}</div>
-                                    </div>
-                                </div>
+                                    title={article.title}
+                                    articleId={article.id}
+                                    summary={article.summary}
+                                    tags={article.tags}
+                                    author={article.author_nickname}
+                                    updateTime={article.updated_time}
+                                    likes_count={article.like_count}
+                                    looks_count={article.look_count}
+                                    cover={article.cover}
+                                />
                             })
                         }
                     </div>
