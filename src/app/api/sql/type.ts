@@ -107,6 +107,8 @@ export type draftTableType = {
     article_id?: number;
     review_id?: number;
     cover?: string;
+    update_time?: string;
+    create_time?: string;
 }
 
 // 审核表
@@ -140,3 +142,19 @@ export type userTableType = {
     nick_name: string,
 }
 
+// 专栏表
+export type columnsTableType = {
+    column_id: number,
+    column_name: string,
+    cover_image?: string,
+    author_id: number,
+    description: string,
+    created_at: string,
+}
+
+// 文章专栏关联表
+export type article_columnsTableType = {
+    id: number,
+    column_id: number,
+    article_id: number,
+}

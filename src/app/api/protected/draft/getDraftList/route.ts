@@ -10,7 +10,7 @@ export type getDraftListResponseType = {
     msg: 'success' | 'error';
     data: itemType[];
 }
-export type itemType = Pick<draftTableType, 'id' | 'title' | 'review_id'>;
+export type itemType = Pick<draftTableType, 'id' | 'title' | 'review_id' | 'summary' | 'tags' | 'cover' | 'update_time'>;
 
 export async function POST(req: NextRequest) {
     const connection = await pool.getConnection();
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         // 非本人无访问权限
         if (!isOwn) return NextResponse.json({ msg: 'error', data: '无访问权限' }, { status: 200 });
         // 只有仅草稿的草稿才能展示在草稿箱
-        const sql = `SELECT id, title, review_id 
+        const sql = `SELECT id, title, review_id, summary, cover, tags, update_time
                      FROM drafts 
                      WHERE author_id = ? AND status = 'onlyDraft'
                      ORDER BY id DESC`;

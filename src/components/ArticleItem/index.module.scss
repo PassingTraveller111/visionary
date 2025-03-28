@@ -13,12 +13,18 @@ $editWidth: 40px;
     background-color: #eee;
   }
   .leftBar{
-    .title{
-      font-size: 20px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .top{
+      display: flex;
+      align-items: center;
+      .title{
+        margin-right: 10px;
+        font-size: 20px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
+
     .summary{
       font-size: 14px;
       color: #666666;

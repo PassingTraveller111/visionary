@@ -9,7 +9,7 @@ type CreatorSideBarLayoutProps = {
     selectedMenuKey: menuKeyType;
 }
 
-type menuKeyType = 'home' | 'article' | 'draft';
+type menuKeyType = 'home' | 'article' | 'draft' | 'columns';
 
 const CreatorSideBarLayout = (props: CreatorSideBarLayoutProps) => {
     const { children, selectedMenuKey } = props;
@@ -50,6 +50,7 @@ const SideBarMenu = (props: { defaultSelectedKeys: string[] }) => {
             children: [
                 { key: 'article', label: '文章管理' },
                 { key: 'draft', label: '草稿管理' },
+                { key: 'columns', label: '专栏管理' },
             ],
         },
     ];

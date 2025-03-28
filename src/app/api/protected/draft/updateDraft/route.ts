@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
             sql = `INSERT INTO drafts (title, content, summary, tags, author_id, author_nickname, cover) VALUES (?,?,?,?,?,?,?)`;
             values = [title, content, summary, tags, author_id, author_nickname, cover];
         } else {
-            sql = `UPDATE drafts SET content = ?, title = ?, summary = ?, tags = ?, cover = ? WHERE id = ?;`;
-            values = [content, title, summary, tags, cover, draftId];
+            sql = `UPDATE drafts SET content = ?, title = ?, summary = ?, tags = ?, cover = ?, update_time = ? WHERE id = ?;`;
+            values = [content, title, summary, tags, cover, new Date(),draftId];
             await redis.del(getDraftKey(draftId));
         }
         const [ rows ] = await connection.execute(sql, values);
