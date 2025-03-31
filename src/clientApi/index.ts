@@ -77,7 +77,11 @@ export const apiList = {
                 sendArticleComment: 'protected/article_comments/sendComment', // 发送评论
                 getCommentListByArticleId: 'protected/article_comments/getCommentListByArticleId', // 获取评论列表
                 delComment: 'protected/article_comments/delComment', // 删除评论
-            }
+            },
+            columns: {
+                uploadCover: 'protected/columns/uploadCover',  // 上传封面
+                updateColumn: 'protected/columns/updateColumn', // 新建或更新Column
+            },
         },
     },
     get: {

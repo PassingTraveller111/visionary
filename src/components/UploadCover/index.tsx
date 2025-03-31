@@ -15,7 +15,10 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 
-const UploadCover = (props: { onChange: (fileList: UploadFile[]) => void, initValue?: string}) => {
+type uploadToDirType = 'article' | 'columns'
+
+const UploadCover = (props: { onChange?: (fileList: UploadFile[]) => void, initValue?: string, uploadToDir?: uploadToDirType}) => {
+    const { uploadToDir = 'article' } = props;
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const initFileList = props.initValue ? [{
@@ -35,7 +38,7 @@ const UploadCover = (props: { onChange: (fileList: UploadFile[]) => void, initVa
 
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
         setFileList(newFileList);
-        props.onChange(newFileList);
+        if(props.onChange) props.onChange(newFileList);
     }
 
     const uploadButton = (
@@ -48,7 +51,7 @@ const UploadCover = (props: { onChange: (fileList: UploadFile[]) => void, initVa
         <>
             <Upload
                 className={styles.upload}
-                action={apiBaseUrl + apiList.post.protected.article.uploadCover}
+                action={apiBaseUrl + apiList.post.protected[uploadToDir].uploadCover}
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
