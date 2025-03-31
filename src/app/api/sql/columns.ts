@@ -27,7 +27,9 @@ const insertColumn = async (column_name: string, author_id: number, description:
             `, values)) as [ { insertId: number } ] | null
 }
 
-const deleteColumn = async (column_id: number) => {}
+const deleteColumn = async (column_id: number, userId: number) => {
+    return (await query(`DELETE FROM columns WHERE column_id = ? AND author_id = ?`, [column_id, userId]));
+}
 
 const getColumnsByUserId = async (userId: number) => {
     return (await query(`SELECT * FROM columns where author_id = ?`, [userId])) as [ columnsTableType[] ] | null

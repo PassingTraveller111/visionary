@@ -5,6 +5,7 @@ import {
     getColumnsByUserIdReqType,
     getColumnsByUserIdResType
 } from "@/app/api/protected/columns/getColumnsByUserId/route";
+import {deleteColumnReqType} from "@/app/api/protected/columns/deleteColumn/route";
 
 
 export const useGetColumns = () => {
@@ -28,4 +29,16 @@ export const useGetColumns = () => {
         if(userInfo.id) getColumns(userInfo.id)
     },[getColumns, userInfo.id]);
     return [ columns, getColumns ] as [ columns: getColumnsByUserIdResType['data'], (userId: number) => void ];
+}
+
+export const useDeleteColumn = () => {
+    return useCallback(async (column_id: number) => {
+        const apiData: deleteColumnReqType = {
+            column_id,
+        }
+        return apiClient(apiList.post.protected.columns.deleteColumn, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        })
+    }, [])
 }

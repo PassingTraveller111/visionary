@@ -6,7 +6,7 @@ import {Button, Dropdown, Form, Input, Modal} from "antd";
 import UploadCover from "@/components/UploadCover";
 import {forwardRef, useImperativeHandle, useRef, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
-import {useGetColumns} from "@/hooks/columns/useColumns";
+import {useDeleteColumn, useGetColumns} from "@/hooks/columns/useColumns";
 import {columnsTableType} from "@/app/api/sql/type";
 import styles from "./index.module.scss";
 import Image from "next/image";
@@ -40,7 +40,7 @@ const ColumnsPage = () => {
             <CreatorList
                 NavLeftContent={'专栏管理'}
                 NavRightContent={<Button onClick={onCreateColumns} type={'primary'}>新建专栏</Button>}
-                ListContent={<ColumnList columns={columns} onUpdateColumns={onUpdateColumns} />}
+                ListContent={<ColumnList columns={columns} onUpdateColumns={onUpdateColumns} getColumns={onGetColumns}/>}
             />
         </CreatorSideBarLayout>
     </NavLayout>
@@ -173,9 +173,12 @@ const ColumnModal = forwardRef<ColumnModalMethods, { getColumns: () => void }>(f
 
 })
 
-const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (column_id: number, column_name: string, description: string, cover_image: string) => void }) => {
-    const { columns } = props;
+const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (column_id: number, column_name: string, description: string, cover_image: string) => void, getColumns: () => void }) => {
+    const { columns, getColumns } = props;
+    const deleteColumn = useDeleteColumn();
+    const [ messageApi, messageContext ] = useMessage();
     return <div>
+        {messageContext}
         {columns.map(column => {
             return <div
                 key={column.column_id}
@@ -206,7 +209,12 @@ const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (colu
                                     {
                                         key: 'delete',
                                         label: '删除',
-                                        onClick: () => {},
+                                        onClick: () => {
+                                            deleteColumn(column.column_id).then((res) => {
+                                                messageApi.success(res.msg === 'success' ? '删除成功' : '删除失败');
+                                                getColumns();
+                                            });
+                                        },
                                     },
                                 ]
                             }}
