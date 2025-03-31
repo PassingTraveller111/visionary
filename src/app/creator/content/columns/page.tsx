@@ -122,6 +122,9 @@ const ColumnModal = forwardRef<ColumnModalMethods, { getColumns: () => void }>(f
             >
                 <Form.Item
                     label='专栏名称'
+                    required
+                    validateStatus={ formValue.column_name ? '' : 'error' }
+                    help={ formValue.column_name ? '' : '专栏名称不能为空'}
                 >
                     <Input
                         maxLength={50}
@@ -136,6 +139,9 @@ const ColumnModal = forwardRef<ColumnModalMethods, { getColumns: () => void }>(f
                 </Form.Item>
                 <Form.Item
                     label='专栏简介'
+                    required
+                    validateStatus={ formValue.description ? '' : 'error' }
+                    help={ formValue.description ? '' : '专栏简介不能为空'}
                 >
                     <Input.TextArea
                         maxLength={200}
