@@ -1,0 +1,49 @@
+
+
+.columnsItem{
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  &:hover{
+    background: #fafafa;
+  }
+  .columnsItemLeft{
+    display: flex;
+    .cover{
+      height: 116px;
+      width: 150px;
+      object-fit: contain;
+      display: flex;
+      align-items: center;
+    }
+    .text{
+      margin-left: 10px;
+      max-width: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .name{
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .description{
+
+      }
+      .time{
+        font-size: 14px;
+        color: #86909c;
+      }
+    }
+  }
+  .columnsItemRight{
+    display: flex;
+    align-items: center;
+    .editMenu{
+      svg{
+        font-size: 40px;
+        cursor: pointer;
+      }
+    }
+  }
+}

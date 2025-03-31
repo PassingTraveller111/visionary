@@ -81,6 +81,7 @@ export const apiList = {
             columns: {
                 uploadCover: 'protected/columns/uploadCover',  // 上传封面
                 updateColumn: 'protected/columns/updateColumn', // 新建或更新Column
+                getColumnsByUserId: 'protected/columns/getColumnsByUserId', // 获取专栏列表
             },
         },
     },
