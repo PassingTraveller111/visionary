@@ -2,15 +2,18 @@ import {query} from "@/app/api/utils";
 import {columnsTableType} from "@/app/api/sql/type";
 
 
-const updateColumn = async () => {
-
+const updateColumn = async (column_id: number, column_name: string, author_id: number, description: string, cover_image?: string) => {
+    const columns = ['column_name', 'description', 'cover_image'];
+    const setClause = columns.map((col) => `${col} = ?`).join(', ');
+    const cover = cover_image ? cover_image : 'https://visionary-1305469650.cos.ap-beijing.myqcloud.com/column_cover%2Fdefault.png';
+    const values = [column_name, description, cover, author_id, column_id];
+    return (await query(`UPDATE columns SET ${setClause} WHERE author_id = ? AND column_id = ?`, values))
 }
 
 const insertColumn = async (column_name: string, author_id: number, description: string, cover_image?: string) => {
     const columns = ['column_name', 'author_id', 'description'];
     const values = [column_name, author_id, description];
-
-    if (cover_image!== undefined && cover_image!== null) {
+    if (cover_image!== undefined && cover_image!== null && cover_image !== '') {
         columns.push('cover_image');
         values.push(cover_image);
     }

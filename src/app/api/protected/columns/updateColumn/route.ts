@@ -10,14 +10,17 @@ export type updateColumnReqType = {
 }
 
 
-
 export async function POST(req: NextRequest){
     try{
         const data: updateColumnReqType = await req.json();
         const token = req.cookies.get('token')?.value ?? '';
         const { userId } = verifyToken(token);
         if (data.column_id) {
-
+            // 修改
+            const result = await columns.updateColumn(data.column_id, data.column_name, userId, data.description, data.cover_image);
+            if(result) {
+                return NextResponse.json({ msg: 'success', data: result }, { status: 200 });
+            }
         } else {
             // 新建
             const result = await columns.insertColumn(data.column_name, userId, data.description, data.cover_image);

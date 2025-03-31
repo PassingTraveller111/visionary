@@ -27,5 +27,5 @@ export const useGetColumns = () => {
     useEffect(() => {
         if(userInfo.id) getColumns(userInfo.id)
     },[getColumns, userInfo.id]);
-    return [ columns ];
+    return [ columns, getColumns ] as [ columns: getColumnsByUserIdResType['data'], (userId: number) => void ];
 }

@@ -2,9 +2,9 @@
 import NavLayout from "@/components/NavLayout";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
 import CreatorList from "@/components/CreatorList";
-import {Button, Dropdown, Form, FormProps, Input, Modal} from "antd";
+import {Button, Dropdown, Form, Input, Modal} from "antd";
 import UploadCover from "@/components/UploadCover";
-import {useState} from "react";
+import {forwardRef, useImperativeHandle, useRef, useState} from "react";
 import {apiClient, apiList} from "@/clientApi";
 import {useGetColumns} from "@/hooks/columns/useColumns";
 import {columnsTableType} from "@/app/api/sql/type";
@@ -12,26 +12,35 @@ import styles from "./index.module.scss";
 import Image from "next/image";
 import {IconFont} from "@/components/IconFont";
 import dayjs from "dayjs";
+import {useAppSelector} from "@/store";
+import useMessage from "antd/es/message/useMessage";
 
 
 const ColumnsPage = () => {
-    const [ modalIsOpen, setModalIsOpen ] = useState(false);
-    const [ columns ] = useGetColumns();
+    const [ columns, getColumnsByUserId ] = useGetColumns();
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const modalRef = useRef<ColumnModalMethods>(null);
     const onCreateColumns = () => {
-        setModalIsOpen(true);
+        if(modalRef.current) modalRef.current.onCreateColumn();
+    }
+    const onUpdateColumns = (column_id: number, column_name: string, description: string, cover_image: string) => {
+        if(modalRef.current) modalRef.current.onUpdateColumn(column_id, column_name, description, cover_image);
+    }
+    const onGetColumns = () => {
+        getColumnsByUserId(userInfo.id);
     }
     return <NavLayout>
         <CreatorSideBarLayout
             selectedMenuKey='columns'
         >
             <ColumnModal
-                modalIsOpen={modalIsOpen}
-                setModalIsOpen={setModalIsOpen}
+                ref={modalRef}
+                getColumns={onGetColumns}
             />
             <CreatorList
                 NavLeftContent={'专栏管理'}
                 NavRightContent={<Button onClick={onCreateColumns} type={'primary'}>新建专栏</Button>}
-                ListContent={<ColumnList columns={columns} />}
+                ListContent={<ColumnList columns={columns} onUpdateColumns={onUpdateColumns} />}
             />
         </CreatorSideBarLayout>
     </NavLayout>
@@ -39,101 +48,135 @@ const ColumnsPage = () => {
 
 export default ColumnsPage;
 
+interface ColumnModalMethods {
+    onCreateColumn: () => void;
+    onUpdateColumn: (column_id: number, column_name: string, description: string, cover_image: string) => void;
+}
 
-type FieldType = {
-    column_name?: string;
-    description?: string;
-    cover_image?: (File & {
-        response: {
-            msg: 'success' | 'error',
-            data: {
-                Location: string
-            }
-        }
-    })[]
-};
-
-const normFile = (e: FileList) => {
-    if (Array.isArray(e) && e.length > 0) {
-        return e;
+const initFormValue = {
+    column_id: 0,
+    column_name: '',
+    description: '',
+    cover_image: '',
+}
+const ColumnModal = forwardRef<ColumnModalMethods, { getColumns: () => void }>(function ColumnModal(props, ref) {
+    const { getColumns } = props;
+    const [ modalIsOpen, setModalIsOpen ] = useState(false);
+    const [ formValue, setFormValue ] = useState(initFormValue);
+    const [ modalTitle, setModalTitle ] = useState('');
+    const [messageApi, contextHandle] = useMessage();
+    const onCreateColumn = () => {
+        setModalTitle('新建专栏');
+        setFormValue(initFormValue);
+        setModalIsOpen(true);
     }
-};
-
-const ColumnModal = (props: { modalIsOpen: boolean, setModalIsOpen: (isOpen: boolean) => void }) => {
-    const { modalIsOpen, setModalIsOpen } = props;
-    const [ formRef ] = Form.useForm<FieldType>();
-    const onFinish: FormProps<FieldType>['onFinish'] = (e) => {
-        let cover_image
-        if(Array.isArray(e.cover_image) && e.cover_image.length > 0) {
-            cover_image = e.cover_image[0].response.msg === 'success' ? ('https://' + e.cover_image[0].response.data.Location) : undefined;
-        }
-        const apiData = {
-            column_name: e.column_name,
-            description: e.description,
+    const onUpdateColumn = (column_id: number, column_name: string, description: string, cover_image: string) => {
+        setModalTitle('修改专栏');
+        setFormValue({
+            column_id,
             cover_image,
+            description,
+            column_name,
+        });
+        setModalIsOpen(true);
+    }
+    // 将方法暴露给父组件
+    useImperativeHandle(ref, () => ({
+        onCreateColumn,
+        onUpdateColumn
+    }));
+    const onFinish = () => {
+        const apiData = {
+            column_id: formValue.column_id,
+            column_name: formValue.column_name,
+            description: formValue.description,
+            cover_image: formValue.cover_image,
         }
         apiClient(apiList.post.protected.columns.updateColumn, {
             method: 'POST',
             body: JSON.stringify(apiData),
         }).then(res => {
-            console.log(res);
+            setModalIsOpen(false);
             if (res.msg === 'success') {
-
+                messageApi.success(formValue.column_id === 0 ? '创建成功' : '修改成功');
+            } else {
+                messageApi.success(formValue.column_id === 0 ? '创建失败' : '修改失败');
             }
-
+            getColumns();
         })
     }
-    return <Modal
-        open={modalIsOpen}
-        title={'新建专栏'}
-        onOk={() => {
-            formRef.submit();
-        }}
-        onCancel={() => { setModalIsOpen(false) }}
-    >
-        <Form<FieldType>
-            form={formRef}
-            name="basic"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            onFinish={onFinish}
+    return <>
+        {contextHandle}
+        <Modal
+            open={modalIsOpen}
+            title={modalTitle}
+            onOk={() => {
+                onFinish();
+            }}
+            destroyOnClose={true}
+            onCancel={() => { setModalIsOpen(false) }}
         >
-            <Form.Item
-                name='column_name'
-                label='专栏名称'
-                required
-                rules={[{ required: true, message: '专栏名称不能为空' }]}
+            <Form
+                labelCol={{span: 4}}
+                wrapperCol={{span: 16}}
             >
-                <Input maxLength={50} />
-            </Form.Item>
-            <Form.Item
-                label='专栏简介'
-                name='description'
-                required
-                rules={[{ required: true, message: '专栏简介不能为空' }]}
-            >
-                <Input.TextArea maxLength={200} rows={4} />
-            </Form.Item>
-            <Form.Item
-                name="cover_image"
-                label="专栏封面"
-                valuePropName="fileList"
-                getValueFromEvent={normFile}
-            >
-                <UploadCover
-                    uploadToDir={'columns'}
-                />
-            </Form.Item>
-        </Form>
-    </Modal>
-}
+                <Form.Item
+                    label='专栏名称'
+                >
+                    <Input
+                        maxLength={50}
+                        value={formValue.column_name}
+                        onChange={(e) => setFormValue((pre) => {
+                            return {
+                                ...pre,
+                                column_name: e.target.value,
+                            }
+                        })}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label='专栏简介'
+                >
+                    <Input.TextArea
+                        maxLength={200}
+                        rows={4}
+                        value={formValue.description}
+                        onChange={(e) => setFormValue((pre) => {
+                            return {
+                                ...pre,
+                                description: e.target.value,
+                            }
+                        })}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label="专栏封面"
+                >
+                    <UploadCover
+                        uploadToDir={'columns'}
+                        initValue={formValue.cover_image}
+                        onChange={(coverList) => {
+                            const cover = (coverList.length > 0 && coverList[0].response) ? ('https://' + coverList[0].response.data.Location) : undefined;
+                            setFormValue(pre => {
+                                return {
+                                    ...pre,
+                                    cover_image: cover ?? '',
+                                }
+                            });
+                        }}
+                    />
+                </Form.Item>
+            </Form>
+        </Modal>
+    </>
 
-const ColumnList = (props: { columns: columnsTableType[] }) => {
+
+})
+
+const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (column_id: number, column_name: string, description: string, cover_image: string) => void }) => {
     const { columns } = props;
     return <div>
         {columns.map(column => {
-            console.log(column.cover_image);
             return <div
                 key={column.column_id}
                 className={styles.columnsItem}
@@ -154,10 +197,17 @@ const ColumnList = (props: { columns: columnsTableType[] }) => {
                             menu={{
                                 items: [
                                     {
+                                        key: 'edit',
+                                        label: '修改',
+                                        onClick: () => {
+                                            props.onUpdateColumns(column.column_id, column.column_name, column.description, column.cover_image ?? '');
+                                        }
+                                    },
+                                    {
                                         key: 'delete',
                                         label: '删除',
                                         onClick: () => {},
-                                    }
+                                    },
                                 ]
                             }}
                         >
