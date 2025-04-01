@@ -2,7 +2,7 @@
 import NavLayout from "@/components/NavLayout";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
 import CreatorList from "@/components/CreatorList";
-import {Button, Checkbox, Modal, Spin, Transfer, TransferProps} from "antd";
+import {Button, Modal, Spin, Transfer, TransferProps} from "antd";
 import {useParams, useRouter} from "next/navigation";
 import {
     useGetArticleListByColumnId,

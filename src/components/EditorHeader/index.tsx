@@ -1,12 +1,11 @@
 import React from 'react'
-import {Button, Form, Input, Popover, Select} from "antd";
+import {Button, Form, Input, Popover} from "antd";
 import styles from './index.module.scss';
 import Tags from "@/components/Tags";
 import {useDispatch} from "react-redux";
 import {draftType, setDraft} from "@/store/features/draftSlice";
 import {Profile} from "@/components/Profile";
 import UploadCover from "@/components/UploadCover";
-import {useGetColumns} from "@/hooks/columns/useColumns";
 
 type EditorHeaderProps = {
     draft: draftType;
@@ -78,24 +77,6 @@ const EditorHeader= (props: EditorHeaderProps) => {
                                 }}
                             />
                         </Form.Item>
-                        {/*<Form.Item*/}
-                        {/*    label='专栏'*/}
-                        {/*>*/}
-                        {/*    <Select*/}
-                        {/*        mode="multiple"*/}
-                        {/*        allowClear*/}
-                        {/*        maxCount={3}*/}
-                        {/*        style={{ width: '100%' }}*/}
-                        {/*        placeholder="最多选择三项"*/}
-                        {/*        // defaultValue={['a10', 'c12']}*/}
-                        {/*        options={columns.map((column) => {*/}
-                        {/*            return {*/}
-                        {/*                label: column.column_name,*/}
-                        {/*                value: column.column_id,*/}
-                        {/*            }*/}
-                        {/*        })}*/}
-                        {/*    />*/}
-                        {/*</Form.Item>*/}
                         <Form.Item
                             label='封面'
                             help={draft.cover ? '' : '建议图片大小为192*128px'}
