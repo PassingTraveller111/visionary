@@ -41,6 +41,8 @@ export const apiList = {
                 getPublishedArticleList: 'protected/article/getPublishedArticleList', // 获取公开文章列表
                 getArticleListByKeyWord: 'protected/article/getArticleListByKeyWord', // 模糊搜索文章
                 getArticleCountByUserId: 'protected/article/getArticleCountByUserId', // 获取文章数量
+                getArticleListToAddColumn: 'protected/article/getArticleListToAddColumn', // 获取专栏数三个以下的文章列表
+                getArticleListByColumnId: 'protected/article/getArticleListByColumnId', // 获取专栏下的文章列表
             },
             article_likes: {
                 getArticleIsLike: 'protected/article_likes/getArticleIsLike', // 获取是否喜欢该文章
@@ -82,7 +84,9 @@ export const apiList = {
                 uploadCover: 'protected/columns/uploadCover',  // 上传封面
                 updateColumn: 'protected/columns/updateColumn', // 新建或更新Column
                 getColumnsByUserId: 'protected/columns/getColumnsByUserId', // 获取专栏列表
-                deleteColumn: 'protected/columns/deleteColumn',
+                deleteColumn: 'protected/columns/deleteColumn', // 删除专栏
+                getColumn: 'protected/columns/getColumn', // 获取专栏
+                updateColumnArticleList: 'protected/columns/updateColumnArticleList', // 更新专栏的文章列表
             },
         },
     },

@@ -6,6 +6,8 @@ import {
     getColumnsByUserIdResType
 } from "@/app/api/protected/columns/getColumnsByUserId/route";
 import {deleteColumnReqType} from "@/app/api/protected/columns/deleteColumn/route";
+import {getArticleListToAddColumnResType} from "@/app/api/protected/article/getArticleListToAddColumn/route";
+import {getArticleListByColumnIdResType} from "@/app/api/protected/article/getArticleListByColumnId/route";
 
 
 export const useGetColumns = () => {
@@ -41,4 +43,73 @@ export const useDeleteColumn = () => {
             body: JSON.stringify(apiData),
         })
     }, [])
+}
+
+type columnType = {
+    column_id: number,
+    column_name: string,
+    cover_image: string,
+    description: string,
+    created_at: string,
+    articleList: {
+        id: number,
+        title: string,
+        updateTime: string,
+    }[],
+}
+
+export const useGetColumn = (column_id: number) => {
+    const [column, setColumn] = useState<columnType>({
+        column_id: 0,
+        column_name: '',
+        cover_image: '',
+        description: '',
+        created_at: '',
+        articleList: [],
+    });
+
+    const getColumn = useCallback((column_id: number) => {
+        apiClient(apiList.post.protected.columns.getColumn, {
+            method: 'POST',
+            body: JSON.stringify({
+                column_id,
+            }),
+        }).then(res => {
+            if(res.msg === 'success') setColumn(res.data);
+        })
+    }, []);
+
+    useEffect(() => {
+        getColumn(column_id);
+    }, [column_id, getColumn]);
+
+    return [ column ] as [ columnType ]
+}
+
+export const useGetArticleListToColumn = () => {
+    const [articleList, setArticleList] = useState<getArticleListToAddColumnResType['data']>([]);
+    const getArticleListToColumn = useCallback(async () => {
+        const res: getArticleListToAddColumnResType = await apiClient(apiList.post.protected.article.getArticleListToAddColumn, {
+            method: 'POST',
+        })
+        if(res.msg === 'success') setArticleList(res.data);
+        return res.data;
+    }, [])
+
+    return [ articleList, getArticleListToColumn ] as [ articleList: getArticleListToAddColumnResType['data'], () => Promise<getArticleListToAddColumnResType['data']> ];
+}
+
+export const useGetArticleListByColumnId = () => {
+    const [articleList, setArticleList] = useState<getArticleListByColumnIdResType['data']>([]);
+    const getArticleListByColumn = useCallback(async (column_id: number) => {
+        const res: getArticleListByColumnIdResType = await apiClient(apiList.post.protected.article.getArticleListByColumnId, {
+            method: 'POST',
+            body: JSON.stringify({
+                column_id,
+            }),
+        })
+        if(res.msg === 'success') setArticleList(res.data);
+        return res.data;
+    }, [])
+    return [articleList, getArticleListByColumn] as [getArticleListByColumnIdResType['data'], (column_id: number) => Promise<getArticleListByColumnIdResType['data']> ];
 }

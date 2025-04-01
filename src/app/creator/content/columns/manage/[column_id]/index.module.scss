@@ -1,0 +1,27 @@
+
+
+
+.leftNavBack{
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.ManageArticleModalTitle{
+  .help{
+    font-size: 14px;
+    color: #8a919f;
+  }
+}
+.ManageArticleModalList{
+  height: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .item{
+    display: flex;
+    justify-content: space-between;
+    height: 30px;
+    align-items: center;
+  }
+}

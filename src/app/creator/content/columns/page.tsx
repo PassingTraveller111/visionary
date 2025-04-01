@@ -14,6 +14,7 @@ import {IconFont} from "@/components/IconFont";
 import dayjs from "dayjs";
 import {useAppSelector} from "@/store";
 import useMessage from "antd/es/message/useMessage";
+import {useRouter} from "next/navigation";
 
 
 const ColumnsPage = () => {
@@ -183,12 +184,19 @@ const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (colu
     const { columns, getColumns } = props;
     const deleteColumn = useDeleteColumn();
     const [ messageApi, messageContext ] = useMessage();
+    const router = useRouter();
+    const gotoManage = (column_id: number) => {
+        router.push(`/creator/content/columns/manage/${column_id}`);
+    }
     return <div>
         {messageContext}
         {columns.map(column => {
             return <div
                 key={column.column_id}
                 className={styles.columnsItem}
+                onClick={() => {
+                    gotoManage(column.column_id);
+                }}
             >
                 <div className={styles.columnsItemLeft} >
                     <div className={styles.cover}>
@@ -205,6 +213,13 @@ const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (colu
                         <Dropdown
                             menu={{
                                 items: [
+                                    {
+                                        key: 'manage',
+                                        label: '管理文章',
+                                        onClick: () => {
+                                            gotoManage(column.column_id);
+                                        },
+                                    },
                                     {
                                         key: 'edit',
                                         label: '修改',

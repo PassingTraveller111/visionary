@@ -37,6 +37,10 @@ const UserCenterLayOut = (props: UserCenterLayoutProps) => {
                         {
                             key: 'collect',
                             label: '收藏'
+                        },
+                        {
+                            key: 'column',
+                            label: '专栏'
                         }
                     ]}
                     onChange={(tabKey) => {

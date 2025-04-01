@@ -57,9 +57,32 @@ const getArticleCountByUserId = async (userId: number) => {
     return (await query(`SELECT COUNT(*) as articleCounts FROM articles WHERE author_id = ?`, [userId])) as null | [[{ articleCounts: number }]];
 }
 
+const getArticleToAddColumn = async (userId: number) => {
+    return (await query(`SELECT a.id, a.title, a.updated_time
+                         FROM articles a
+                        -- 左连接 article_columns 表
+                                  LEFT JOIN article_columns ac ON a.id = ac.article_id
+                         WHERE a.author_id = ?
+                        -- 按文章 ID 分组
+                         GROUP BY a.id
+                        -- 筛选关联 column 数小于 3 的文章
+                         HAVING COUNT(ac.column_id) < 3
+                         `, [userId]))
+}
+
+const getArticleListByColumnId = async (column_id: number) => {
+    return (await query(`SELECT a.id, a.title, a.updated_time, a.cover, a.summary, a.tags 
+                         FROM articles a
+                         LEFT JOIN article_columns ac ON a.id = ac.article_id
+                         WHERE ac.column_id = ?
+                         GROUP BY a.id
+                         `, [column_id]))
+}
 export const article = {
     getPublishedArticlesList,
     getPublishedArticleCount,
     getArticleListByKeyWord,
     getArticleCountByUserId,
+    getArticleToAddColumn,
+    getArticleListByColumnId,
 }

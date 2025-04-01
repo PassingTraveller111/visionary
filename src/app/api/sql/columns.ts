@@ -35,10 +35,15 @@ const getColumnsByUserId = async (userId: number) => {
     return (await query(`SELECT * FROM columns where author_id = ?`, [userId])) as [ columnsTableType[] ] | null
 }
 
+const getColumn = async (column_id: number) => {
+    return (await query(`SELECT * FROM columns where column_id = ?`, [column_id])) as [ [ columnsTableType ] ] | null
+}
+
 
 export const columns = {
     insertColumn,
     updateColumn,
     deleteColumn,
     getColumnsByUserId,
+    getColumn,
 }
