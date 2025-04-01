@@ -209,7 +209,10 @@ const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (colu
                     </div>
                 </div>
                 <div className={styles.columnsItemRight}>
-                    <div className={styles.editMenu}>
+                    <div
+                        className={styles.editMenu}
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <Dropdown
                             menu={{
                                 items: [
