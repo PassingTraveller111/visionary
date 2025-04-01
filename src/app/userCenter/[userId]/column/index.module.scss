@@ -1,4 +1,4 @@
-@use '@/components/UserCenterLayout/index.module.scss' as var;
+@use '../index.module.scss' as var;
 
 .collectContainer {
   max-height: calc(100% - #{var.$profile-content-height} - #{var.$tabs-marginTop} - #{var.$tabs-height});

@@ -1,5 +1,4 @@
 'use client'
-import UserCenterLayOut from "../../../../components/UserCenterLayout";
 import styles from './index.module.scss';
 import {useArticleCollections, useSetArticleIsCollected} from "@/hooks/article_collections/useArticleCollections";
 import ArticleItem from "@/components/ArticleItem";
@@ -17,7 +16,7 @@ const CollectPage = () => {
     const userId = Number(useParams().userId); // 该用户空间的用户id
     const isOwnFn = useIsUserOwn();
     const isOwn = useMemo(() => isOwnFn(userId), [isOwnFn, userId]);
-    return <UserCenterLayOut>
+    return <>
         {messageContext}
         <div
             className={styles.collectContainer}
@@ -58,7 +57,7 @@ const CollectPage = () => {
                 })}
             </div>
         </div>
-    </UserCenterLayOut>
+    </>
 }
 
 export default CollectPage;

@@ -1,5 +1,4 @@
 'use client'
-import UserCenterLayOut from "../../../../components/UserCenterLayout";
 import styles from './index.module.scss';
 import { useRouter } from "next/navigation";
 import {columnsTableType} from "@/app/api/sql/type";
@@ -9,7 +8,7 @@ import dayjs from "dayjs";
 
 const ColumnPage = () => {
     const [ columns ] = useGetColumns();
-    return <UserCenterLayOut>
+    return <>
         <div
             className={styles.collectContainer}
         >
@@ -17,7 +16,7 @@ const ColumnPage = () => {
                 <ColumnList columns={columns} />
             </div>
         </div>
-    </UserCenterLayOut>
+    </>
 }
 
 export default ColumnPage;
