@@ -59,7 +59,7 @@ const TablePlugin = (props: PluginProps) => {
             okText: '确定',
             cancelText: '取消',
             onOk: () => {
-                const table = createTable(tableSizeRef.current.rows, tableSizeRef.current.rows);
+                const table = createTable(tableSizeRef.current.rows, tableSizeRef.current.cols);
                 insert(table);
             },
         })
@@ -130,8 +130,8 @@ const TableCreate = (props: { rowCount?: number, colCount?: number, onCreatTable
             }}
             onClick={() => {
                 onCreatTable(createTable(
-                    Math.floor(index / colCount) + 1,
-                    index % rowCount + 1,
+                    Math.floor(index / colCount) + 1, // 行号
+                    (index) % colCount + 1, // 列号
                 ));
             }}
         ></div>
@@ -149,6 +149,7 @@ const TableCreate = (props: { rowCount?: number, colCount?: number, onCreatTable
 }
 
 const  createTable = (rows: number, columns: number) => {
+    console.log('rows, columns', rows, columns);
     // 换行
     let table = '\n';
 

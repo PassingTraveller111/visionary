@@ -266,10 +266,9 @@ function findSurroundingStrings(str: string, index: number, frontStr: string, ba
 * 在光标的开始位置插入内容
 * */
 export const insertInPoint = (editor: Editor, insertText: string) => {
-    const selection = editor.getSelection();
     editor.insertText(insertText, true, {
-        start: selection.start,
-        end: selection.start + insertText.length,
+        start: 0,
+        end: insertText.length,
     })
 }
 
