@@ -119,7 +119,7 @@ const TableCreate = (props: { rowCount?: number, colCount?: number, onCreatTable
                 marginTop: (index < colCount ? 0 : marginWidth) + 'px',
                 marginLeft: (index % colCount === 0 ? 0 : marginWidth) + 'px',
                 background: isHover
-                    && hoverIndex
+                    && (hoverIndex !== null && hoverIndex >= 0)
                     && (Math.floor(hoverIndex / colCount) >= Math.floor(index / colCount)) // 行号
                     && (hoverIndex % colCount >= index % colCount) // 列号
                     ? '#8f8f91'
