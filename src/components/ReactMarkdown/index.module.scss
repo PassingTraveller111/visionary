@@ -67,6 +67,9 @@ $font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin-bottom: 0.5em;
     }
   }
+  ul{
+    list-style-type: disc;
+  }
   ol {
     list-style-type: decimal; /* 使用数字作为序号 */
   }
