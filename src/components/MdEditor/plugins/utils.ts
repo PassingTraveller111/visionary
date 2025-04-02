@@ -144,10 +144,18 @@ export const insertToPreAndLast = (editor: Editor, insertTextPre: string, insert
             editor.setText(`${newBefore}${toInsert}${newAfter}`, ()=>{}, newSelection);
             return;
         }
+        /*
+        * 选中的区域为原来的被选中的内容
+        * */
         const newSelection = {
-            start: before.length + insertTextPre.length,
-            end: before.length + insertTextPre.length + toInsert.length,
+            start: insertTextPre.length,
+            end: insertTextPre.length + toInsert.length,
         }
+        /*
+        *  插入的文本
+        * 是否替换原来的文本
+        * 从插入位置的起点开始算新的选择区域
+        * */
         editor.insertText(`${insertTextPre}${toInsert}${insertTextLast}`, true, newSelection);
     }
 }
