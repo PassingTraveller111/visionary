@@ -20,11 +20,12 @@ type uploadToDirType = 'article' | 'columns'
 const UploadCover = (props: { onChange?: (fileList: UploadFile[]) => void, initValue?: string, uploadToDir?: uploadToDirType}) => {
     const { uploadToDir = 'article' } = props;
     const [previewOpen, setPreviewOpen] = useState(false);
-    const [previewImage, setPreviewImage] = useState('');
+    const [previewImage, setPreviewImage] = useState(props.initValue ?? '');
     const initFileList = props.initValue ? [{
         thumbUrl: props.initValue ?? '',
         uid: '',
-        name: ''
+        name: '',
+        url: props.initValue ?? '',
     }] : []
     const [fileList, setFileList] = useState<UploadFile[]>(initFileList);
 
