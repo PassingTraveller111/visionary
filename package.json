@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
+    "@xyflow/react": "^12.5.4",
     "antd": "^5.23.0",
     "antd-img-crop": "^4.24.0",
     "cos-nodejs-sdk-v5": "^2.14.6",

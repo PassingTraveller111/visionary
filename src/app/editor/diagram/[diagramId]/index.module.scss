@@ -1,0 +1,19 @@
+@use '@/components/DiagramHeader/index.module' as diagramHeader;
+@use '@/components/DiagramToolBar/index.module' as diagramToolBar;
+.DiagramContainer{
+  width: 100vw;
+  height: 100vh;
+  .Header{
+  }
+  .Diagram{
+    height: calc(100vh - #{diagramHeader.$HeaderHeight});
+    width: 100%;
+    display: flex;
+    .left{
+    }
+    .center{
+      height: 100%;
+      width: calc(100%  - #{diagramToolBar.$DiagramToolBarWidth});
+    }
+  }
+}

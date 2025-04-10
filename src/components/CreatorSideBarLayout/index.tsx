@@ -1,8 +1,9 @@
 "use client"
 import React from "react";
 import styles from "./index.module.scss";
-import {Button, Menu, MenuProps} from "antd";
+import {Button, Dropdown, Menu, MenuProps} from "antd";
 import {useRouter} from "next/navigation";
+import {IconFont} from "@/components/IconFont";
 
 type CreatorSideBarLayoutProps = {
     children: React.ReactNode;
@@ -11,19 +12,42 @@ type CreatorSideBarLayoutProps = {
 
 type menuKeyType = 'home' | 'article' | 'draft' | 'columns';
 
+const items: MenuProps['items'] = [
+    {
+        label: '新建文章',
+        key: 'draft',
+        icon: <IconFont type='icon-article'/>,
+        onClick: () => {
+            window.open('/editor/draft/new', '_blank');
+        }
+    },
+    {
+        label: '新建图表',
+        key: 'diagram',
+        icon: <IconFont type='icon-diagram'/>,
+        onClick: () => {
+            window.open('/editor/diagram/new', '_blank');
+        }
+    },
+];
+
 const CreatorSideBarLayout = (props: CreatorSideBarLayoutProps) => {
     const { children, selectedMenuKey } = props;
 
     return <div className={styles.creatorSideBarLayout}>
         <div className={styles.sideBar}>
             <div className={styles.sideBarContent}>
-                <Button
-                    className={styles.createButton}
-                    type="primary"
-                    onClick={() => {
-                        window.open('/editor/draft/new', '_blank');
-                    }}
-                >新建文章</Button>
+                <Dropdown
+                    menu={{ items }}
+                >
+                    <Button
+                        className={styles.createButton}
+                        type="primary"
+                    >
+                        创作<IconFont type='icon-bottomArrow'/>
+                    </Button>
+                </Dropdown>
+
                 <SideBarMenu defaultSelectedKeys={[ selectedMenuKey ]} />
             </div>
         </div>
