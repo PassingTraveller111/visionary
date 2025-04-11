@@ -1,5 +1,5 @@
 import { useLayoutEffect, useEffect, useRef } from 'react';
-import { Handle, NodeProps, Position } from '@xyflow/react';
+import {Handle, NodeProps, NodeResizer, Position} from '@xyflow/react';
 
 import useStore from '../../store';
 
@@ -7,7 +7,7 @@ import { type FlowNode as FlowNodeType } from '../../types';
 
 import styles from './index.module.scss';
 
-const FlowNode = ({ id, data }: NodeProps<FlowNodeType>) => {
+const FlowNode = ({ id, data, selected }: NodeProps<FlowNodeType>) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const updateNodeLabel = useStore((state) => state.updateNodeLabel);
 
@@ -25,6 +25,10 @@ const FlowNode = ({ id, data }: NodeProps<FlowNodeType>) => {
 
     return (
         <>
+            <NodeResizer
+                color="#ff0071"
+                isVisible={selected}
+            />
             <div className={styles.NodeContainer}>
                 <input
                     value={data.label}
