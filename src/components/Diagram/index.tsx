@@ -5,7 +5,7 @@ import {
     ConnectionLineType,
     useReactFlow,
     Controls,
-    Panel,
+    Panel, addEdge, Edge, Connection,
 } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -22,6 +22,7 @@ const selector = (state: RFState) => ({
     onNodesChange: state.onNodesChange,
     onEdgesChange: state.onEdgesChange,
     addNode: state.addNode,
+    setEdges: state.setEdges,
 });
 
 const nodeTypes = {
@@ -36,11 +37,17 @@ const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3 };
 const defaultEdgeOptions = { style: connectionLineStyle, type: 'flow' };
 
 function Flow() {
-    const { nodes, edges, onNodesChange, onEdgesChange, sidebarDragType, addNode } = useStore(
+    const { nodes, edges, onNodesChange, onEdgesChange, sidebarDragType, addNode, setEdges } = useStore(
         useShallow(selector)
     );
     const { screenToFlowPosition } = useReactFlow();
 
+    // 处理节点连线事件
+    const onConnect = useCallback((params: Edge | Connection) => {
+        console.log(params);
+        // 使用 addEdge 函数添加新的边
+        setEdges((eds) => addEdge(params, eds));
+    }, [setEdges]);
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -78,6 +85,7 @@ function Flow() {
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
+            onConnect={onConnect}
             connectionLineType={ConnectionLineType.Straight}
             defaultEdgeOptions={defaultEdgeOptions}
             connectionLineStyle={connectionLineStyle}

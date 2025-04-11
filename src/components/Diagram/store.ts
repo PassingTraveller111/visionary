@@ -21,6 +21,7 @@ export type RFState = {
     updateNodeLabel: (nodeId: string, label: string) => void;
     onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => void;
     addNode: (newNode: FlowNode) => void;
+    setEdges: (callback: (edges: Edge[]) => Edge[]) => void;
 };
 
 const useStore = create<RFState>((set, get) => ({
@@ -88,6 +89,12 @@ const useStore = create<RFState>((set, get) => ({
         set({
             nodes: [...get().nodes, newNode],
         });
+    },
+    setEdges: (callback) => {
+        const newEdges = callback(get().edges);
+        set({
+            edges: [...newEdges],
+        })
     }
 }));
 
