@@ -1,5 +1,5 @@
-@use '@/components/DiagramHeader/index.module' as diagramHeader;
-@use '@/components/DiagramToolBar/index.module' as diagramToolBar;
+@use '@/components/Diagram/DiagramHeader/index.module' as diagramHeader;
+@use '@/components/Diagram/DiagramSideBar/index.module' as diagramSideBar;
 .DiagramContainer{
   width: 100vw;
   height: 100vh;
@@ -13,7 +13,7 @@
     }
     .center{
       height: 100%;
-      width: calc(100%  - #{diagramToolBar.$DiagramToolBarWidth});
+      width: calc(100%  - #{diagramSideBar.$DiagramSideBarWidth});
     }
   }
 }

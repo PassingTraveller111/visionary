@@ -8,6 +8,7 @@ import locale from 'antd/locale/zh_CN';
 import {ReduxProvider} from "@/store/provider";
 import ClientEntry from "@/components/ClientEntry";
 import {ConfigProvider} from "antd";
+import { ReactFlowProvider } from "@xyflow/react";
 
 
 export const metadata: Metadata = {
@@ -25,8 +26,10 @@ export default function RootLayout({
       <body>
         <ReduxProvider>
             <ConfigProvider locale={locale}>
-                <ClientEntry/>
-                {children}
+                <ReactFlowProvider>
+                    <ClientEntry/>
+                    {children}
+                </ReactFlowProvider>
             </ConfigProvider>
         </ReduxProvider>
       </body>
