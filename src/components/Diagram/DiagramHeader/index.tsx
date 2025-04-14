@@ -17,7 +17,7 @@ const DiagramHeader = () => {
             <div className={styles.toolbarLeft}>
                 {
                     RootPlugins
-                        .filter(Plugin => Plugin.config.align === 'left')
+                        .filter(Plugin => Plugin.config.align !== 'right')
                         .map((Plugin) => {
                             return <Plugin key={Plugin.name}/>
                         })

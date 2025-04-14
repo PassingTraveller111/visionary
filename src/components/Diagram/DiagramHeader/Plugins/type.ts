@@ -8,8 +8,5 @@ export type configType = {
 
 export type PluginType = {
     (): JSX. Element;
-    config: {
-        name: string;
-        align: string;
-    };
+    config: configType
 }
