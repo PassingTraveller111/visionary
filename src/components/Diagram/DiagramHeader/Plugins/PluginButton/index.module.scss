@@ -1,0 +1,15 @@
+.buttonContainer {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  &:hover {
+    background: #dfe1e6;
+  }
+}
+.disabled{
+  cursor: not-allowed;
+  color: #c1c5cc;
+  &:hover {
+    background: #fff;
+  }
+}
