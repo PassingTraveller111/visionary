@@ -5,7 +5,7 @@ import {
     ConnectionLineType,
     useReactFlow,
     Controls,
-    Panel, addEdge, Edge, Connection,
+    Panel, addEdge, Edge, Connection, MiniMap,
 } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -96,6 +96,7 @@ function Flow() {
             <Panel position="top-left" className="header">
                 React Flow Mind Map
             </Panel>
+            <MiniMap pannable zoomable />
         </ReactFlow>
     );
 }
