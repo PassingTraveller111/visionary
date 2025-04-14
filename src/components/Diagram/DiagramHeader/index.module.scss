@@ -1,9 +1,17 @@
-
 $HeaderHeight: 100px;
+$ToolbarHeight: 40px;
 
 .HeaderContainer {
   height: $HeaderHeight;
-  border: 1px solid #8a919f;
+  .header{
+    height: calc(#{$HeaderHeight} - #{$ToolbarHeight});
+  }
   .toolbar{
+    display: flex;
+    height: $ToolbarHeight;
+    align-items: center;
+    border: 1px solid #8a919f;
+    padding: 0 10px;
+    justify-content: space-between;
   }
 }
