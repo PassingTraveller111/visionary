@@ -44,7 +44,6 @@ function Flow() {
 
     // 处理节点连线事件
     const onConnect = useCallback((params: Edge | Connection) => {
-        console.log(params);
         // 使用 addEdge 函数添加新的边
         setEdges((eds) => addEdge(params, eds));
     }, [setEdges]);
