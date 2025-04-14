@@ -5,10 +5,12 @@ import classNames from "classnames";
 type NodeInputProps = {
     value: string;
     onChange: (value: string) => void;
+    align?: 'center' | 'left' | 'right';
+    verticalAlign?: 'top' | 'bottom' | 'center';
 }
 
 const NodeInput = (props: NodeInputProps) => {
-    const { value, onChange } = props;
+    const { value, onChange, align = 'center', verticalAlign = 'center' } = props;
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const parentRef = useRef<HTMLDivElement>(null);
 
@@ -63,12 +65,19 @@ const NodeInput = (props: NodeInputProps) => {
             ref={parentRef}
             className={classNames({
                 [styles.inputContainer]: true,
+                [styles.verticalAlignTop]: verticalAlign === 'top',
+                [styles.verticalAlignCenter]: verticalAlign === 'center',
+                [styles.verticalAlignBottom]: verticalAlign === 'bottom',
             })}
+
         >
             <textarea
                 className={classNames({
                     [styles.input]: true,
                 })}
+                style={{
+                    textAlign: align,
+                }}
                 rows={1}
                 value={value}
                 onChange={(evt) => onChange(evt.target.value)}

@@ -1,10 +1,8 @@
-
-
 .inputContainer{
   display: flex;
   width: 100%;
-  align-items: center;
   position: relative;
+  height: 100%;
   .input{
     border: none;
     box-shadow: none !important;
@@ -17,4 +15,13 @@
     background: transparent;
     overflow: hidden;
   }
+}
+.verticalAlignCenter{
+  align-items: center;
+}
+.verticalAlignTop{
+  align-items: flex-start;
+}
+.verticalAlignBottom{
+  align-items: flex-end;
 }

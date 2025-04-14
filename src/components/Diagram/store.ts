@@ -22,6 +22,13 @@ export type RFState = {
     onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => void;
     addNode: (newNode: FlowNode) => void;
     setEdges: (callback: (edges: Edge[]) => Edge[]) => void;
+    updateNodesInputStyles: (
+        nodeIds: string[],
+        styles?: {
+            align?: 'center' | 'left' | 'right',
+            verticalAlign?: 'center' | 'top' | 'bottom',
+        }
+    ) => void;
 };
 
 const useStore = create<RFState>((set, get) => ({
@@ -29,8 +36,18 @@ const useStore = create<RFState>((set, get) => ({
         {
             id: '1',
             position: { x: 0, y: 0 },
-            data: { label: '1' },
+            data: {
+                label: '睡觉啊看了房间阿斯科利反馈啦',
+                inputStyles: {
+                    align: 'left',
+                    verticalAlign: 'top',
+                },
+            },
             type: 'flow',
+            style: {
+                width: '100px',
+                height: '100px',
+            },
         },
         {
             id: '2',
@@ -57,11 +74,13 @@ const useStore = create<RFState>((set, get) => ({
             edges: applyEdgeChanges(changes, get().edges),
         });
     },
+    /**
+     * 更新节点的label
+     * */
     updateNodeLabel: (nodeId: string, label: string) => {
         set({
             nodes: get().nodes.map((node) => {
                 if (node.id === nodeId) {
-                    // it's important to create a new node here, to inform React Flow about the changes
                     return {
                         ...node,
                         data: { ...node.data, label },
@@ -72,7 +91,7 @@ const useStore = create<RFState>((set, get) => ({
             }),
         });
     },
-    /*
+    /**
     * 侧边栏开始拖拽元素
     * */
     onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -81,7 +100,7 @@ const useStore = create<RFState>((set, get) => ({
         })
         event.dataTransfer.effectAllowed = 'move';
     },
-    /*
+    /**
     * 添加节点
     * */
     addNode: (newNode: FlowNode) => {
@@ -90,12 +109,41 @@ const useStore = create<RFState>((set, get) => ({
             nodes: [...get().nodes, newNode],
         });
     },
+    /**
+     * 修改边
+     * */
     setEdges: (callback) => {
         const newEdges = callback(get().edges);
         set({
             edges: [...newEdges],
         })
-    }
+    },
+    updateNodesInputStyles: (
+        nodeIds: string[],
+        styles?: {
+            align?: 'center' | 'left' | 'right',
+            verticalAlign?: 'center' | 'top' | 'bottom',
+        }
+    ) => {
+        set({
+            nodes: get().nodes.map((node) => {
+                if (nodeIds.includes(node.id)) {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            inputStyles: {
+                                ...node.data.inputStyles,
+                                align: styles?.align ?? node.data.inputStyles?.align,
+                                verticalAlign: styles?.verticalAlign ?? node.data.inputStyles?.verticalAlign,
+                            }
+                        },
+                    };
+                }
+                return node;
+            }),
+        });
+    },
 }));
 
 export default useStore;
