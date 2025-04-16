@@ -5,14 +5,14 @@ import {
     ConnectionLineType,
     useReactFlow,
     Controls,
-    Panel, addEdge, Edge, Connection, MiniMap,
+    Panel, addEdge, Connection, MiniMap,
 } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 
 import useStore, { RFState } from './store';
 import FlowNode from './Nodes/FlowNode';
 import FlowEdge from './Edges/FlowEdge';
-import { type FlowNode as FlowNodeType } from './types';
+import { type FlowNode as FlowNodeType, type FlowEdge as FlowEdgeType } from './types';
 import '@xyflow/react/dist/style.css';
 
 const selector = (state: RFState) => ({
@@ -33,7 +33,7 @@ const edgeTypes = {
     flow: FlowEdge,
 };
 
-const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3 };
+const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3, type: 'flow' };
 const defaultEdgeOptions = { style: connectionLineStyle, type: 'flow' };
 
 function Flow() {
@@ -43,7 +43,7 @@ function Flow() {
     const { screenToFlowPosition } = useReactFlow();
 
     // 处理节点连线事件
-    const onConnect = useCallback((params: Edge | Connection) => {
+    const onConnect = useCallback((params: FlowEdgeType | Connection) => {
         // 使用 addEdge 函数添加新的边
         setEdges((eds) => addEdge(params, eds));
     }, [setEdges]);

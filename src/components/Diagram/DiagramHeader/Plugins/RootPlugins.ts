@@ -1,9 +1,11 @@
 import TextAlignPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextAlignPlugin";
 import {configType} from "@/components/Diagram/DiagramHeader/Plugins/type";
+import LineTypePlugin from "@/components/Diagram/DiagramHeader/Plugins/LineTypePlugin";
 
 
 const rootPlugins = [
-    TextAlignPlugin
+    TextAlignPlugin,
+    LineTypePlugin,
 ];
 
 const defaultPluginConfig: configType = {

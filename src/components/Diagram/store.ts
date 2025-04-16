@@ -1,33 +1,38 @@
 import {
-    Edge,
-    EdgeChange,
-    NodeChange,
-    OnNodesChange,
-    OnEdgesChange,
-    applyNodeChanges,
     applyEdgeChanges,
+    applyNodeChanges,
+    EdgeChange,
+    MarkerType,
+    NodeChange,
+    OnEdgesChange,
+    OnNodesChange,
 } from '@xyflow/react';
-import { create } from 'zustand';
+import {create} from 'zustand';
 
-import { type FlowNode } from './types';
+import {type FlowEdge, type FlowNode, lineType} from './types';
 
 
 export type RFState = {
     nodes: FlowNode[];
-    edges: Edge[];
+    edges: FlowEdge[];
     sidebarDragType: string;
     onNodesChange: OnNodesChange<FlowNode>;
-    onEdgesChange: OnEdgesChange;
+    onEdgesChange: OnEdgesChange<FlowEdge>;
     updateNodeLabel: (nodeId: string, label: string) => void;
+    updateEdgeLabel: (nodeId: string, label: string) => void;
     onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => void;
     addNode: (newNode: FlowNode) => void;
-    setEdges: (callback: (edges: Edge[]) => Edge[]) => void;
+    setEdges: (callback: (edges: FlowEdge[]) => FlowEdge[]) => void;
     updateNodesInputStyles: (
         nodeIds: string[],
         styles?: {
             align?: 'center' | 'left' | 'right',
             verticalAlign?: 'center' | 'top' | 'bottom',
         }
+    ) => void;
+    updateLineType: (
+        edgeIds: string[],
+        type: lineType,
     ) => void;
 };
 
@@ -47,6 +52,7 @@ const useStore = create<RFState>((set, get) => ({
             style: {
                 width: '100px',
                 height: '100px',
+                padding: '2px',
             },
         },
         {
@@ -57,21 +63,37 @@ const useStore = create<RFState>((set, get) => ({
         },
         {
             id: '3',
-            position: { x: 100, y: 100 },
+            position: { x: 200, y: 200 },
             data: { label: '123' },
             type: 'flow',
         }
     ],
-    edges: [],
+    edges: [
+        {
+            id: '4',
+            source: '1',
+            sourceHandle: 'right-source',
+            target: "3",
+            targetHandle: "top-target",
+            data: {
+                label: '111',
+                type: 'SmoothStep',
+            },
+            type: 'flow',
+            markerEnd: {
+                type: MarkerType.Arrow,
+            }
+        }
+    ],
     sidebarDragType: '',
     onNodesChange: (changes: NodeChange<FlowNode>[]) => {
         set({
             nodes: applyNodeChanges<FlowNode>(changes, get().nodes),
         });
     },
-    onEdgesChange: (changes: EdgeChange[]) => {
+    onEdgesChange: (changes: EdgeChange<FlowEdge>[]) => {
         set({
-            edges: applyEdgeChanges(changes, get().edges),
+            edges: applyEdgeChanges<FlowEdge>(changes, get().edges),
         });
     },
     /**
@@ -86,8 +108,23 @@ const useStore = create<RFState>((set, get) => ({
                         data: { ...node.data, label },
                     };
                 }
-
                 return node;
+            }),
+        });
+    },
+    /**
+     * 更新边的label
+     * */
+    updateEdgeLabel: (edgeId: string, label: string) => {
+        set({
+            edges: get().edges.map((edge) => {
+                if (edge.id === edgeId) {
+                    return {
+                        ...edge,
+                        data: { ...edge.data, label },
+                    } as FlowEdge;
+                }
+                return edge;
             }),
         });
     },
@@ -118,6 +155,9 @@ const useStore = create<RFState>((set, get) => ({
             edges: [...newEdges],
         })
     },
+    /**
+     * 修改节点的文字的样式
+     * */
     updateNodesInputStyles: (
         nodeIds: string[],
         styles?: {
@@ -144,6 +184,28 @@ const useStore = create<RFState>((set, get) => ({
             }),
         });
     },
+    /**
+     * 更新连线类型
+     * */
+    updateLineType: (
+        edgeIds: string[],
+        type: lineType,
+    ) => {
+        set({
+            edges: get().edges.map((edge) => {
+                if (edgeIds.includes(edge.id)) {
+                    return {
+                        ...edge,
+                        data: {
+                            ...edge.data,
+                            type,
+                        },
+                    } as FlowEdge;
+                }
+                return edge;
+            }),
+        });
+    }
 }));
 
 export default useStore;
