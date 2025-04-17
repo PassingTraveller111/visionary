@@ -33,7 +33,7 @@ const edgeTypes = {
     flow: FlowEdge,
 };
 
-const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3, type: 'flow' };
+const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3 };
 const defaultEdgeOptions = { style: connectionLineStyle, type: 'flow' };
 
 function Flow() {

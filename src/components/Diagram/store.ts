@@ -82,6 +82,10 @@ const useStore = create<RFState>((set, get) => ({
             type: 'flow',
             markerEnd: {
                 type: MarkerType.Arrow,
+            },
+            style: {
+                stroke: '#c8dc8b',
+                strokeWidth: 2
             }
         }
     ],
