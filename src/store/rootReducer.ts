@@ -4,6 +4,7 @@ import articleReducer from './features/articleSlice';
 import draftReducer from './features/draftSlice';
 import reviewReducer from './features/reviewSlice';
 import assistantReducer from './features/assistantSlice';
+import diagramReducer from'./features/diagramSlice';
 
 const rootReducer = combineReducers({
     userReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
     draftReducer,
     reviewReducer,
     assistantReducer,
+    diagramReducer,
 });
 
 export default rootReducer;
