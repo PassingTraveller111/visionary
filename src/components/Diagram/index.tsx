@@ -38,7 +38,7 @@ const edgeTypes = {
 const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3 };
 const defaultEdgeOptions = { style: connectionLineStyle, type: 'flow' };
 
-function Flow() {
+const Flow = () => {
     const { nodes, edges, onNodesChange, onEdgesChange, sidebarDragType, addNode, setEdges } = useStore(
         useShallow(selector)
     );
@@ -78,6 +78,8 @@ function Flow() {
         [addNode, screenToFlowPosition, sidebarDragType],
     );
 
+
+
     return (
         <ReactFlow
             nodes={nodes}
@@ -93,6 +95,7 @@ function Flow() {
             fitView
             onDrop={onDrop}
             onDragOver={onDragOver}
+            className="download-image"
         >
             <Controls showInteractive={false} />
             <MiniMap pannable zoomable />

@@ -15,6 +15,7 @@
     "antd-img-crop": "^4.24.0",
     "cos-nodejs-sdk-v5": "^2.14.6",
     "highlight.js": "^11.11.1",
+    "html-to-image": "^1.11.13",
     "ioredis": "^5.5.0",
     "jsonwebtoken": "^9.0.2",
     "katex": "^0.16.21",

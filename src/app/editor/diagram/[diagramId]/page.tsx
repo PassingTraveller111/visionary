@@ -4,13 +4,14 @@ import styles from './index.module.scss';
 import DiagramHeader from "../../../../components/Diagram/DiagramHeader";
 import DiagramToolBar from "../../../../components/Diagram/DiagramSideBar";
 import {useParams, useRouter, useSearchParams} from "next/navigation";
-import {useCallback, useEffect} from "react";
+import { useCallback, useEffect } from "react";
 import {useDispatch} from "react-redux";
 import {AppDispatch, useAppSelector} from "@/store";
 import {setDiagram} from "@/store/features/diagramSlice";
 import {useGetDiagram, useUpdateDiagram} from "@/hooks/diagrams/useDiagram";
 import useStore from "@/components/Diagram/store";
 import useMessage from "antd/es/message/useMessage";
+import {ReactFlowProvider} from "@xyflow/react";
 
 const DiagramPage = () => {
     const diagramId = useParams().diagramId;
@@ -64,21 +65,29 @@ const DiagramPage = () => {
             title,
         }))
     }
-    return <div className={styles.DiagramContainer}>
-        {messageContext}
-        <div className={styles.Header}>
-            <DiagramHeader diagram={diagram} onSaveDiagram={onSaveDiagram} onTitleChange={onTitleChange} />
-        </div>
-        <div className={styles.Diagram}>
-            <DiagramToolBar/>
-            <div className={styles.center}>
-                <Diagram/>
-            </div>
-            <div className={styles.right}>
 
+
+    return <ReactFlowProvider>
+        <div className={styles.DiagramContainer}>
+            {messageContext}
+            <div className={styles.Header}>
+                <DiagramHeader
+                    diagram={diagram}
+                    onSaveDiagram={onSaveDiagram}
+                    onTitleChange={onTitleChange}
+                />
+            </div>
+            <div className={styles.Diagram}>
+                <DiagramToolBar/>
+                <div className={styles.center}>
+                    <Diagram />
+                </div>
+                <div className={styles.right}>
+
+                </div>
             </div>
         </div>
-    </div>
+    </ReactFlowProvider>
 }
 
 
