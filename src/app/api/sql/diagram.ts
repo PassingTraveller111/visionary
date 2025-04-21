@@ -10,11 +10,11 @@ const insertDiagram = async (diagram: Pick<diagramTableType, 'data' | 'cover' | 
 const updateDiagram = async (diagram: Pick<diagramTableType, 'id' |'data' | 'cover' | 'tags' | 'title' | 'intro'>, userId: number) => {
     const values = [diagram.data, diagram.cover, diagram.tags, diagram.title, diagram.intro, new Date()];
     const where = [diagram.id, userId];
-    return (await query(`UPDATE diagrams SET data = ?, cover = ?, tags = ?, title = ?, intro = ?, update_time = ? where id = ? AND author_id = ?`, [...values, ...where]) as [ { insertId: number } ] | null);
+    return (await query(`UPDATE diagrams SET data = ?, cover = ?, tags = ?, title = ?, intro = ?, update_time = ? WHERE id = ? AND author_id = ?`, [...values, ...where]) as [ { insertId: number } ] | null);
 }
 
-const deleteDiagram = async () => {
-
+const deleteDiagram = async (diagramId: number, userId: number) => {
+    return (await query(`DELETE FROM diagrams WHERE id = ? AND author_id = ?`, [diagramId, userId]));
 }
 
 const getDiagram = async (id: number, userId: number) => {

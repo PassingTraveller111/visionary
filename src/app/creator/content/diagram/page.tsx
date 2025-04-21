@@ -5,7 +5,7 @@ import {Modal, message, Flex, Dropdown} from "antd";
 import {useAppSelector} from "@/store";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
 import CreatorList from "@/components/CreatorList";
-import {useGetDiagramsList} from "@/hooks/diagrams/useDiagram";
+import {useDeleteDiagram, useGetDiagramsList} from "@/hooks/diagrams/useDiagram";
 import {IconFont} from "@/components/IconFont";
 import Image from "next/image";
 
@@ -15,9 +15,15 @@ const DiagramPage = () => {
     const { id: userId, isLoading } = useAppSelector(state => state.rootReducer.userReducer.value);
     const [modalApi, modalContextHolder] = Modal.useModal();
     const [messageApi, messageContextHolder] = message.useMessage();
-    const [diagramsList] = useGetDiagramsList();
+    const [diagramsList, getDiagramsList] = useGetDiagramsList();
+    const delDiagram = useDeleteDiagram();
     const handleOpen = (id: number) => {
         window.open('/editor/diagram/' + id, '_blank');
+    }
+    const handleDel = (id: number) => {
+        delDiagram(id).then(() => {
+            getDiagramsList();
+        })
     }
     return <>
         {modalContextHolder}
@@ -77,6 +83,15 @@ const DiagramPage = () => {
                                                                     label: '删除',
                                                                     onClick: ({ domEvent }) => {
                                                                         domEvent.stopPropagation();
+                                                                        modalApi.confirm({
+                                                                            title: '删除',
+                                                                            content: <>
+                                                                                确定要删除<strong>{diagram.title}</strong>吗？
+                                                                            </>,
+                                                                            onOk: () => {
+                                                                                handleDel(diagram.id);
+                                                                            }
+                                                                        })
                                                                     }
                                                                 },
                                                             ]

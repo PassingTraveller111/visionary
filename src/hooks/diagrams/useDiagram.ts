@@ -8,6 +8,7 @@ import {getDiagramReqType, getDiagramResType} from "@/app/api/protected/diagrams
 import {useAppSelector} from "@/store";
 import useStore from "@/components/Diagram/store";
 import {getDiagramsListResType} from "@/app/api/protected/diagrams/getDiagramsList/route";
+import {delDiagramReqType} from "@/app/api/protected/diagrams/delDiagram/route";
 
 
 export const useUpdateDiagram = () => {
@@ -89,5 +90,18 @@ export const useGetDiagramsList = () => {
     useEffect(() => {
         getDiagramsList();
     },[getDiagramsList])
-    return[ diagramsList ] as [ getDiagramsListResType['data'] ];
+    return[ diagramsList, getDiagramsList ] as [ getDiagramsListResType['data'], () => Promise<void> ];
+}
+
+export const useDeleteDiagram = () => {
+    return useCallback(async (id: number) => {
+        const apiData: delDiagramReqType = {
+            id,
+        }
+        const res = await apiClient(apiList.post.protected.diagrams.delDiagram, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        });
+        console.log(res);
+    }, []);
 }

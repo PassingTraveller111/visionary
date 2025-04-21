@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
             const result = await diagram.insertDiagram({
                 ...data,
                 data: JSON.stringify(initData),
-            }, userId);
+            });
             if (result) {
                 const [ rows ] = result;
                 return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
             const result = await diagram.updateDiagram({
                 ...data,
                 id: data.id as number,
-            })
+            }, userId);
             if (result) {
                 const [ rows] = result;
                 return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
