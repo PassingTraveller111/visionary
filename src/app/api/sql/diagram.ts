@@ -7,8 +7,10 @@ const insertDiagram = async (diagram: Pick<diagramTableType, 'data' | 'cover' | 
     return (await query(`INSERT INTO  diagrams (title, data, intro, tags, author_id, cover, type) VALUES (?,?,?,?,?,?,?)`, values) as [ { insertId: number } ] | null);
 }
 
-const updateDiagram = async () => {
-
+const updateDiagram = async (diagram: Pick<diagramTableType, 'id' |'data' | 'cover' | 'tags' | 'title' | 'intro'>) => {
+    const values = [diagram.data, diagram.cover, diagram.tags, diagram.title, diagram.intro, new Date()];
+    const where = [diagram.id];
+    return (await query(`UPDATE diagrams SET data = ?, cover = ?, tags = ?, title = ?, intro = ?, update_time = ? where id = ?`, [...values, ...where]) as [ { insertId: number } ] | null);
 }
 
 const deleteDiagram = async () => {

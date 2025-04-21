@@ -9,6 +9,8 @@ import {useDispatch} from "react-redux";
 import {AppDispatch, useAppSelector} from "@/store";
 import {setDiagram} from "@/store/features/diagramSlice";
 import {useGetDiagram, useUpdateDiagram} from "@/hooks/diagrams/useDiagram";
+import useStore from "@/components/Diagram/store";
+import useMessage from "antd/es/message/useMessage";
 
 const DiagramPage = () => {
     const diagramId = useParams().diagramId;
@@ -19,6 +21,8 @@ const DiagramPage = () => {
     const getDiagram = useGetDiagram();
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const router = useRouter();
+    const getData = useStore(state => state.getData);
+    const [messageApi, messageContext] = useMessage();
     const initDiagram = useCallback(() => {
         const id = diagramId === 'new' ? diagramId : Number(diagramId);
         dispatch(setDiagram({
@@ -40,9 +44,30 @@ const DiagramPage = () => {
         if(userInfo.id === 0) return;
         initDiagram();
     }, [userInfo.id]);
+
+    const onSaveDiagram = () => {
+        const data = getData(); // 图表数据要从图表的独立store获取
+        updateDiagram({
+            ...diagram,
+            data: JSON.stringify(data),
+        }, userInfo).then((res) => {
+            if(res.msg === 'success') {
+                messageApi.success('保存成功');
+            }else{
+                messageApi.error('保存失败');
+            }
+        })
+    }
+    const onTitleChange = (title: string) => {
+        dispatch(setDiagram({
+            ...diagram,
+            title,
+        }))
+    }
     return <div className={styles.DiagramContainer}>
+        {messageContext}
         <div className={styles.Header}>
-            <DiagramHeader/>
+            <DiagramHeader diagram={diagram} onSaveDiagram={onSaveDiagram} onTitleChange={onTitleChange} />
         </div>
         <div className={styles.Diagram}>
             <DiagramToolBar/>

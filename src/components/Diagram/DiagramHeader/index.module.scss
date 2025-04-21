@@ -5,6 +5,26 @@ $ToolbarHeight: 40px;
   height: $HeaderHeight;
   .header{
     height: calc(#{$HeaderHeight} - #{$ToolbarHeight});
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    .left{
+      .title{
+        flex: 1 1 auto;
+        height: 100%;
+        font-size: 22px;
+        border: none;
+        box-shadow: none;
+      }
+    }
+    .right{
+      display: flex;
+      height: 100%;
+      align-items: center;
+      &>*{
+        margin-left: 10px;
+      }
+    }
   }
   .toolbar{
     display: flex;

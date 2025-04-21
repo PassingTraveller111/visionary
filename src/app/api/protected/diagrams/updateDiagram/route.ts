@@ -76,7 +76,11 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
             }
         } else {
-
+            const result = await diagram.updateDiagram({
+                ...data,
+                id: data.id as number,
+            })
+            return NextResponse.json({ msg: 'success', data: result }, { status: 200 });
         }
         return NextResponse.json({ msg: 'error' }, { status: 200 });
     } catch (error) {

@@ -2,7 +2,6 @@ import {
     applyEdgeChanges,
     applyNodeChanges,
     EdgeChange,
-    MarkerType,
     NodeChange,
     OnEdgesChange,
     OnNodesChange,
@@ -19,6 +18,10 @@ export type RFState = {
     onNodesChange: OnNodesChange<FlowNode>;
     onEdgesChange: OnEdgesChange<FlowEdge>;
     initDiagram: (initData: string) => void;
+    getData: () => {
+        nodes: FlowNode[];
+        edges: FlowEdge[];
+    };
     updateNodeLabel: (nodeId: string, label: string) => void;
     updateEdgeLabel: (nodeId: string, label: string) => void;
     onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => void;
@@ -61,6 +64,15 @@ const useStore = create<RFState>((set, get) => ({
         set({
             ...data,
         })
+    },
+    /**
+     * 获得图表数据
+     * */
+    getData: () => {
+        return {
+            nodes: get().nodes,
+            edges: get().edges,
+        }
     },
     /**
      * 更新节点的label

@@ -1,7 +1,7 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
 import styles from "./index.module.scss";
-import {Modal, message, Card, Flex, Dropdown} from "antd";
+import {Modal, message, Flex, Dropdown} from "antd";
 import {useAppSelector} from "@/store";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
 import CreatorList from "@/components/CreatorList";
