@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {diagramTableType} from "@/app/api/sql/type";
 import {diagram} from "@/app/api/sql/diagram";
 import {MarkerType} from "@xyflow/react";
+import {verifyToken} from "@/utils/auth";
 
 export type updateDiagramReqType = {
     id: number | 'new';
@@ -12,6 +13,8 @@ export async function POST(req: NextRequest) {
     try {
         const data: updateDiagramReqType = await req.json();
         const { id } = data;
+        const token = await req.cookies.get('token')?.value ?? '';
+        const { userId } = verifyToken(token);
         if (id === 'new') {
             const initData = {
                 nodes: [
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
             const result = await diagram.insertDiagram({
                 ...data,
                 data: JSON.stringify(initData),
-            });
+            }, userId);
             if (result) {
                 const [ rows ] = result;
                 return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
@@ -80,7 +83,10 @@ export async function POST(req: NextRequest) {
                 ...data,
                 id: data.id as number,
             })
-            return NextResponse.json({ msg: 'success', data: result }, { status: 200 });
+            if (result) {
+                const [ rows] = result;
+                return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
+            }
         }
         return NextResponse.json({ msg: 'error' }, { status: 200 });
     } catch (error) {
