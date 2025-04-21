@@ -88,6 +88,10 @@ export const apiList = {
                 getColumn: 'protected/columns/getColumn', // 获取专栏
                 updateColumnArticleList: 'protected/columns/updateColumnArticleList', // 更新专栏的文章列表
             },
+            diagrams: {
+                updateDiagram: 'protected/diagrams/updateDiagram', // 插入和更新图表
+                getDiagram: 'protected/diagrams/getDiagram', // 获取图表
+            }
         },
     },
     get: {

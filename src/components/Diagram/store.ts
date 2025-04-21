@@ -18,6 +18,7 @@ export type RFState = {
     sidebarDragType: string;
     onNodesChange: OnNodesChange<FlowNode>;
     onEdgesChange: OnEdgesChange<FlowEdge>;
+    initDiagram: (initData: string) => void;
     updateNodeLabel: (nodeId: string, label: string) => void;
     updateEdgeLabel: (nodeId: string, label: string) => void;
     onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => void;
@@ -38,56 +39,8 @@ export type RFState = {
 
 const useStore = create<RFState>((set, get) => ({
     nodes: [
-        {
-            id: '1',
-            position: { x: 0, y: 0 },
-            data: {
-                label: '睡觉啊看了房间阿斯科利反馈啦',
-                inputStyles: {
-                    align: 'left',
-                    verticalAlign: 'top',
-                },
-            },
-            type: 'flow',
-            style: {
-                width: '100px',
-                height: '100px',
-                padding: '2px',
-            },
-        },
-        {
-            id: '2',
-            position: { x: 0, y: 100 },
-            data: { label: '2' },
-            type: 'flow',
-        },
-        {
-            id: '3',
-            position: { x: 200, y: 200 },
-            data: { label: '123' },
-            type: 'flow',
-        }
     ],
     edges: [
-        {
-            id: '4',
-            source: '1',
-            sourceHandle: 'right-source',
-            target: "3",
-            targetHandle: "top-target",
-            data: {
-                label: '111',
-                type: 'SmoothStep',
-            },
-            type: 'flow',
-            markerEnd: {
-                type: MarkerType.Arrow,
-            },
-            style: {
-                stroke: '#c8dc8b',
-                strokeWidth: 2
-            }
-        }
     ],
     sidebarDragType: '',
     onNodesChange: (changes: NodeChange<FlowNode>[]) => {
@@ -99,6 +52,15 @@ const useStore = create<RFState>((set, get) => ({
         set({
             edges: applyEdgeChanges<FlowEdge>(changes, get().edges),
         });
+    },
+    /**
+     * 初始化
+     * */
+    initDiagram: (initData: string) => {
+        const data = JSON.parse(initData);
+        set({
+            ...data,
+        })
     },
     /**
      * 更新节点的label

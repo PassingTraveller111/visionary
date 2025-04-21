@@ -53,12 +53,12 @@ export const useGetUserInfo =  () => {
             isLoading: true,
         });
         apiClient(apiList.get.protected.user.getUserInfo).then(res => {
-            setLoading({
-                isLoading: false,
-            })
             dispatch(setUserInfo(
                 res.data
             ));
+            setLoading({
+                isLoading: false,
+            })
         })
     }
 }

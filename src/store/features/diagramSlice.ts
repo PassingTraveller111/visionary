@@ -10,6 +10,9 @@ export type diagramType = {
     tags: string[]; // 标签
     author_id: number; // 作者id
     cover: string;
+    type: 'flow' | 'mindMap';
+    create_time: string;
+    update_time: string;
 }
 
 type InitialStateType = {
@@ -25,6 +28,9 @@ const initialState: InitialStateType = {
         tags: [],
         author_id: 0,
         cover: '',
+        type: 'flow',
+        create_time: '',
+        update_time: '',
     }
 };
 

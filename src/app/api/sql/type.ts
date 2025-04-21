@@ -158,3 +158,18 @@ export type article_columnsTableType = {
     column_id: number,
     article_id: number,
 }
+
+
+// 图表表
+export type diagramTableType = {
+    id: number,
+    title: string,
+    data: string,
+    intro: string,
+    tags: string[],
+    author_id: number,
+    cover?: string,
+    type: 'flow' | 'mindMap',
+    update_time: string,
+    create_time: string,
+}
