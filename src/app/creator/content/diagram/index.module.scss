@@ -1,0 +1,48 @@
+
+.CardContainer{
+  padding: 20px;
+  .CardItem{
+    .Card{
+      position: relative;
+      width: 180px;
+      height: 180px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      .menu{
+        display: none;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        font-size: 30px;
+        background: #9f9d9d;
+        height: 20px;
+        align-items: center;
+        border-radius: 4px;
+        color: #fff;
+      }
+    }
+    &:hover{
+      .Card{
+        border-color: #1e80ff;
+      }
+      .menu{
+        display: flex;
+      }
+    }
+    .bottom{
+      width: 180px;
+      display: flex;
+      padding: 0 10px;
+      svg{
+        margin-right: 10px;
+      }
+      .title{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}

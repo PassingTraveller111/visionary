@@ -19,11 +19,16 @@ const getDiagram = async (id: number, userId: number) => {
     return (await query(`SELECT * FROM diagrams WHERE id = ? AND author_id = ?`, [id, userId]) as [ diagramTableType[] ] | null);
 }
 
+const getDiagramsList = async (userId: number) => {
+    return (await query(`SELECT * FROM diagrams`, [userId]) as [ diagramTableType[] ] | null);
+}
+
 
 export const diagram = {
     insertDiagram,
     updateDiagram,
     deleteDiagram,
     getDiagram,
+    getDiagramsList,
 }
 

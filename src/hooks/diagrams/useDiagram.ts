@@ -1,4 +1,4 @@
-import {useCallback} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {diagramType, setDiagram} from "@/store/features/diagramSlice";
 import {useDispatch} from "react-redux";
 import {UserInfoType} from "@/store/features/userSlice";
@@ -7,6 +7,7 @@ import {updateDiagramReqType} from "@/app/api/protected/diagrams/updateDiagram/r
 import {getDiagramReqType, getDiagramResType} from "@/app/api/protected/diagrams/getDiagram/route";
 import {useAppSelector} from "@/store";
 import useStore from "@/components/Diagram/store";
+import {getDiagramsListResType} from "@/app/api/protected/diagrams/getDiagramsList/route";
 
 
 export const useUpdateDiagram = () => {
@@ -75,4 +76,18 @@ export const useGetDiagram = () => {
             initDiagram(res.data.data);
         }
     }, [diagram, dispatch, initDiagram])
+}
+
+export const useGetDiagramsList = () => {
+    const [diagramsList, setDiagramsList] = useState<getDiagramsListResType['data']>([]);
+    const getDiagramsList = useCallback(async () => {
+        const res: getDiagramsListResType = await apiClient(apiList.get.protected.diagrams.getDiagramsList);
+        if(res.msg === "success") {
+            setDiagramsList(res.data);
+        }
+    },[]);
+    useEffect(() => {
+        getDiagramsList();
+    },[getDiagramsList])
+    return[ diagramsList ] as [ getDiagramsListResType['data'] ];
 }

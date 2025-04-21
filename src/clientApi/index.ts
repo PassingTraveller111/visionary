@@ -105,6 +105,9 @@ export const apiList = {
             },
             quotes: {
                 getQuoteRandom: 'protected/quotes/getQuoteRandom', // 随机获取格言
+            },
+            diagrams: {
+                getDiagramsList: 'protected/diagrams/getDiagramsList',
             }
         },
         user: {
