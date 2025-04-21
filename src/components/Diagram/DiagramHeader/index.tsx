@@ -5,46 +5,21 @@ import {Button, Input} from "antd";
 import {Profile} from "@/components/Profile";
 import React from "react";
 import {diagramType} from "@/store/features/diagramSlice";
-import {getNodesBounds, getViewportForBounds, useReactFlow} from "@xyflow/react";
-import {toPng} from "html-to-image";
 
 
 type DiagramHeaderProps = {
     diagram: diagramType;
     onSaveDiagram: () => void;
     onTitleChange: (title: string) => void;
+    onSaveAsImage:  () => Promise<undefined | string>;
 }
 
-const imageWidth = 1024;
-const imageHeight = 768;
 
-const DiagramHeader = ({ diagram, onSaveDiagram, onTitleChange }: DiagramHeaderProps) => {
-    const { getNodes } = useReactFlow();
-    const saveAsImage = async () => {
-        const nodesBounds = getNodesBounds(getNodes());
-        const viewport = getViewportForBounds(
-            nodesBounds,
-            imageWidth,
-            imageHeight,
-            0.5,
-            2,
-            0,
-        );
-        const element = document.querySelector('.react-flow__viewport');
-        if(!element) return;
-        return await toPng(element as HTMLElement, {
-            backgroundColor: 'transparent',
-            width: imageWidth,
-            height: imageHeight,
-            style: {
-                width: imageWidth.toString(),
-                height: imageHeight.toString(),
-                transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
-            },
-        });
-    };
+
+const DiagramHeader = ({ diagram, onSaveDiagram, onTitleChange, onSaveAsImage }: DiagramHeaderProps) => {
+
     const downloadImage = () => {
-        saveAsImage().then((dataUrl) => {
+        onSaveAsImage().then((dataUrl) => {
             if(!dataUrl) return;
             const a = document.createElement('a');
             a.setAttribute('download', `${diagram.title}.png`);

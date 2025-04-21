@@ -91,6 +91,7 @@ export const apiList = {
             diagrams: {
                 updateDiagram: 'protected/diagrams/updateDiagram', // 插入和更新图表
                 getDiagram: 'protected/diagrams/getDiagram', // 获取图表
+                uploadCover: 'protected/diagrams/uploadCover', // 上传封面
             }
         },
     },
