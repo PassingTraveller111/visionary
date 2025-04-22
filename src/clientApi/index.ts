@@ -93,6 +93,7 @@ export const apiList = {
                 getDiagram: 'protected/diagrams/getDiagram', // 获取图表
                 uploadCover: 'protected/diagrams/uploadCover', // 上传封面
                 delDiagram: 'protected/diagrams/delDiagram', // 删除
+                renameDiagram: 'protected/diagrams/renameDiagram', // 重命名
             }
         },
     },

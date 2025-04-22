@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     try {
         const data: updateDiagramReqType = await req.json();
         const { id } = data;
-        const token = await req.cookies.get('token')?.value ?? '';
+        const token = req.cookies.get('token')?.value ?? '';
         const { userId } = verifyToken(token);
         if (id === 'new') {
             const initData = {

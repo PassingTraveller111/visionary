@@ -9,6 +9,7 @@ import {useAppSelector} from "@/store";
 import useStore from "@/components/Diagram/store";
 import {getDiagramsListResType} from "@/app/api/protected/diagrams/getDiagramsList/route";
 import {delDiagramReqType} from "@/app/api/protected/diagrams/delDiagram/route";
+import {renameDiagramReqType} from "@/app/api/protected/diagrams/renameDiagram/route";
 
 
 export const useUpdateDiagram = () => {
@@ -102,6 +103,18 @@ export const useDeleteDiagram = () => {
             method: 'POST',
             body: JSON.stringify(apiData),
         });
-        console.log(res);
+    }, []);
+}
+
+export const useRenameDiagram = () => {
+    return useCallback(async (title: string, id: number) => {
+        const apiData: renameDiagramReqType = {
+            title,
+            id,
+        }
+        const res = await apiClient(apiList.post.protected.diagrams.renameDiagram, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        })
     }, []);
 }

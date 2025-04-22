@@ -13,6 +13,10 @@ const updateDiagram = async (diagram: Pick<diagramTableType, 'id' |'data' | 'cov
     return (await query(`UPDATE diagrams SET data = ?, cover = ?, tags = ?, title = ?, intro = ?, update_time = ? WHERE id = ? AND author_id = ?`, [...values, ...where]) as [ { insertId: number } ] | null);
 }
 
+const renameDiagram = async (title: string, id: number, userId: number) => {
+    return (await query(`UPDATE diagrams SET title = ? WHERE id = ? AND author_id = ?`, [title, id, userId]));
+}
+
 const deleteDiagram = async (diagramId: number, userId: number) => {
     return (await query(`DELETE FROM diagrams WHERE id = ? AND author_id = ?`, [diagramId, userId]));
 }
@@ -32,5 +36,6 @@ export const diagram = {
     deleteDiagram,
     getDiagram,
     getDiagramsList,
+    renameDiagram,
 }
 
