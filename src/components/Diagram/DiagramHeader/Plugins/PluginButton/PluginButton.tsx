@@ -3,9 +3,10 @@ import {Dropdown, DropdownProps, Tooltip} from "antd";
 import {IconFont} from "@/components/IconFont";
 import styles from './index.module.scss';
 import classNames from "classnames";
+import {ReactNode} from "react";
 
-const PluginButton = (props: { disabled?: boolean, title: string, iconName: string, dropdownProps?: DropdownProps }) => {
-    const { title, dropdownProps, iconName, disabled = false } = props;
+const PluginButton = (props: { disabled?: boolean, title: string, iconName?: string, dropdownProps?: DropdownProps, content?: string | ReactNode }) => {
+    const { title, dropdownProps, iconName = '', disabled = false, content } = props;
     return dropdownProps ?
        <Dropdown
         {...dropdownProps}
@@ -21,7 +22,7 @@ const PluginButton = (props: { disabled?: boolean, title: string, iconName: stri
                     [styles.disabled]: disabled,
                 })}
             >
-                <IconFont type={iconName}/>
+                {content ? content : <IconFont type={iconName}/>}
             </span>
            </Tooltip>
     </Dropdown> :
@@ -35,7 +36,7 @@ const PluginButton = (props: { disabled?: boolean, title: string, iconName: stri
                     [styles.disabled]: disabled,
                 })}
             >
-                <IconFont type={iconName}/>
+                {content ? content : <IconFont type={iconName}/>}
             </span>
         </Tooltip>
 }

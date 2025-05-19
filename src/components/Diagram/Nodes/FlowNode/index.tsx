@@ -31,6 +31,12 @@ const FlowNode = ({ id, data, selected }: NodeProps<FlowNodeType>) => {
                     onChange={(value) => updateNodeLabel(id, value)}
                     align={data.inputStyles?.align}
                     verticalAlign={data.inputStyles?.verticalAlign}
+                    fontSize={data.inputStyles?.fontSize}
+                    bold={data.inputStyles?.bold}
+                    italic={data.inputStyles?.italic}
+                    underline={data.inputStyles?.underline}
+                    color={data.inputStyles?.color}
+                    lineHeight={data.inputStyles?.lineHeight}
                 />
                 <Handle type="target" position={Position.Top}
                         id='top-target'/> {/* 每个句柄需要一个id，用来唯一标识是该节点上的哪个句柄 */}

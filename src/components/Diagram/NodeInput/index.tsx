@@ -7,10 +7,27 @@ type NodeInputProps = {
     onChange: (value: string) => void;
     align?: 'center' | 'left' | 'right';
     verticalAlign?: 'top' | 'bottom' | 'center';
+    fontSize?: string, // 字体大小
+    bold?: boolean, // 是否加粗
+    italic?: boolean, // 是否斜体
+    underline?: boolean, // 是否下划线
+    color?: string, // 颜色
+    lineHeight?: string, // 行高
 }
 
 const NodeInput = (props: NodeInputProps) => {
-    const { value, onChange, align = 'center', verticalAlign = 'center' } = props;
+    const {
+        value,
+        onChange,
+        align = 'center',
+        verticalAlign = 'center',
+        fontSize = '14px',
+        bold = false,
+        italic = false,
+        underline = false,
+        color = 'black',
+        lineHeight = '14px',
+    } = props;
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const parentRef = useRef<HTMLDivElement>(null);
 
@@ -20,6 +37,7 @@ const NodeInput = (props: NodeInputProps) => {
         }, 1);
     }, []);
 
+    // 监听输入内容的变化
     useEffect(() => {
         const handleInput = () => {
             const textarea = inputRef.current;
@@ -37,15 +55,14 @@ const NodeInput = (props: NodeInputProps) => {
         };
     }, []);
 
+    // 监听父容器的变化
     useEffect(() => {
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const textarea = inputRef.current;
-                if (!textarea) return;
-                // 重新调整高度以适应内容
-                textarea.style.height = 'auto';
-                textarea.style.height = `${textarea.scrollHeight}px`;
-            }
+        const resizeObserver = new ResizeObserver(() => {
+            const textarea = inputRef.current;
+            if (!textarea) return;
+            // 重新调整高度以适应内容
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
         });
 
         const parentElement = parentRef.current;
@@ -69,7 +86,6 @@ const NodeInput = (props: NodeInputProps) => {
                 [styles.verticalAlignCenter]: verticalAlign === 'center',
                 [styles.verticalAlignBottom]: verticalAlign === 'bottom',
             })}
-
         >
             <textarea
                 className={classNames({
@@ -77,6 +93,12 @@ const NodeInput = (props: NodeInputProps) => {
                 })}
                 style={{
                     textAlign: align,
+                    fontSize: fontSize,
+                    lineHeight: lineHeight,
+                    fontWeight: bold ? 'bold' : 'normal',
+                    fontStyle: italic ? 'italic' : 'normal',
+                    textDecoration: underline ? 'underline' : 'none',
+                    color,
                 }}
                 rows={1}
                 value={value}

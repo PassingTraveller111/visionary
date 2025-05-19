@@ -15,14 +15,30 @@ const DiagramSideBar = () => {
     return <div
         className={styles.DiagramSideBarContainer}
     >
-        <div className={styles.shapeBar} onDragStart={(event) => onSideBarDragStart(event, 'input')} draggable>
-            Input Node
-        </div>
-        <div className={styles.shapeBar} onDragStart={(event) => onSideBarDragStart(event, 'default')} draggable>
-            Default Node
-        </div>
-        <div className={styles.shapeBar} onDragStart={(event) => onSideBarDragStart(event, 'output')} draggable>
-            Output Node
+        <div
+            className={styles.shapeBar}
+            onDragStart={(event) => onSideBarDragStart(event, {
+                id: '0',
+                position: {
+                    x: 0,
+                    y: 0,
+                },
+                data: {
+                    label: 'input Node',
+                    inputStyles: {
+                        fontSize: '18px',
+                        align: 'center',
+                        verticalAlign: 'center',
+                        bold: true,
+                        underline: true,
+                        color: '#123',
+                    },
+                },
+                width: 100,
+                height: 40,
+            })}
+            draggable>
+            Input Node1
         </div>
     </div>
 }

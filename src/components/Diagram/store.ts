@@ -8,13 +8,13 @@ import {
 } from '@xyflow/react';
 import {create} from 'zustand';
 
-import {type FlowEdge, type FlowNode, lineType} from './types';
+import {type FlowEdge, type FlowNode, inputStylesType, lineType} from './types';
 
 
 export type RFState = {
     nodes: FlowNode[];
     edges: FlowEdge[];
-    sidebarDragType: string;
+    sidebarDragNode: FlowNode;
     onNodesChange: OnNodesChange<FlowNode>;
     onEdgesChange: OnEdgesChange<FlowEdge>;
     initDiagram: (initData: string) => void;
@@ -24,15 +24,12 @@ export type RFState = {
     };
     updateNodeLabel: (nodeId: string, label: string) => void;
     updateEdgeLabel: (nodeId: string, label: string) => void;
-    onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => void;
+    onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, node: FlowNode) => void;
     addNode: (newNode: FlowNode) => void;
     setEdges: (callback: (edges: FlowEdge[]) => FlowEdge[]) => void;
     updateNodesInputStyles: (
         nodeIds: string[],
-        styles?: {
-            align?: 'center' | 'left' | 'right',
-            verticalAlign?: 'center' | 'top' | 'bottom',
-        }
+        styles: inputStylesType,
     ) => void;
     updateLineType: (
         edgeIds: string[],
@@ -45,7 +42,22 @@ const useStore = create<RFState>((set, get) => ({
     ],
     edges: [
     ],
-    sidebarDragType: '',
+    // 侧边栏拖动的节点数据
+    sidebarDragNode: {
+        id: 'new Node',
+        position: {
+            x: 0,
+            y: 0,
+        },
+        data: {
+            inputStyles: {
+                align: 'center',
+                verticalAlign: 'center',
+                fontSize: '14px',
+            },
+            label: 'new Node',
+        },
+    },
     onNodesChange: (changes: NodeChange<FlowNode>[]) => {
         set({
             nodes: applyNodeChanges<FlowNode>(changes, get().nodes),
@@ -109,9 +121,12 @@ const useStore = create<RFState>((set, get) => ({
     /**
     * 侧边栏开始拖拽元素
     * */
-    onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
+    onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, node: FlowNode) => {
         set({
-            sidebarDragType: nodeType,
+            sidebarDragNode: {
+                ...get().sidebarDragNode,
+                ...node
+            },
         })
         event.dataTransfer.effectAllowed = 'move';
     },
@@ -138,10 +153,7 @@ const useStore = create<RFState>((set, get) => ({
      * */
     updateNodesInputStyles: (
         nodeIds: string[],
-        styles?: {
-            align?: 'center' | 'left' | 'right',
-            verticalAlign?: 'center' | 'top' | 'bottom',
-        }
+        styles: inputStylesType,
     ) => {
         set({
             nodes: get().nodes.map((node) => {
@@ -152,8 +164,7 @@ const useStore = create<RFState>((set, get) => ({
                             ...node.data,
                             inputStyles: {
                                 ...node.data.inputStyles,
-                                align: styles?.align ?? node.data.inputStyles?.align,
-                                verticalAlign: styles?.verticalAlign ?? node.data.inputStyles?.verticalAlign,
+                                ...styles,
                             }
                         },
                     };

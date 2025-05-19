@@ -20,7 +20,7 @@ import '@xyflow/react/dist/style.css';
 const selector = (state: RFState) => ({
     nodes: state.nodes,
     edges: state.edges,
-    sidebarDragType: state.sidebarDragType,
+    sideBarDragNode: state.sidebarDragNode,
     onNodesChange: state.onNodesChange,
     onEdgesChange: state.onEdgesChange,
     addNode: state.addNode,
@@ -39,7 +39,7 @@ const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3 };
 const defaultEdgeOptions = { style: connectionLineStyle, type: 'flow' };
 
 const Flow = () => {
-    const { nodes, edges, onNodesChange, onEdgesChange, sidebarDragType, addNode, setEdges } = useStore(
+    const { nodes, edges, onNodesChange, onEdgesChange, sideBarDragNode, addNode, setEdges } = useStore(
         useShallow(selector)
     );
     const { screenToFlowPosition } = useReactFlow();
@@ -60,7 +60,7 @@ const Flow = () => {
     const onDrop = useCallback(
         (event: React.DragEvent) => {
             event.preventDefault();
-            if (!sidebarDragType) {
+            if (!sideBarDragNode) {
                 return;
             }
             const position = screenToFlowPosition({
@@ -68,14 +68,14 @@ const Flow = () => {
                 y: event.clientY,
             });
             const newNode: FlowNodeType = {
+                ...sideBarDragNode,
                 id: Math.random().toString(),
                 position,
                 type: 'flow',
-                data: { label: `${sidebarDragType} node` },
             };
             addNode(newNode);
         },
-        [addNode, screenToFlowPosition, sidebarDragType],
+        [addNode, screenToFlowPosition, sideBarDragNode],
     );
 
 
@@ -91,7 +91,7 @@ const Flow = () => {
             onConnect={onConnect}
             connectionLineType={ConnectionLineType.Straight}
             defaultEdgeOptions={defaultEdgeOptions}
-            connectionLineStyle={connectionLineStyle}
+            connectionLineStyle={connectionLineStyle} // 拉出来连接线的默认属性
             fitView
             onDrop={onDrop}
             onDragOver={onDragOver}

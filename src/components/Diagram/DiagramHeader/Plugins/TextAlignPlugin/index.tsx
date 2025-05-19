@@ -1,16 +1,18 @@
 import {useCallback, useState} from "react";
-import {Edge, Node, useOnSelectionChange} from "@xyflow/react";
+import { useOnSelectionChange} from "@xyflow/react";
 import useStore from "@/components/Diagram/store";
 import {IconFont} from "@/components/IconFont";
 import {PluginType} from "@/components/Diagram/DiagramHeader/Plugins/type";
 import PluginButton from "@/components/Diagram/DiagramHeader/Plugins/PluginButton/PluginButton";
+import {FlowEdge, FlowNode} from "@/components/Diagram/types";
 
 
 const TextAlignPlugin: PluginType = () => {
-    const [selection, setSelection] = useState<{ nodes: Node[], edges: Edge[] }>({ nodes: [], edges: [] });
+    const [selection, setSelection] = useState<{ nodes: FlowNode[], edges: FlowEdge[] }>({ nodes: [], edges: [] });
     const updateNodesInputStyles = useStore(state => state.updateNodesInputStyles);
+
     // 监听选中节点/边变化
-    const onSelectionChange = useCallback(({ nodes, edges }: { nodes: Node[], edges: Edge[] }) => {
+    const onSelectionChange = useCallback(({ nodes, edges }: { nodes: FlowNode[], edges: FlowEdge[] }) => {
         setSelection({
             nodes,
             edges,
@@ -24,9 +26,13 @@ const TextAlignPlugin: PluginType = () => {
         verticalAlign?: 'top' | 'bottom' | 'center'
     }) => {
         const nodeIds = selection.nodes.map((node) => node.id);
+        if(inputStyles.verticalAlign)
+        updateNodesInputStyles(nodeIds, {
+            verticalAlign: inputStyles.verticalAlign,
+        });
+        if(inputStyles.align)
         updateNodesInputStyles(nodeIds, {
             align: inputStyles.align,
-            verticalAlign: inputStyles.verticalAlign,
         });
     }
     return <PluginButton
