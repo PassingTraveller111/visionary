@@ -5,7 +5,7 @@ import { PluginType } from "@/components/Diagram/DiagramHeader/Plugins/type";
 import PluginButton from "@/components/Diagram/DiagramHeader/Plugins/PluginButton/PluginButton";
 import { FlowEdge, FlowNode } from "@/components/Diagram/types";
 
-const TextFontBoldPlugin: PluginType = () => {
+const TextUnderlinePlugin: PluginType = () => {
     const [selection, setSelection] = useState<{ nodes: FlowNode[]; edges: FlowEdge[] }>({ nodes: [], edges: [] });
     const updateNodesInputStyles = useStore(state => state.updateNodesInputStyles);
     const nodes = useStore(state => state.nodes); // 获取最新节点数据
@@ -17,53 +17,53 @@ const TextFontBoldPlugin: PluginType = () => {
 
     useOnSelectionChange({ onChange: onSelectionChange });
 
-    // 计算当前是否加粗
-    const curFontBold = useMemo(() => {
+    // 计算当前是否下划线
+    const curUnderline = useMemo(() => {
         if (selection.nodes.length === 0) return false;
 
-        // 获取第一个选中节点是否加粗
+        // 获取第一个选中节点是否下划线
         const selectedNode = nodes.find(node => node.id === selection.nodes[0].id);
-        const firstFontBold = selectedNode?.data?.inputStyles?.bold;
+        const firstUnderline = selectedNode?.data?.inputStyles?.underline;
 
-        if (!firstFontBold) return false;
+        if (!firstUnderline) return false;
 
 
-        // 检查所有选中节点的加粗是否一致
+        // 检查所有选中节点的下划线是否一致
         const isUniform = selection.nodes.every(selectedNode => {
             const node = nodes.find(node => node.id === selectedNode.id);
-            const nodeBold = node?.data?.inputStyles?.bold;
-            return nodeBold === firstFontBold;
+            const nodeUnderline = node?.data?.inputStyles?.underline;
+            return nodeUnderline === firstUnderline;
         });
 
-        return isUniform ? firstFontBold : false;
+        return isUniform ? firstUnderline : false;
     }, [selection, nodes]);
 
     const isInputDisabled = selection.nodes.length === 0;
 
     // 处理加粗变化
-    const handleFontBoldChange = useCallback(() => {
+    const handleUnderlineChange = useCallback(() => {
         if (isInputDisabled) return;
 
         const nodeIds = selection.nodes.map(node => node.id);
         if (nodeIds.length > 0) {
-            updateNodesInputStyles(nodeIds, { bold:  !curFontBold});
+            updateNodesInputStyles(nodeIds, { underline:  !curUnderline});
         }
-    }, [curFontBold, isInputDisabled, selection.nodes, updateNodesInputStyles]);
+    }, [curUnderline, isInputDisabled, selection.nodes, updateNodesInputStyles]);
 
     return (
         <PluginButton
-            title="加粗"
-            iconName={'icon-bold'}
+            title="下划线"
+            iconName={'icon-underline'}
             disabled={isInputDisabled}
-            selected={curFontBold}
-            onClick={handleFontBoldChange}
+            selected={curUnderline}
+            onClick={handleUnderlineChange}
         />
     );
 };
 
-TextFontBoldPlugin.config = {
-    name: "TextFontBoldPlugin",
+TextUnderlinePlugin.config = {
+    name: "TextUnderlinePlugin",
     align: "left",
 };
 
-export default TextFontBoldPlugin;
+export default TextUnderlinePlugin;
