@@ -1,5 +1,5 @@
 import styles from './index.module.scss';
-import { useEffect, useRef } from "react";
+import {useEffect, useRef, useState} from "react";
 import classNames from "classnames";
 
 type NodeInputProps = {
@@ -26,10 +26,11 @@ const NodeInput = (props: NodeInputProps) => {
         italic = false,
         underline = false,
         color = 'black',
-        lineHeight = '14px',
+        lineHeight = 'normal',
     } = props;
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const parentRef = useRef<HTMLDivElement>(null);
+    const [prevFontSize, setPrevFontSize] = useState(fontSize);
 
     useEffect(() => {
         setTimeout(() => {
@@ -37,7 +38,7 @@ const NodeInput = (props: NodeInputProps) => {
         }, 1);
     }, []);
 
-    // 监听输入内容的变化
+    // 监听输入内容的变化，根据输入内容调整输入框高度
     useEffect(() => {
         const handleInput = () => {
             const textarea = inputRef.current;
@@ -55,7 +56,7 @@ const NodeInput = (props: NodeInputProps) => {
         };
     }, []);
 
-    // 监听父容器的变化
+    // 监听父容器的变化，根据父容器的变化，调整输入框高度
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
             const textarea = inputRef.current;
@@ -77,6 +78,19 @@ const NodeInput = (props: NodeInputProps) => {
         };
     }, []);
 
+    // 监听字号调整，根据字号调整，调整输入框的高度
+    useEffect(() => {
+        if (prevFontSize !== fontSize) {
+            const textarea = inputRef.current;
+            if (textarea) {
+                // 重置高度，让内容重新填充
+                textarea.style.height = 'auto';
+                textarea.style.height = `${textarea.scrollHeight}px`;
+            }
+            setPrevFontSize(fontSize);
+        }
+    }, [fontSize, prevFontSize]);
+
     return (
         <div
             ref={parentRef}
@@ -93,8 +107,8 @@ const NodeInput = (props: NodeInputProps) => {
                 })}
                 style={{
                     textAlign: align,
-                    fontSize: fontSize,
-                    lineHeight: lineHeight,
+                    fontSize,
+                    lineHeight,
                     fontWeight: bold ? 'bold' : 'normal',
                     fontStyle: italic ? 'italic' : 'normal',
                     textDecoration: underline ? 'underline' : 'none',
