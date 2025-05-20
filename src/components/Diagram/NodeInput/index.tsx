@@ -31,6 +31,7 @@ const NodeInput = (props: NodeInputProps) => {
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const parentRef = useRef<HTMLDivElement>(null);
     const [prevFontSize, setPrevFontSize] = useState(fontSize);
+    const [prevLineHeight, setPrevLineHeight] = useState(lineHeight);
 
     useEffect(() => {
         setTimeout(() => {
@@ -90,6 +91,19 @@ const NodeInput = (props: NodeInputProps) => {
             setPrevFontSize(fontSize);
         }
     }, [fontSize, prevFontSize]);
+
+    // 监听行高调整，根据行高调整，调整输入框的高度
+    useEffect(() => {
+        if (prevLineHeight !== lineHeight) {
+            const textarea = inputRef.current;
+            if (textarea) {
+                // 重置高度，让内容重新填充
+                textarea.style.height = 'auto';
+                textarea.style.height = `${textarea.scrollHeight}px`;
+            }
+            setPrevLineHeight(lineHeight);
+        }
+    }, [lineHeight, prevLineHeight]);
 
     return (
         <div
