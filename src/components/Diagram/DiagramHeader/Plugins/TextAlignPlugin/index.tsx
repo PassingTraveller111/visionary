@@ -21,6 +21,7 @@ const TextAlignPlugin: PluginType = () => {
     useOnSelectionChange({
         onChange: onSelectionChange,
     });
+
     const changeAlign = (inputStyles: {
         align?: 'center' | 'left' | 'right',
         verticalAlign?: 'top' | 'bottom' | 'center'
@@ -42,54 +43,54 @@ const TextAlignPlugin: PluginType = () => {
         dropdownProps={{
             menu: {
                 items: [
-                {
-                    key: 'center',
-                    icon: <IconFont type='icon-centerAlign' />,
-                    label: '水平居中',
-                    onClick: () => changeAlign({
-                    align: 'center'
-                }),
-                },
-                {
-                    key: 'left',
-                    icon: <IconFont type='icon-leftAlign' />,
-                    label: '左对齐',
-                    onClick: () => changeAlign({
-                    align: 'left'
-                }),
-                },
-                {
-                    key: 'right',
-                    icon: <IconFont type='icon-rightAlign' />,
-                    label: '右对齐',
-                    onClick: () => changeAlign({
-                    align: 'right'
-                }),
-                },
-                {
-                    key: 'top',
-                    icon: <IconFont type='icon-rightAlign' />,
-                    label: '顶端对齐',
-                    onClick: () => changeAlign({
-                    verticalAlign: 'top'
-                }),
-                },
-                {
-                    key: 'middle',
-                    icon: <IconFont type='icon-rightAlign' />,
-                    label: '垂直居中对齐',
-                    onClick: () => changeAlign({
-                    verticalAlign: 'center'
-                }),
-                },
-                {
-                    key: 'bottom',
-                    icon: <IconFont type='icon-rightAlign' />,
-                    label: '底端对齐',
-                    onClick: () => changeAlign({
-                    verticalAlign: 'bottom'
-                }),
-                }
+                    {
+                        key: 'center',
+                        icon: <IconFont type='icon-centerAlign' />,
+                        label: '水平居中',
+                        onClick: () => changeAlign({
+                            align: 'center'
+                        }),
+                    },
+                    {
+                        key: 'left',
+                        icon: <IconFont type='icon-leftAlign' />,
+                        label: '左对齐',
+                        onClick: () => changeAlign({
+                            align: 'left'
+                        }),
+                    },
+                    {
+                        key: 'right',
+                        icon: <IconFont type='icon-rightAlign' />,
+                        label: '右对齐',
+                        onClick: () => changeAlign({
+                            align: 'right'
+                        }),
+                    },
+                    {
+                        key: 'top',
+                        icon: <IconFont type='icon-rightAlign' />,
+                        label: '顶端对齐',
+                        onClick: () => changeAlign({
+                            verticalAlign: 'top'
+                        }),
+                    },
+                    {
+                        key: 'middle',
+                        icon: <IconFont type='icon-rightAlign' />,
+                        label: '垂直居中对齐',
+                        onClick: () => changeAlign({
+                            verticalAlign: 'center'
+                        }),
+                    },
+                    {
+                        key: 'bottom',
+                        icon: <IconFont type='icon-rightAlign' />,
+                        label: '底端对齐',
+                        onClick: () => changeAlign({
+                            verticalAlign: 'bottom'
+                        }),
+                    }
                 ]
             }
         }}

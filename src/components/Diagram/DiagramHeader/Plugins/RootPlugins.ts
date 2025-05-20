@@ -2,12 +2,14 @@ import TextAlignPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextAlig
 import {configType} from "@/components/Diagram/DiagramHeader/Plugins/type";
 import LineTypePlugin from "@/components/Diagram/DiagramHeader/Plugins/LineTypePlugin";
 import TextFontSizePlugin from "@/components/Diagram/DiagramHeader/Plugins/TextFontSizePlugin";
+import TextFontBoldPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextFontBoldPlugin";
 
 
 const rootPlugins = [
     // 字体相关
     TextAlignPlugin,
     TextFontSizePlugin,
+    TextFontBoldPlugin,
     // 连线相关
     LineTypePlugin,
 ];

@@ -5,40 +5,62 @@ import styles from './index.module.scss';
 import classNames from "classnames";
 import {ReactNode} from "react";
 
-const PluginButton = (props: { disabled?: boolean, title: string, iconName?: string, dropdownProps?: DropdownProps, content?: string | ReactNode }) => {
-    const { title, dropdownProps, iconName = '', disabled = false, content } = props;
+type PluginButtonProps = {
+    disabled?: boolean,
+    selected?: boolean,
+    onClick?: () => void,
+    title: string,
+    iconName?: string,
+    dropdownProps?: DropdownProps,
+    content?: string | ReactNode
+}
+
+const PluginButton = (props: PluginButtonProps) => {
+    const {
+        title,
+        dropdownProps,
+        iconName = '',
+        disabled = false,
+        content,
+        selected = false,
+        onClick,
+    } = props;
     return dropdownProps ?
        <Dropdown
-        {...dropdownProps}
-        disabled={disabled}
-    >
-           <Tooltip
-               title={<span>{title}</span>}
-               placement="top"
-           >
-            <span
-                className={classNames({
-                    [styles.buttonContainer]: true,
-                    [styles.disabled]: disabled,
-                })}
-            >
-                {content ? content : <IconFont type={iconName}/>}
-            </span>
-           </Tooltip>
-    </Dropdown> :
-        <Tooltip
-            title={<span>{title}</span>}
-            placement="top"
+            {...dropdownProps}
+            disabled={disabled}
         >
-            <span
-                className={classNames({
-                    [styles.buttonContainer]: true,
-                    [styles.disabled]: disabled,
-                })}
+               <Tooltip
+                   title={<span>{title}</span>}
+                   placement="top"
+               >
+                <span
+                    className={classNames({
+                        [styles.buttonContainer]: true,
+                        [styles.disabled]: disabled,
+                        [styles.selected]: selected,
+                    })}
+                    onClick={onClick}
+                >
+                    {content ? content : <IconFont type={iconName}/>}
+                </span>
+               </Tooltip>
+        </Dropdown> :
+            <Tooltip
+                title={<span>{title}</span>}
+                placement="top"
             >
-                {content ? content : <IconFont type={iconName}/>}
-            </span>
-        </Tooltip>
+                <span
+                    className={classNames({
+                        [styles.buttonContainer]: true,
+                        [styles.disabled]: disabled,
+                        [styles.selected]: selected,
+                    })}
+                    onClick={onClick}
+                >
+                    {content ? content : <IconFont type={iconName}/>}
+                </span>
+            </Tooltip>
 }
 
 export default PluginButton;

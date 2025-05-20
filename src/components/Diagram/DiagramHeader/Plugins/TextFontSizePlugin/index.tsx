@@ -41,7 +41,7 @@ const TextFontSizePlugin: PluginType = () => {
 
         return isUniform ? sizeNum : null;
     }, [selection, nodes]);
-    console.log('curFontSize', curFontSize);
+
     // 处理字号变化
     const handleFontSizeChange = useCallback((value?: number | null) => {
         if (value === undefined || value === null) return;

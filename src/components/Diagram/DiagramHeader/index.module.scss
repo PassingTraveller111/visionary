@@ -34,7 +34,9 @@ $ToolbarHeight: 40px;
     padding: 0 20px;
     justify-content: space-between;
     .toolbarLeft{
-
+      &>span{
+        margin-right: 4px;
+      }
     }
     .toolbarRight{
 
