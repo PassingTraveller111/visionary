@@ -1,7 +1,10 @@
 .buttonContainer {
   font-size: 16px;
   cursor: pointer;
-  padding: 4px;
+  margin-right: 4px;
+  padding: 3px 6px;
+}
+.needHoverBg{
   &:hover {
     background: #dfe1e6;
   }

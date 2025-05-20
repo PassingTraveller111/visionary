@@ -70,6 +70,7 @@ const TextFontSizePlugin: PluginType = () => {
                     suffix={'px'}
                 />
             }
+            needHoverBg={false}
             disabled={isInputDisabled}
         />
     );

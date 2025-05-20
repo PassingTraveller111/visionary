@@ -13,6 +13,7 @@ type PluginButtonProps = {
     iconName?: string,
     dropdownProps?: DropdownProps,
     content?: string | ReactNode
+    needHoverBg?: boolean, // 是否需要hover背景色
 }
 
 const PluginButton = (props: PluginButtonProps) => {
@@ -24,6 +25,7 @@ const PluginButton = (props: PluginButtonProps) => {
         content,
         selected = false,
         onClick,
+        needHoverBg = true,
     } = props;
     return dropdownProps ?
        <Dropdown
@@ -55,6 +57,7 @@ const PluginButton = (props: PluginButtonProps) => {
                         [styles.buttonContainer]: true,
                         [styles.disabled]: disabled,
                         [styles.selected]: selected,
+                        [styles.needHoverBg]: needHoverBg,
                     })}
                     onClick={onClick}
                 >

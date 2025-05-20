@@ -4,6 +4,7 @@ import LineTypePlugin from "@/components/Diagram/DiagramHeader/Plugins/LineTypeP
 import TextFontSizePlugin from "@/components/Diagram/DiagramHeader/Plugins/TextFontSizePlugin";
 import TextFontBoldPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextFontBoldPlugin";
 import TextUnderLinePlugin from "@/components/Diagram/DiagramHeader/Plugins/TextUnderLinePlugin";
+import TextColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextColorPlugin";
 
 
 const rootPlugins = [
@@ -12,6 +13,7 @@ const rootPlugins = [
     TextFontSizePlugin,
     TextFontBoldPlugin,
     TextUnderLinePlugin,
+    TextColorPlugin,
     // 连线相关
     LineTypePlugin,
 ];

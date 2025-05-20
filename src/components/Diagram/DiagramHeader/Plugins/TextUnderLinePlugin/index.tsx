@@ -40,7 +40,6 @@ const TextUnderlinePlugin: PluginType = () => {
 
     const isInputDisabled = selection.nodes.length === 0;
 
-    // 处理加粗变化
     const handleUnderlineChange = useCallback(() => {
         if (isInputDisabled) return;
 
