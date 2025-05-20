@@ -67,6 +67,7 @@ const TextFontSizePlugin: PluginType = () => {
                     max={72}
                     step={1}
                     style={{ width: 80 }}
+                    suffix={'px'}
                 />
             }
             disabled={isInputDisabled}
