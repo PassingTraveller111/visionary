@@ -7,6 +7,7 @@ import TextUnderLinePlugin from "@/components/Diagram/DiagramHeader/Plugins/Text
 import TextColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextColorPlugin";
 import TextLineHeightPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextLineHeightPlugin";
 import LineColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/LineColorPlugin";
+import LineWidthPlugin from "@/components/Diagram/DiagramHeader/Plugins/LineWidthPlugin";
 
 
 const rootPlugins = [
@@ -20,6 +21,7 @@ const rootPlugins = [
     // 连线相关
     LineTypePlugin,
     LineColorPlugin,
+    LineWidthPlugin,
 ];
 
 const defaultPluginConfig: configType = {

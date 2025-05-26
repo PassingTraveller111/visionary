@@ -61,6 +61,7 @@ const LineColorPlugin: PluginType = () => {
     return (
         <PluginButton
             title="线条颜色"
+            disabled={isInputDisabled}
             content={
                 <ColorPicker
                     size={'small'}
