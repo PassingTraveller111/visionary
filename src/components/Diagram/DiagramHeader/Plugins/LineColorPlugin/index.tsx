@@ -6,6 +6,7 @@ import PluginButton from "@/components/Diagram/DiagramHeader/Plugins/PluginButto
 import { FlowEdge, FlowNode } from "@/components/Diagram/types";
 import {ColorPicker, ColorPickerProps, theme} from "antd";
 import {green, presetPalettes, red, generate} from "@ant-design/colors";
+import {IconFont} from "@/components/IconFont";
 
 type Presets = Required<ColorPickerProps>['presets'][number];
 
@@ -69,7 +70,14 @@ const LineColorPlugin: PluginType = () => {
                     onChange={(color) => {
                         handleColorChange(color.toCssString())
                     }}
-                />
+                >
+                    <IconFont
+                        type={'icon-lineColor'}
+                        style={{
+                            color: curColor ?? ''
+                        }}
+                    />
+                </ColorPicker>
             }
         />
     );
