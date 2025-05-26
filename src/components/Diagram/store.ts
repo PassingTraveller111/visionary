@@ -8,32 +8,36 @@ import {
 } from '@xyflow/react';
 import {create} from 'zustand';
 
-import {type FlowEdge, type FlowNode, inputStylesType, lineType} from './types';
+import {type FlowEdge, type FlowNode, inputStylesType, lineStylesType, lineType} from './types';
 
 
 export type RFState = {
-    nodes: FlowNode[];
-    edges: FlowEdge[];
-    sidebarDragNode: FlowNode;
-    onNodesChange: OnNodesChange<FlowNode>;
-    onEdgesChange: OnEdgesChange<FlowEdge>;
-    initDiagram: (initData: string) => void;
+    nodes: FlowNode[]; // 节点数据
+    edges: FlowEdge[]; // 边数据
+    sidebarDragNode: FlowNode; // 侧边栏当前拖动的节点
+    onNodesChange: OnNodesChange<FlowNode>; // 节点修改触发
+    onEdgesChange: OnEdgesChange<FlowEdge>; // 边修改触发
+    initDiagram: (initData: string) => void; // 初始化
     getData: () => {
         nodes: FlowNode[];
         edges: FlowEdge[];
-    };
-    updateNodeLabel: (nodeId: string, label: string) => void;
-    updateEdgeLabel: (nodeId: string, label: string) => void;
-    onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, node: FlowNode) => void;
-    addNode: (newNode: FlowNode) => void;
-    setEdges: (callback: (edges: FlowEdge[]) => FlowEdge[]) => void;
-    updateNodesInputStyles: (
+    }; // 获取节点和边数据
+    updateNodeLabel: (nodeId: string, label: string) => void; // 更新节点的label
+    updateEdgeLabel: (nodeId: string, label: string) => void; // 更新边的label
+    onSideBarDragStart: (event: React.DragEvent<HTMLDivElement>, node: FlowNode) => void; // 开始从侧边栏拖拽节点
+    addNode: (newNode: FlowNode) => void; // 添加节点
+    setEdges: (callback: (edges: FlowEdge[]) => FlowEdge[]) => void; // 修改边
+    updateNodesInputStyles: ( // 更新节点输入框样式
         nodeIds: string[],
         styles: inputStylesType,
     ) => void;
-    updateLineType: (
+    updateLineType: (  // 更新连线类型
         edgeIds: string[],
         type: lineType,
+    ) => void;
+    updateLineStyle: (
+        edgeIds: string[],
+        lineStyles: lineStylesType,
     ) => void;
 };
 
@@ -57,6 +61,12 @@ const useStore = create<RFState>((set, get) => ({
             },
             label: 'new Node',
         },
+    },
+    connectionLineStyle: {
+
+    },
+    defaultEdgeOptions: {
+
     },
     onNodesChange: (changes: NodeChange<FlowNode>[]) => {
         set({
@@ -189,6 +199,25 @@ const useStore = create<RFState>((set, get) => ({
                             ...edge.data,
                             type,
                         },
+                    } as FlowEdge;
+                }
+                return edge;
+            }),
+        });
+    },
+    updateLineStyle: (
+        edgeIds,
+        lineStyles
+    ) => {
+        set({
+            edges: get().edges.map(edge => {
+                if (edgeIds.includes(edge.id)) {
+                    return {
+                        ...edge,
+                        style: {
+                            ...edge.style,
+                            ...lineStyles,
+                        }
                     } as FlowEdge;
                 }
                 return edge;

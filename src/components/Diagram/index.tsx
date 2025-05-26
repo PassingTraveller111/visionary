@@ -2,7 +2,6 @@
 import { useCallback } from 'react';
 import {
     ReactFlow,
-    ConnectionLineType,
     useReactFlow,
     Controls,
     addEdge,
@@ -16,6 +15,7 @@ import FlowNode from './Nodes/FlowNode';
 import FlowEdge from './Edges/FlowEdge';
 import { type FlowNode as FlowNodeType, type FlowEdge as FlowEdgeType } from './types';
 import '@xyflow/react/dist/style.css';
+import ConnectionLine from "@/components/Diagram/ConnectionLine";
 
 const selector = (state: RFState) => ({
     nodes: state.nodes,
@@ -47,6 +47,7 @@ const Flow = () => {
     // 处理节点连线事件
     const onConnect = useCallback((params: FlowEdgeType | Connection) => {
         // 使用 addEdge 函数添加新的边
+        console.log('addEdge', params);
         setEdges((eds) => addEdge(params, eds));
     }, [setEdges]);
 
@@ -89,7 +90,7 @@ const Flow = () => {
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onConnect={onConnect}
-            connectionLineType={ConnectionLineType.Straight}
+            connectionLineComponent={ConnectionLine}
             defaultEdgeOptions={defaultEdgeOptions}
             connectionLineStyle={connectionLineStyle} // 拉出来连接线的默认属性
             fitView

@@ -12,7 +12,7 @@ type NodeInputProps = {
     italic?: boolean, // 是否斜体
     underline?: boolean, // 是否下划线
     color?: string, // 颜色
-    lineHeight?: string, // 行高
+    lineHeight?: string | number, // 行高
 }
 
 const NodeInput = (props: NodeInputProps) => {

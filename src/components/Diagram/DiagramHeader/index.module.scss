@@ -33,13 +33,11 @@ $ToolbarHeight: 40px;
     border: 1px solid #8a919f;
     padding: 0 20px;
     justify-content: space-between;
+    .toolbarRight,
     .toolbarLeft{
       height: 100%;
       display: inline-flex;
       align-items: center;
-    }
-    .toolbarRight{
-
     }
   }
 }

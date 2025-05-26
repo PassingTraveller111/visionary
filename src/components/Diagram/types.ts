@@ -28,4 +28,12 @@ export type lineType = 'Bezier' | 'SmoothStep' | 'Straight';
 
 export type FlowEdge = Edge<FlowEdgeData, 'flow'>;
 
+export type lineStylesType = {
+    stroke?: string; // 连线颜色
+    strokeWidth?: number; // 连线宽度
+    strokeDasharray?: string; // 虚线样式
+    startMarket?: string; // 开始箭头
+    endMarket?: string; // 结束箭头
+} | undefined;
+
 
