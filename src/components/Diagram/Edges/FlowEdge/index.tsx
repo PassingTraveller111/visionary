@@ -52,7 +52,6 @@ function FlowEdge({ id, data, markerEnd, selected, ...props }: EdgeProps<FlowEdg
                     style={{
                         position: 'absolute',
                         transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-                        backgroundColor: props?.style?.stroke ?? '#fff',
                         padding: 5,
                         borderRadius: 5,
                         pointerEvents: 'all',
@@ -62,6 +61,14 @@ function FlowEdge({ id, data, markerEnd, selected, ...props }: EdgeProps<FlowEdg
                     <EdgeInput
                         value={data?.label ?? ''}
                         onChange={(value) => updateEdgeLabel(id, value)}
+                        align={data?.inputStyles?.align}
+                        verticalAlign={data?.inputStyles?.verticalAlign}
+                        fontSize={data?.inputStyles?.fontSize}
+                        bold={data?.inputStyles?.bold}
+                        italic={data?.inputStyles?.italic}
+                        underline={data?.inputStyles?.underline}
+                        color={data?.inputStyles?.color}
+                        lineHeight={data?.inputStyles?.lineHeight}
                     />
                 </div>
             </EdgeLabelRenderer>

@@ -9,6 +9,7 @@ import {FlowEdge, FlowNode} from "@/components/Diagram/types";
 const TextLineHeightPlugin: PluginType = () => {
     const [selection, setSelection] = useState<{ nodes: FlowNode[], edges: FlowEdge[] }>({ nodes: [], edges: [] });
     const updateNodesInputStyles = useStore(state => state.updateNodesInputStyles);
+    const updateEdgesInputStyles = useStore(state => state.updateEdgeInputStyles);
 
     // 监听选中节点/边变化
     const onSelectionChange = useCallback(({ nodes, edges }: { nodes: FlowNode[], edges: FlowEdge[] }) => {
@@ -25,10 +26,16 @@ const TextLineHeightPlugin: PluginType = () => {
         lineHeight: number
     ) => {
         const nodeIds = selection.nodes.map((node) => node.id);
-        if(lineHeight)
-        updateNodesInputStyles(nodeIds, {
-            lineHeight,
-        });
+        const edgeIds = selection.edges.map((edge) => edge.id);
+        if(lineHeight){
+            updateNodesInputStyles(nodeIds, {
+                lineHeight,
+            });
+            updateEdgesInputStyles(edgeIds, {
+                lineHeight,
+            })
+        }
+
     }
     return <PluginButton
         title='行高'

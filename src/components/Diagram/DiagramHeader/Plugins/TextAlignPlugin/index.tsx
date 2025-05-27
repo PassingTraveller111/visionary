@@ -10,6 +10,7 @@ import {FlowEdge, FlowNode} from "@/components/Diagram/types";
 const TextAlignPlugin: PluginType = () => {
     const [selection, setSelection] = useState<{ nodes: FlowNode[], edges: FlowEdge[] }>({ nodes: [], edges: [] });
     const updateNodesInputStyles = useStore(state => state.updateNodesInputStyles);
+    const updateEdgesInputStyles = useStore(state => state.updateEdgeInputStyles);
 
     // 监听选中节点/边变化
     const onSelectionChange = useCallback(({ nodes, edges }: { nodes: FlowNode[], edges: FlowEdge[] }) => {
@@ -21,20 +22,32 @@ const TextAlignPlugin: PluginType = () => {
     useOnSelectionChange({
         onChange: onSelectionChange,
     });
-
+    console.log(selection)
     const changeAlign = (inputStyles: {
         align?: 'center' | 'left' | 'right',
         verticalAlign?: 'top' | 'bottom' | 'center'
     }) => {
         const nodeIds = selection.nodes.map((node) => node.id);
-        if(inputStyles.verticalAlign)
-        updateNodesInputStyles(nodeIds, {
-            verticalAlign: inputStyles.verticalAlign,
-        });
-        if(inputStyles.align)
-        updateNodesInputStyles(nodeIds, {
-            align: inputStyles.align,
-        });
+        const edgeIds = selection.edges.map((edge) => edge.id);
+
+        if (inputStyles.verticalAlign) {
+            updateNodesInputStyles(nodeIds, {
+                verticalAlign: inputStyles.verticalAlign,
+            });
+            updateEdgesInputStyles(edgeIds, {
+                verticalAlign: inputStyles.verticalAlign
+            })
+        }
+
+        if (inputStyles.align) {
+            updateNodesInputStyles(nodeIds, {
+                align: inputStyles.align,
+            });
+            updateEdgesInputStyles(edgeIds, {
+                align: inputStyles.align,
+            })
+        }
+
     }
     return <PluginButton
         title='居中'

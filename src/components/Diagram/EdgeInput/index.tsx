@@ -29,7 +29,6 @@ const EdgeInput = (props: EdgeInputProps) => {
         lineHeight = 'normal',
     } = props;
     const inputRef = useRef<HTMLTextAreaElement>(null);
-    const parentRef = useRef<HTMLDivElement>(null);
     const [prevFontSize, setPrevFontSize] = useState(fontSize);
     const [prevLineHeight, setPrevLineHeight] = useState(lineHeight);
     useEffect(() => {
@@ -56,27 +55,6 @@ const EdgeInput = (props: EdgeInputProps) => {
         };
     }, []);
 
-    // 监听父容器的变化，根据父容器的变化，调整输入框高度
-    useEffect(() => {
-        const resizeObserver = new ResizeObserver(() => {
-            const textarea = inputRef.current;
-            if (!textarea) return;
-            // 重新调整高度以适应内容
-            textarea.style.height = 'auto';
-            textarea.style.height = `${textarea.scrollHeight}px`;
-        });
-
-        const parentElement = parentRef.current;
-        if (parentElement) {
-            resizeObserver.observe(parentElement);
-        }
-
-        return () => {
-            if (parentElement) {
-                resizeObserver.unobserve(parentElement);
-            }
-        };
-    }, []);
 
     // 监听字号调整，根据字号调整，调整输入框的高度
     useEffect(() => {
@@ -106,7 +84,6 @@ const EdgeInput = (props: EdgeInputProps) => {
 
     return (
         <div
-            ref={parentRef}
             className={classNames({
                 [styles.inputContainer]: true,
                 [styles.verticalAlignTop]: verticalAlign === 'top',
@@ -126,11 +103,14 @@ const EdgeInput = (props: EdgeInputProps) => {
                     fontStyle: italic ? 'italic' : 'normal',
                     textDecoration: underline ? 'underline' : 'none',
                     color,
+                    backgroundColor: 'red',
+                    width: 'auto',
                 }}
                 rows={1}
                 value={value}
                 onChange={(evt) => onChange(evt.target.value)}
                 ref={inputRef}
+                placeholder={'编辑'}
             />
         </div>
     );

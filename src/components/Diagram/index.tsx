@@ -47,7 +47,6 @@ const Flow = () => {
     // 处理节点连线事件
     const onConnect = useCallback((params: FlowEdgeType | Connection) => {
         // 使用 addEdge 函数添加新的边
-        console.log('addEdge', params);
         const newEdge = {
             ...params,
             data: {

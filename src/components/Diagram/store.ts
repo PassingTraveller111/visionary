@@ -31,6 +31,10 @@ export type RFState = {
         nodeIds: string[],
         styles: inputStylesType,
     ) => void;
+    updateEdgeInputStyles: (
+        edgeIds: string[],
+        styles: inputStylesType,
+    ) => void;
     updateLineType: (  // 更新连线类型
         edgeIds: string[],
         type: lineType,
@@ -180,6 +184,28 @@ const useStore = create<RFState>((set, get) => ({
                     };
                 }
                 return node;
+            }),
+        });
+    },
+    updateEdgeInputStyles: (
+        edgeIds: string[],
+        styles: inputStylesType,
+    ) => {
+        set({
+            edges: get().edges.map((edge) => {
+                if (edgeIds.includes(edge.id)) {
+                    return {
+                        ...edge,
+                        data: {
+                            ...edge.data,
+                            inputStyles: {
+                                ...edge?.data?.inputStyles,
+                                ...styles,
+                            }
+                        },
+                    } as FlowEdge;
+                }
+                return edge;
             }),
         });
     },
