@@ -21,6 +21,16 @@ const FlowNode = ({ id, data, selected }: NodeProps<FlowNodeType>) => {
                 minHeight={30}
                 minWidth={30}
             />
+            {/*<svg*/}
+            {/*    viewBox="0 0 100 90"*/}
+            {/*    width="100%"*/}
+            {/*    height="100%"*/}
+            {/*    style={{*/}
+            {/*        position: 'absolute',*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <path d="M50,10 L90,30 L90,60 L50,80 L10,60 L10,30 Z" fill="#8B5CF6"/>*/}
+            {/*</svg>*/}
             <div
                 className={classNames({
                     [styles.NodeContainer]: true,
