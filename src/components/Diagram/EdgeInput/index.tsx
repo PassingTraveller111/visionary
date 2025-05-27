@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 import {useEffect, useRef, useState} from "react";
 import classNames from "classnames";
 
-type NodeInputProps = {
+type EdgeInputProps = {
     value: string;
     onChange: (value: string) => void;
     align?: 'center' | 'left' | 'right';
@@ -15,7 +15,7 @@ type NodeInputProps = {
     lineHeight?: string | number, // 行高
 }
 
-const NodeInput = (props: NodeInputProps) => {
+const EdgeInput = (props: EdgeInputProps) => {
     const {
         value,
         onChange,
@@ -136,4 +136,4 @@ const NodeInput = (props: NodeInputProps) => {
     );
 };
 
-export default NodeInput;
+export default EdgeInput;

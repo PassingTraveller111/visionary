@@ -48,7 +48,13 @@ const Flow = () => {
     const onConnect = useCallback((params: FlowEdgeType | Connection) => {
         // 使用 addEdge 函数添加新的边
         console.log('addEdge', params);
-        setEdges((eds) => addEdge(params, eds));
+        const newEdge = {
+            ...params,
+            data: {
+                label: 'new edge'
+            }
+        } as FlowEdgeType;
+        setEdges((eds) => addEdge(newEdge, eds));
     }, [setEdges]);
 
     const onDragOver = useCallback((event: React.DragEvent) => {

@@ -1,0 +1,28 @@
+.inputContainer{
+  display: flex;
+  width: 100%;
+  position: relative;
+  height: 100%;
+  min-width: 20px;
+  .input{
+    border: none;
+    box-shadow: none !important;
+    outline: none !important;
+    resize: none !important;
+    position: absolute;
+    height: auto;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    overflow: hidden;
+  }
+}
+.verticalAlignCenter{
+  align-items: center;
+}
+.verticalAlignTop{
+  align-items: flex-start;
+}
+.verticalAlignBottom{
+  align-items: flex-end;
+}

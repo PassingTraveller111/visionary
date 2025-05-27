@@ -1,0 +1,12 @@
+// 虚线动画
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+.animatedDash {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 10,5;
+  animation: dash 3s linear infinite;
+}

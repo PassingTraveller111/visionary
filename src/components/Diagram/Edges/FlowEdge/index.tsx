@@ -10,14 +10,15 @@ import {
 import {type FlowEdge as FlowEdgeType, FlowNode} from "@/components/Diagram/types";
 import useStore from "@/components/Diagram/store";
 import {useCallback, useState} from "react";
-import NodeInput from "@/components/Diagram/NodeInput";
+import EdgeInput from "@/components/Diagram/EdgeInput";
+import styles from './index.module.scss'
+import classNames from "classnames";
 
 
 
-function FlowEdge({ id, data, markerEnd, ...props }: EdgeProps<FlowEdgeType>) {
+function FlowEdge({ id, data, markerEnd, selected, ...props }: EdgeProps<FlowEdgeType>) {
     const updateEdgeLabel = useStore((state) => state.updateEdgeLabel);
     const [edgePath, labelX, labelY] = getPath(props, data?.type);
-    const [showInput, setShowInput] = useState(false);
     const [selection, setSelection] = useState<{ nodes: FlowNode[], edges: FlowEdgeType[] }>({ nodes: [], edges: [] });
 
     // 监听选中节点/边变化
@@ -30,41 +31,41 @@ function FlowEdge({ id, data, markerEnd, ...props }: EdgeProps<FlowEdgeType>) {
     useOnSelectionChange({
         onChange: onSelectionChange,
     });
-console.log(selection)
+    console.log(selection,selected, id, data?.label);
     return <>
         <g>
             <BaseEdge
                 id={id}
                 path={edgePath}
-                style={props.style}
+                style={{
+                    ...props.style,
+                }}
+                className={classNames({
+                    [styles.animatedDash]: selected
+                })}
                 markerEnd={markerEnd}
             />
         </g>
-        <EdgeLabelRenderer>
-            {
-                showInput ? (
-                            data?.label && <div
-                            style={{
-                                position: 'absolute',
-                                transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-                                background: '#ffcc00',
-                                padding: 5,
-                                borderRadius: 5,
-                                fontSize: 12,
-                                fontWeight: 700,
-                                pointerEvents: 'all',
-                            }}
-                            className="nodrag nopan"
-                        >
-                            {data?.label}
-                        </div>
-                ) : (
-                    <NodeInput value={data?.label ?? ''} onChange={(value) => updateEdgeLabel(id, value)}/>
-                )
-            }
-
-
-        </EdgeLabelRenderer>
+        {
+            (selected || data?.label) && <EdgeLabelRenderer>
+                <div
+                    style={{
+                        position: 'absolute',
+                        transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                        backgroundColor: props?.style?.stroke ?? '#fff',
+                        padding: 5,
+                        borderRadius: 5,
+                        pointerEvents: 'all',
+                    }}
+                    className="nodrag nopan"
+                >
+                    <EdgeInput
+                        value={data?.label ?? ''}
+                        onChange={(value) => updateEdgeLabel(id, value)}
+                    />
+                </div>
+            </EdgeLabelRenderer>
+        }
     </>
 }
 
