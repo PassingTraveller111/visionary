@@ -5,11 +5,10 @@ import {
     getBezierPath,
     GetBezierPathParams,
     getSmoothStepPath, GetSmoothStepPathParams,
-    getStraightPath, GetStraightPathParams, useOnSelectionChange
+    getStraightPath, GetStraightPathParams
 } from '@xyflow/react';
-import {type FlowEdge as FlowEdgeType, FlowNode} from "@/components/Diagram/types";
+import {type FlowEdge as FlowEdgeType} from "@/components/Diagram/types";
 import useStore from "@/components/Diagram/store";
-import {useCallback, useState} from "react";
 import EdgeInput from "@/components/Diagram/EdgeInput";
 import styles from './index.module.scss'
 import classNames from "classnames";
@@ -19,19 +18,7 @@ import classNames from "classnames";
 function FlowEdge({ id, data, markerEnd, selected, ...props }: EdgeProps<FlowEdgeType>) {
     const updateEdgeLabel = useStore((state) => state.updateEdgeLabel);
     const [edgePath, labelX, labelY] = getPath(props, data?.type);
-    const [selection, setSelection] = useState<{ nodes: FlowNode[], edges: FlowEdgeType[] }>({ nodes: [], edges: [] });
 
-    // 监听选中节点/边变化
-    const onSelectionChange = useCallback(({ nodes, edges }: { nodes: FlowNode[], edges: FlowEdgeType[] }) => {
-        setSelection({
-            nodes,
-            edges,
-        })
-    }, []);
-    useOnSelectionChange({
-        onChange: onSelectionChange,
-    });
-    console.log(selection,selected, id, data?.label);
     return <>
         <g>
             <BaseEdge
@@ -69,6 +56,7 @@ function FlowEdge({ id, data, markerEnd, selected, ...props }: EdgeProps<FlowEdg
                         underline={data?.inputStyles?.underline}
                         color={data?.inputStyles?.color}
                         lineHeight={data?.inputStyles?.lineHeight}
+                        fill={data?.inputStyles?.fill}
                     />
                 </div>
             </EdgeLabelRenderer>

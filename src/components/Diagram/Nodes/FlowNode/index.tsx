@@ -35,6 +35,9 @@ const FlowNode = ({ id, data, selected }: NodeProps<FlowNodeType>) => {
                 className={classNames({
                     [styles.NodeContainer]: true,
                 })}
+                style={{
+                    backgroundColor: data?.inputStyles?.fill ?? 'transparent',
+                }}
             >
                 <NodeInput
                     value={data.label}

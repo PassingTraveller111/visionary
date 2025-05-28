@@ -13,6 +13,7 @@ type EdgeInputProps = {
     underline?: boolean, // 是否下划线
     color?: string, // 颜色
     lineHeight?: string | number, // 行高
+    fill?: string, // 背景颜色
 }
 
 const EdgeInput = (props: EdgeInputProps) => {
@@ -27,6 +28,7 @@ const EdgeInput = (props: EdgeInputProps) => {
         underline = false,
         color = 'black',
         lineHeight = 'normal',
+        fill = 'transparent',
     } = props;
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [prevFontSize, setPrevFontSize] = useState(fontSize);
@@ -105,6 +107,7 @@ const EdgeInput = (props: EdgeInputProps) => {
                     color,
                     backgroundColor: 'red',
                     width: 'auto',
+                    background: fill,
                 }}
                 rows={1}
                 value={value}

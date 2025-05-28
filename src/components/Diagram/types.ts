@@ -22,6 +22,7 @@ export type inputStylesType = {
     lineHeight?: string | number, // 行高
     align?: 'center' | 'left' | 'right', // 横向对齐
     verticalAlign?: 'center' | 'top' | 'bottom', // 纵向对齐
+    fill?: string, // 填充颜色
 } | undefined;
 
 export type lineType = 'Bezier' | 'SmoothStep' | 'Straight';

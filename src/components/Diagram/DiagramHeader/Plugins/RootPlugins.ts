@@ -8,6 +8,7 @@ import TextColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextColo
 import TextLineHeightPlugin from "@/components/Diagram/DiagramHeader/Plugins/TextLineHeightPlugin";
 import LineColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/LineColorPlugin";
 import LineWidthPlugin from "@/components/Diagram/DiagramHeader/Plugins/LineWidthPlugin";
+import FillColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/FillColorPlugin";
 
 
 const rootPlugins = [
@@ -18,6 +19,7 @@ const rootPlugins = [
     TextUnderLinePlugin,
     TextColorPlugin,
     TextLineHeightPlugin,
+    FillColorPlugin,
     // 连线相关
     LineTypePlugin,
     LineColorPlugin,
