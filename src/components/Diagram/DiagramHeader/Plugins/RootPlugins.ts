@@ -9,6 +9,7 @@ import TextLineHeightPlugin from "@/components/Diagram/DiagramHeader/Plugins/Tex
 import LineColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/LineColorPlugin";
 import LineWidthPlugin from "@/components/Diagram/DiagramHeader/Plugins/LineWidthPlugin";
 import FillColorPlugin from "@/components/Diagram/DiagramHeader/Plugins/FillColorPlugin";
+import DividerPlugin from "@/components/Diagram/DiagramHeader/Plugins/DividerPlugin";
 
 
 const rootPlugins = [
@@ -20,6 +21,7 @@ const rootPlugins = [
     TextColorPlugin,
     TextLineHeightPlugin,
     FillColorPlugin,
+    DividerPlugin,
     // 连线相关
     LineTypePlugin,
     LineColorPlugin,

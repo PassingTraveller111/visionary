@@ -58,7 +58,7 @@ const LineTypePlugin: PluginType = () => {
 
 LineTypePlugin.config = {
     name: 'LineTypePlugin',
-    align: 'right',
+    align: 'left',
 }
 
 export default LineTypePlugin;

@@ -71,7 +71,7 @@ const LineWidthPlugin: PluginType = () => {
 
 LineWidthPlugin.config = {
     name: "LineWidthPlugin",
-    align: "right",
+    align: "left",
 };
 
 export default LineWidthPlugin;

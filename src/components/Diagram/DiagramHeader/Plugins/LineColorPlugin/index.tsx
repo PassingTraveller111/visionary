@@ -86,7 +86,7 @@ const LineColorPlugin: PluginType = () => {
 
 LineColorPlugin.config = {
     name: "LineColorPlugin",
-    align: "right",
+    align: "left",
 };
 
 export default LineColorPlugin;

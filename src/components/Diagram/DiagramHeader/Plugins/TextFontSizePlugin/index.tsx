@@ -82,7 +82,7 @@ const TextFontSizePlugin: PluginType = () => {
                     min={8}
                     max={72}
                     step={1}
-                    style={{ width: 80 }}
+                    style={{ width: 90 }}
                     suffix={'px'}
                 />
             }
