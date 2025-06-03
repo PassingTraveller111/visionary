@@ -1,12 +1,17 @@
-$DiagramSideBarWidth: 180px;
+$DiagramSideBarWidth: 250px;
 
 .DiagramSideBarContainer {
   height: 100%;
   width: $DiagramSideBarWidth;
-  border: #8a919f 1px solid;
+  background: #f6f3f3;
   .shapeBar{
     width: 100px;
     height: 30px;
     border: 1px solid #8a919f;
+  }
+  .collapseItem{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 }

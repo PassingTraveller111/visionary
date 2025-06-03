@@ -3,6 +3,11 @@ import { type Edge, type Node} from '@xyflow/react';
 export type FlowNodeDataType = {
     label: string;
     inputStyles: inputStylesType, // 输入框文字样式
+    shape: { // 形状
+        d: string; // 路径
+        stroke: string; // 路径颜色
+        strokeWidth: string | number; // 路径宽度
+    }
 };
 
 export type FlowNode = Node<FlowNodeDataType, 'flow'>;
@@ -22,7 +27,7 @@ export type inputStylesType = {
     lineHeight?: string | number, // 行高
     align?: 'center' | 'left' | 'right', // 横向对齐
     verticalAlign?: 'center' | 'top' | 'bottom', // 纵向对齐
-    fill?: string, // 填充颜色
+    fill?: string, // 填充颜色（对于节点是形状内部的颜色fill，对于边是输入框内部的颜色）
 } | undefined;
 
 export type lineType = 'Bezier' | 'SmoothStep' | 'Straight';

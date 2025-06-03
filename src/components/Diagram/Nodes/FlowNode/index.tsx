@@ -21,23 +21,28 @@ const FlowNode = ({ id, data, selected }: NodeProps<FlowNodeType>) => {
                 minHeight={30}
                 minWidth={30}
             />
-            {/*<svg*/}
-            {/*    viewBox="0 0 100 90"*/}
-            {/*    width="100%"*/}
-            {/*    height="100%"*/}
-            {/*    style={{*/}
-            {/*        position: 'absolute',*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <path d="M50,10 L90,30 L90,60 L50,80 L10,60 L10,30 Z" fill="#8B5CF6"/>*/}
-            {/*</svg>*/}
+            <svg
+                viewBox="-5 -5 110 110"
+                width="100%"
+                height="100%"
+                style={{
+                    position: 'absolute',
+                }}
+                fill={data?.inputStyles?.fill ?? 'transparent'}
+                preserveAspectRatio="none" // 允许图形形变
+                shape-rendering="crispEdges" // 调整线条位置，与像素对齐，防止模糊
+            >
+                <path
+                    vector-effect="non-scaling-stroke" // 让线条宽度不受拉伸影响
+                    d={data?.shape?.d ?? ''}
+                    stroke={data?.shape?.stroke}
+                    strokeWidth={data?.shape?.strokeWidth}
+                />
+            </svg>
             <div
                 className={classNames({
                     [styles.NodeContainer]: true,
                 })}
-                style={{
-                    backgroundColor: data?.inputStyles?.fill ?? 'transparent',
-                }}
             >
                 <NodeInput
                     value={data.label}

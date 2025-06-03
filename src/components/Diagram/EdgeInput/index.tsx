@@ -1,6 +1,7 @@
 import styles from './index.module.scss';
 import {useEffect, useRef, useState} from "react";
 import classNames from "classnames";
+import {Input} from "antd";
 
 type EdgeInputProps = {
     value: string;
@@ -105,8 +106,6 @@ const EdgeInput = (props: EdgeInputProps) => {
                     fontStyle: italic ? 'italic' : 'normal',
                     textDecoration: underline ? 'underline' : 'none',
                     color,
-                    backgroundColor: 'red',
-                    width: 'auto',
                     background: fill,
                 }}
                 rows={1}

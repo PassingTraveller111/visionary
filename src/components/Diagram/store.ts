@@ -64,6 +64,11 @@ const useStore = create<RFState>((set, get) => ({
                 fontSize: '14px',
             },
             label: 'new Node',
+            shape: {
+                d: '',
+                stroke: 'black',
+                strokeWidth: 1,
+            }
         },
     },
     connectionLineStyle: {
