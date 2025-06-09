@@ -2,15 +2,17 @@ import {FlowNode} from "@/components/Diagram/types";
 import {DragEventHandler} from "react";
 import styles from './index.module.scss';
 import {Popover} from "antd";
+import Image from "next/image";
 
 type DragItemProps = {
     flowNode: FlowNode,
     onDragStart?: DragEventHandler<HTMLDivElement> | undefined,
     title?: string,
+    icon?: string, // 展示图标
 }
 
 
-const DragItem = ({ flowNode, onDragStart, title }: DragItemProps) => {
+const DragItem = ({ flowNode, onDragStart, title, icon }: DragItemProps) => {
     const { data, width = 1, height = 1 } = flowNode;
     const aspectRatio = width / height;
     return <Popover
@@ -48,7 +50,8 @@ const DragItem = ({ flowNode, onDragStart, title }: DragItemProps) => {
             onDragStart={onDragStart}
             className={styles.DiagramItemContainer}
         >
-            <svg
+            {icon ? <Image src={icon} width={100} height={100}  alt={''}/>
+                : <svg
                 viewBox="-5 -5 110 110"
                 width={aspectRatio >= 1 ? '100%' : `calc(100% * ${aspectRatio})`}
                 height={aspectRatio <= 1 ? '100%' : `calc(100% / ${aspectRatio})`}
@@ -63,6 +66,8 @@ const DragItem = ({ flowNode, onDragStart, title }: DragItemProps) => {
                     strokeWidth={data?.shape?.strokeWidth}
                 />
             </svg>
+            }
+
         </div>
     </Popover>
 

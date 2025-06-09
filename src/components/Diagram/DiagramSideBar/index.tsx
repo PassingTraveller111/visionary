@@ -72,6 +72,7 @@ const DiagramSideBar = () => {
             >
                 {item.items.map((shape) => {
                     return <DragItem
+                        icon={shape.icon}
                         key={shape.title}
                         title={shape.title}
                         flowNode={createNode(shape.d, shape.width, shape.height)}

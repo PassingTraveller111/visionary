@@ -9,6 +9,7 @@ export type ShapeType = {
     stroke?: string, // 默认的线条颜色
     strokeWidth?: number, // 默认的线条宽度
     fill?: string, // 默认的填充颜色
+    icon?: string, // 图标
 }
 
 export const Shapes: {
@@ -18,6 +19,13 @@ export const Shapes: {
 } = {
     // 基础图形
     Base: {
+        Text: {
+          d: '',
+          title: '文本',
+          width: 120,
+          height: 60,
+          icon: 'https://visionary-1305469650.cos.ap-beijing.myqcloud.com/diagram_shape_icon/text.png',
+        },
         Hexagon: {
             d: 'M50,0 L100,33.3 L100,66.6 L50,100 L0,66.6 L0,33.3 Z',
             title: '六边形',
