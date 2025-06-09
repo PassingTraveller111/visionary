@@ -10,8 +10,8 @@ $DiagramSideBarWidth: 250px;
     border: 1px solid #8a919f;
   }
   .collapseItem{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 创建三列，每列宽度相等 */
+    gap: 5px; // 间距10px
   }
 }
