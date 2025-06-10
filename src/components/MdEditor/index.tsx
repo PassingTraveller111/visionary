@@ -36,12 +36,13 @@ type ReactEditorProps = {
     value: string;
     onChange: (value: string) => void;
     className?: string;
+    onSaveDraft: () => void;
 }
 
 
 
 const ReactEditor = (props: ReactEditorProps) => {
-    const { value = '', onChange, className } = props;
+    const { value = '', onChange, className, onSaveDraft } = props;
     useEffect(() => {
         const html = document.documentElement;
         html.style.overflow = 'hidden';
@@ -50,7 +51,10 @@ const ReactEditor = (props: ReactEditorProps) => {
         <MdEditor
             className={classNames(styles.mdEditorContainer, className)}
             value={value}
-            onChange={(e) => onChange(e.text)}
+            onChange={(e) => {
+                onChange(e.text);
+                onSaveDraft();
+            }}
             shortcuts
             renderHTML={text => {
                 return <ReactMarkdown>{text}</ReactMarkdown>;

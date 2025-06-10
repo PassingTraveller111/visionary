@@ -63,7 +63,7 @@ const useStore = create<RFState>((set, get) => ({
                 verticalAlign: 'center',
                 fontSize: '14px',
             },
-            label: 'new Node',
+            label: '',
             shape: {
                 d: '',
                 stroke: 'black',

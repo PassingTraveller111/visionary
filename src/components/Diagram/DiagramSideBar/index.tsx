@@ -22,11 +22,11 @@ const createNode = (shape: string, width?: string | number, height?: string | nu
         data: {
             label: 'input Node',
             inputStyles: {
-                fontSize: '18px',
+                fontSize: '13px',
                 align: 'center',
                 verticalAlign: 'center',
-                bold: true,
-                underline: true,
+                bold: false,
+                underline: false,
                 color: '#123',
             },
             shape: {

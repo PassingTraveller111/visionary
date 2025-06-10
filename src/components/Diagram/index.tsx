@@ -50,7 +50,7 @@ const Flow = () => {
         const newEdge = {
             ...params,
             data: {
-                label: 'new edge'
+                label: ''
             }
         } as FlowEdgeType;
         setEdges((eds) => addEdge(newEdge, eds));

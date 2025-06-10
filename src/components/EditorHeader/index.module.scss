@@ -17,6 +17,11 @@ $editor-header-height: 70px;
   }
   .tools{
     display: flex;
+    .status{
+      display: flex;
+      align-items: center;
+      color: #a19f9f;
+    }
     button{
       margin-left: 10px;
     }

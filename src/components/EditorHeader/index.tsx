@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useMemo} from 'react'
 import {Button, Form, Input, Popover} from "antd";
 import styles from './index.module.scss';
 import Tags from "@/components/Tags";
@@ -12,13 +12,21 @@ type EditorHeaderProps = {
     onTitleChange: (title: string) => void;
     onSaveDraft: () => void;
     onPublicArticle: () => void;
+    DraftSaveStatus: 'loading' | 'success' | 'error';
 }
 
 
 const EditorHeader= (props: EditorHeaderProps) => {
-    const { draft, onTitleChange, onSaveDraft, onPublicArticle } = props;
+    const { draft, onTitleChange, onSaveDraft, onPublicArticle, DraftSaveStatus = 'success' } = props;
     const dispatch = useDispatch();
     // const [columns] = useGetColumns();
+    const status = useMemo(() => {
+        switch (DraftSaveStatus) {
+            case 'loading': return '正在保存';
+            case 'error': return '保存失败';
+            case 'success': return '修改已经保存';
+        }
+    }, [DraftSaveStatus]);
 
     return <div className={styles.editorHeaderContainer}>
         <div className={styles.title}>
@@ -30,6 +38,9 @@ const EditorHeader= (props: EditorHeaderProps) => {
             />
         </div>
         <div className={styles.tools}>
+            <span
+                className={styles.status}
+            >{status}</span>
             <Button
                 type="primary"
                 onClick={onSaveDraft}
