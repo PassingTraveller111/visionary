@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import DiagramHeader from "../../../../components/Diagram/DiagramHeader";
 import DiagramToolBar from "../../../../components/Diagram/DiagramSideBar";
 import {useParams, useRouter, useSearchParams} from "next/navigation";
-import { useCallback, useEffect } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch} from "react-redux";
 import {AppDispatch, useAppSelector} from "@/store";
 import {setDiagram} from "@/store/features/diagramSlice";
@@ -14,6 +14,7 @@ import useMessage from "antd/es/message/useMessage";
 import {getNodesBounds, getViewportForBounds, ReactFlowProvider, useReactFlow} from "@xyflow/react";
 import {toPng} from "html-to-image";
 import {apiClient, apiList} from "@/clientApi";
+import {debounce} from "next/dist/server/utils";
 
 const DiagramPage = () => {
     return <ReactFlowProvider>
@@ -32,7 +33,7 @@ const DiagramContainer = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const router = useRouter();
     const getData = useStore(state => state.getData);
-    const [messageApi, messageContext] = useMessage();
+    const [diagramSaveStatus, setDiagramSaveStatus] = useState<'success' | 'error' | 'loading'>('success');
     const initDiagram = useCallback(() => {
         const id = diagramId === 'new' ? diagramId : Number(diagramId);
         dispatch(setDiagram({
@@ -62,7 +63,7 @@ const DiagramContainer = () => {
         }))
     }
     // 保存为图片
-    const saveAsImage = async () => {
+    const saveAsImage = useCallback(async () => {
         const imageWidth = 1024;
         const imageHeight = 768;
         const nodesBounds = getNodesBounds(getNodes());
@@ -86,40 +87,65 @@ const DiagramContainer = () => {
                 transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
             },
         });
-    };
+    }, [getNodes]);
+
     // 保存到数据库
-    const onSaveDiagram = async () => {
+    const onSaveDiagram = useCallback(async () => {
         const data = getData(); // 图表数据要从图表的独立store获取
         // 根据当前的图像生成新的封面
         const base64 = await saveAsImage();
-        if (!base64) return;
+        if (!base64) return false;
         const file =  base64ToFile(base64, diagram.title);
         const formData = new FormData();
         formData.append('file', file);
         formData.append('id', diagram.id.toString());
-        const res = await apiClient(apiList.post.protected.diagrams.uploadCover, {
+        const resCover = await apiClient(apiList.post.protected.diagrams.uploadCover, {
             method: 'POST',
             body: formData,
         });
-        const newCover = `https://${res.data.Location}`;
-        updateDiagram({
+        const newCover = `https://${resCover.data.Location}`;
+
+        return await updateDiagram({
             ...diagram,
             data: JSON.stringify(data),
             cover: newCover,
-        }, userInfo).then((res) => {
-            if(res.msg === 'success') {
-                messageApi.success('保存成功');
-            }else{
-                messageApi.error('保存失败');
+        }, userInfo);
+    }, [diagram, getData, saveAsImage, updateDiagram, userInfo]);
+
+    const debounceSaveRef = useRef(null);
+    // 初始化防抖函数
+    useEffect(() => {
+        // 创建防抖函数，接收最新的draft和userInfo作为参数
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        debounceSaveRef.current = debounce(async () => {
+            try {
+                setDiagramSaveStatus('loading');
+                const res = await onSaveDiagram();
+                if(res && res.msg === 'success')
+                    setDiagramSaveStatus('success');
+                else setDiagramSaveStatus('error');
+            } catch (error) {
+                console.error('保存失败:', error);
+                setDiagramSaveStatus('error');
             }
-        })
-    }
+        }, 2000);
+    }, [onSaveDiagram]);
+
+    const debounceOnSave = useCallback(async () => {
+        if (debounceSaveRef.current) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            return await debounceSaveRef.current();
+        }
+    },[])
+
     return <div className={styles.DiagramContainer}>
-        {messageContext}
         <div className={styles.Header}>
             <DiagramHeader
                 diagram={diagram}
-                onSaveDiagram={onSaveDiagram}
+                diagramSaveStatus={diagramSaveStatus}
+                onSaveDiagram={debounceOnSave}
                 onTitleChange={onTitleChange}
                 onSaveAsImage={saveAsImage}
             />
@@ -127,7 +153,9 @@ const DiagramContainer = () => {
         <div className={styles.Diagram}>
             <DiagramToolBar/>
             <div className={styles.center}>
-                <Diagram/>
+                <Diagram
+                    onSaveDiagram={debounceOnSave}
+                />
             </div>
             <div className={styles.right}>
 

@@ -6,7 +6,7 @@ import {
     Controls,
     addEdge,
     Connection,
-    MiniMap,
+    MiniMap, NodeChange, EdgeChange,
 } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -38,11 +38,25 @@ const edgeTypes = {
 const connectionLineStyle = { stroke: '#F6AD55', strokeWidth: 3 };
 const defaultEdgeOptions = { style: connectionLineStyle, type: 'flow' };
 
-const Flow = () => {
+type FlowProps = {
+    onSaveDiagram: () => Promise<void>;
+}
+
+const Flow = (props: FlowProps) => {
     const { nodes, edges, onNodesChange, onEdgesChange, sideBarDragNode, addNode, setEdges } = useStore(
         useShallow(selector)
     );
     const { screenToFlowPosition } = useReactFlow();
+    const { onSaveDiagram } = props;
+
+    const handleNodesChange = (args: NodeChange<FlowNodeType>[]) => {
+        onSaveDiagram();
+        return onNodesChange(args);
+    }
+    const handleEdgesChange = (args: EdgeChange<FlowEdgeType>[]) => {
+        onSaveDiagram();
+        return onEdgesChange(args)
+    }
 
     // 处理节点连线事件
     const onConnect = useCallback((params: FlowEdgeType | Connection) => {
@@ -85,13 +99,12 @@ const Flow = () => {
     );
 
 
-
     return (
         <ReactFlow
             nodes={nodes}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
+            onNodesChange={handleNodesChange}
+            onEdgesChange={handleEdgesChange}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onConnect={onConnect}
