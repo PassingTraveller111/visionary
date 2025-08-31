@@ -94,6 +94,7 @@ export const apiList = {
                 uploadCover: 'protected/diagrams/uploadCover', // 上传封面
                 delDiagram: 'protected/diagrams/delDiagram', // 删除
                 renameDiagram: 'protected/diagrams/renameDiagram', // 重命名
+                getDiagramCoverById: 'protected/diagrams/getDiagramCoverById', // 获取图标封面
             }
         },
     },

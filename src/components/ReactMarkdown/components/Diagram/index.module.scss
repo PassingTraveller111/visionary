@@ -1,0 +1,29 @@
+
+
+.diagramHeader{
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  border: 1px solid #eee;
+  background: #faf9f9;
+  font-size: 14px;
+  .headerLeft{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    //&:hover{
+    //  background: #eee;
+    //}
+    //svg{
+    //  font-size: 20px;
+    //}
+  }
+  .editButton{
+    padding: 0 10px;
+    cursor: pointer;
+    &:hover{
+      background: #eee;
+    }
+  }
+}

@@ -10,6 +10,10 @@ import useStore from "@/components/Diagram/store";
 import {getDiagramsListResType} from "@/app/api/protected/diagrams/getDiagramsList/route";
 import {delDiagramReqType} from "@/app/api/protected/diagrams/delDiagram/route";
 import {renameDiagramReqType} from "@/app/api/protected/diagrams/renameDiagram/route";
+import {
+    getDiagramCoverByIdReqType,
+    getDiagramCoverByIdResType
+} from "@/app/api/protected/diagrams/getDiagramCoverById/route";
 
 
 export const useUpdateDiagram = () => {
@@ -116,5 +120,18 @@ export const useRenameDiagram = () => {
             method: 'POST',
             body: JSON.stringify(apiData),
         })
+    }, []);
+}
+
+export const useGetDiagramCoverById = () => {
+    return useCallback(async (id: number) => {
+        const apiData: getDiagramCoverByIdReqType = {
+            id,
+        }
+        const res: getDiagramCoverByIdResType = await apiClient(apiList.post.protected.diagrams.getDiagramCoverById, {
+            method: 'POST',
+            body: JSON.stringify(apiData),
+        })
+        return res.data;
     }, []);
 }
