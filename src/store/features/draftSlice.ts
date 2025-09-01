@@ -11,6 +11,7 @@ export type draftType = {
     review_id: number; // 审核id
     author_id: number; // 作者id
     cover?: string; // 封面
+    isLoading: boolean; // 加载状态
 }
 
 type InitialStateType = {
@@ -29,6 +30,7 @@ const initialState: InitialStateType = {
         review_id: 0,
         author_id: 0,
         cover: '',
+        isLoading: false,
     }
 };
 
@@ -36,7 +38,7 @@ export const draftSlice = createSlice({
     name: "draft",
     initialState,
     reducers: {
-        setDraft: (state, action: PayloadAction<draftType>) => {
+        setDraft: (state, action: PayloadAction<Partial<draftType>>) => {
             return {
                 value: {
                     ...state.value,

@@ -39,7 +39,9 @@ const DiagramComponents: ComponentType  = ({children}) => {
         window.open('/editor/diagram/' + id, '_blank');
     }
     return(
-        <div>
+        <div
+            className={styles.diagramContainer}
+        >
             <div className={styles.diagramHeader}>
                 <div className={styles.headerLeft}>{diagram.title}</div>
                 {isUserOwn(diagram.author_id) && <div

@@ -12,7 +12,6 @@ const CodeComponents: ComponentType  = ({children, className}) => {
     // @ts-expect-error
     const match = /language-(\w+)/.exec(children && children.props.className || "");
     const languageLabel = match ? match[1] : '';
-    console.log('languageLabel',languageLabel)
     const handleCopy = async () => {
         try {
             const text = document.getElementById(uniqueId)?.innerText || "";

@@ -17,6 +17,7 @@ import FullScreenPlugin from "@/components/MdEditor/plugins/FullScreen";
 import TabInsertPlugin from "@/components/MdEditor/plugins/TabInsertPlugin";
 import FindPlugin from "@/components/MdEditor/plugins/FindPlugin";
 import imageScalePlugin from "@/components/MdEditor/plugins/ImageScalePlugin";
+import DiagramPlugin from "@/components/MdEditor/plugins/DiagramPlugin";
 
 
 const rootPluginsList = [
@@ -35,6 +36,7 @@ const rootPluginsList = [
     TablePlugin,
     imagePlugin,
     imageScalePlugin,
+    DiagramPlugin,
     ModeChangePlugin,
     FullScreenPlugin,
     TabInsertPlugin,

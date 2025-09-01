@@ -1,5 +1,9 @@
 
-
+.diagramContainer{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 .diagramHeader{
   display: flex;
   justify-content: space-between;
@@ -7,6 +11,7 @@
   border: 1px solid #eee;
   background: #faf9f9;
   font-size: 14px;
+  width: 100%;
   .headerLeft{
     cursor: pointer;
     display: flex;

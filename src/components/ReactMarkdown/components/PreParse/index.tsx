@@ -9,7 +9,6 @@ const PreParseComponents: ComponentType  = (props) => {
     // @ts-expect-error
     const match = /language-(\w+)/.exec(children && children.props.className || "");
     const languageLabel = match ? match[1] : '';
-    console.log('languageLabel',languageLabel)
     const ParseComponent = useMemo(() => {
         if(languageLabel === 'diagram'){
             return DiagramComponents

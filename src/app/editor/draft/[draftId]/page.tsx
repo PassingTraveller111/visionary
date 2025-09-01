@@ -13,6 +13,7 @@ import styles from './index.module.scss';
 import {useInitAssistantChat} from "@/hooks/assistant_chat/useAssistantChant";
 import {debounce} from "next/dist/server/utils";
 import {UserInfoType} from "@/store/features/userSlice";
+import {Spin} from "antd";
 
 const DraftPage = () => {
     const { draftId } =  useParams();
@@ -129,13 +130,18 @@ const DraftPage = () => {
             DraftSaveStatus={DraftSaveStatus}
         />
         <div className={styles.content}>
-            <MdEditor
-                className={styles.editor}
-                value={draft.content}
-                onChange={onEditorChange}
-                onSaveDraft={onSaveDraft}
-            />
-            <Assistant />
+            <div className={styles.leftContent}>
+                {draft.isLoading && <div className={styles.loading}>
+                    <Spin size={'large'} />
+                </div>}
+                <MdEditor
+                    className={styles.editor}
+                    value={draft.content}
+                    onChange={onEditorChange}
+                    onSaveDraft={onSaveDraft}
+                />
+            </div>
+            <Assistant/>
         </div>
     </>
 }
