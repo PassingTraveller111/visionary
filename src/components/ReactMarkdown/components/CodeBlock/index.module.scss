@@ -1,31 +1,89 @@
+//
+//
+//.codeBlockHeader{
+//  display: flex;
+//  justify-content: space-between;
+//  padding: 5px 10px;
+//  border: 1px solid #eee;
+//  background: #faf9f9;
+//  font-size: 14px;
+//  .headerLeft{
+//    cursor: pointer;
+//    display: flex;
+//    align-items: center;
+//    padding: 0 10px;
+//    &:hover{
+//      background: #eee;
+//    }
+//    svg{
+//      font-size: 20px;
+//    }
+//  }
+//  .copyButton{
+//    padding: 0 10px;
+//    &:hover{
+//      background: #eee;
+//    }
+//  }
+//}
+//.codeContainer{
+//  border: none !important;
+//}
 
-
-.codeBlockHeader{
+.codeBlockHeader {
   display: flex;
   justify-content: space-between;
   padding: 5px 10px;
-  border: 1px solid #eee;
-  background: #faf9f9;
+  // 调整边框+背景：匹配 #1e1e1e 的深色基调，边框用低饱和度灰色
+  border: 1px solid #2c2c2c;
+  border-bottom: none; // 去掉header和codeContainer之间的重复边框
+  background: #252525;
   font-size: 14px;
-  .headerLeft{
+  color: #cccccc; // 文字改为浅灰色，适配深色背景
+
+  .headerLeft {
     cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 0 10px;
-    &:hover{
-      background: #eee;
+    padding: 4px 10px; // 微调内边距，hover效果更舒适
+    border-radius: 4px; // 增加圆角，视觉更柔和
+    &:hover {
+      background: #333333; // hover背景改为深灰色，不刺眼
     }
-    svg{
+    svg {
       font-size: 20px;
+      color: #999999; // 图标颜色改为浅灰，和文字协调
+      margin-left: 8px; // 给图标加间距，排版更美观
     }
   }
-  .copyButton{
-    padding: 0 10px;
-    &:hover{
-      background: #eee;
+
+  .copyButton {
+    padding: 4px 10px;
+    border: none; // 去掉按钮默认边框
+    background: transparent; // 透明背景
+    color: #cccccc; // 按钮文字颜色和header统一
+    border-radius: 4px; // 圆角
+    cursor: pointer; // 加鼠标指针
+    &:hover {
+      background: #333333; // hover背景和headerLeft保持一致
+      color: #ffffff; // hover时文字变白，更醒目
     }
   }
 }
-.codeContainer{
+
+.codeContainer {
   border: none !important;
+  background: #1e1e1e !important; // 保留VSCode Dark背景
+  padding: 12px 10px !important; // 增加内边距，代码和边框有间距
+  margin: 0 !important; // 清除pre默认外边距
+  color: #d4d4d4 !important; // 代码默认文字色，匹配VSCode Dark
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  border: 1px solid #2c2c2c !important; // 补全底部边框，和header对齐
+  border-top: none !important; // 去掉和header重叠的边框
+}
+
+// 可选：优化highlight.js高亮样式的细节，和#1e1e1e更适配
+.codeContainer .hljs {
+  background: transparent !important; // 清除高亮插件的默认背景
 }
