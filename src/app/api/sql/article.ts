@@ -17,6 +17,7 @@ const getPublishedArticlesList = async (pageNum: number, pageSize: number) => {
                                summary,
                                tags,
                                cover,
+                               view_permission,
                                COUNT(DISTINCT al.id)   AS like_count,
                                COUNT(DISTINCT ar.record_id) AS look_count
                         FROM articles a
@@ -47,7 +48,7 @@ const getArticleListByKeyWord = async (keyword: string, pageNum: number, pageSiz
                             (LENGTH(content) - LENGTH(REPLACE(content, ?, ''))) / LENGTH(?) * 1
                         ) AS score
                         FROM articles
-                        WHERE title LIKE ? OR content LIKE ? OR articles.summary LIKE ? AND is_published = 1 
+                        WHERE title LIKE ? OR content LIKE ? OR articles.summary LIKE ? AND is_published = 1
                         ORDER BY  score DESC
                         LIMIT ${offset},${pageSize}`
         , [keyword, keyword, keyword, keyword, keyword, keyword, fuzzyKeyword, fuzzyKeyword, fuzzyKeyword]) as null | publishedItemType[];

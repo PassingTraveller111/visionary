@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
     try {
         const data: getDraftDataType = await req.json();
 
-        const cacheData = await redis.get(getDraftKey(data.draftId));
-        if (cacheData) return NextResponse.json({ msg: 'success', data: JSON.parse(cacheData) }, { status: 200 });
+        // const cacheData = await redis.get(getDraftKey(data.draftId));
+        // if (cacheData) return NextResponse.json({ msg: 'success', data: JSON.parse(cacheData) }, { status: 200 });
 
         const sql = `SELECT * FROM drafts WHERE id = ?`;
         const values = [data.draftId];

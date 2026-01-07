@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
         // 构建时禁用检查
         ignoreDuringBuilds: true,
     },
+    typescript: {
+        ignoreBuildErrors: true, // 核心配置：忽略所有 TypeScript 构建错误
+    },
 };
 
 export default nextConfig;

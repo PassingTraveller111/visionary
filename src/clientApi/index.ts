@@ -1,7 +1,7 @@
 const API_CONFIG = {
-    development: 'http://localhost:3000/api/',
+    development: 'http://localhost:3000/api/', // 本地开发接口访问
     // production: 'https://101.43.168.254/api/',
-    production: 'https://visionaryblog.cn/api/',
+    production: 'https://visionaryblog.cn/api/', // 生产环境接口访问
     test: '',
 };
 export default API_CONFIG;

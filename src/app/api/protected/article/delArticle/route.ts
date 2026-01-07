@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
 }
 
 const getDraftId = async (articleId: number, connection: PoolConnection) => {
-    const cacheData = await redis.get(getArticleKey(articleId));
-    if (cacheData && JSON.parse(cacheData).draft) {
-        return JSON.parse(cacheData).draft;
-    }
+    // const cacheData = await redis.get(getArticleKey(articleId));
+    // if (cacheData && JSON.parse(cacheData).draft) {
+    //     return JSON.parse(cacheData).draft;
+    // }
     const sql = `SELECT draft_id FROM articles WHERE id = ?`;
     const [ rows ] = await connection.execute(sql, [articleId]);
     if (Array.isArray(rows) && rows.length > 0) {

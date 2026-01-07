@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         const result = await article.getArticleCountByUserId(data.userId);
         if(result) {
             const [ [ { articleCounts } ] ] = result;
-            redis.set(getArticleCountByUserId(data.userId), articleCounts);
+            // redis.set(getArticleCountByUserId(data.userId), articleCounts);
             return NextResponse.json({ msg: 'success', data: { articleCounts } },{ status: 200 });
         }
         return NextResponse.json({ msg: 'error' }, { status: 400 });

@@ -115,7 +115,7 @@ const CreateDiagramModal = forwardRef<CreateDiagramModalRef>(function CreateDiag
     return <Modal
         open={open}
         onCancel={() => setOpen(false)}
-        onClose={() => setOpen(false)}
+        // onClose={() => setOpen(false)}
         title={'新建图表'}
     >
         <Button

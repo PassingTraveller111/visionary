@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
     const connection = await pool.getConnection();
     try {
         const data: getAuthorInfoRequestType = await req.json();
-        const cacheData = await redis.get(getUserInfoKey(data.authorId));
-        if (cacheData) return NextResponse.json({msg: 'success', data: JSON.parse(cacheData)}, {status: 200});
+        // const cacheData = await redis.get(getUserInfoKey(data.authorId));
+        // if (cacheData) return NextResponse.json({msg: 'success', data: JSON.parse(cacheData)}, {status: 200});
 
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE id = ?`, [data.authorId]);
         if (Array.isArray(rows) && rows.length > 0) {
