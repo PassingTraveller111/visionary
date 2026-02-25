@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         // 只能删除仅草稿的草稿
         const sql = `DELETE FROM drafts WHERE id = ? AND status = 'onlyDraft';`;
         await connection.execute(sql, [data.id]);
-        await redis.del(getDraftKey(data.id))
+        // await redis.del(getDraftKey(data.id))
         return NextResponse.json({ msg: 'success', data: '删除成功' }, { status: 200 });
     } catch (error) {
         console.error(error);

@@ -8,6 +8,7 @@ import locale from 'antd/locale/zh_CN';
 import {ReduxProvider} from "@/store/provider";
 import ClientEntry from "@/components/ClientEntry";
 import {ConfigProvider} from "antd";
+import {TrackProvider} from "@/app/TrackProvider";
 
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body>
         <ReduxProvider>
             <ConfigProvider locale={locale}>
+                <TrackProvider />
                 <ClientEntry/>
                 {children}
             </ConfigProvider>

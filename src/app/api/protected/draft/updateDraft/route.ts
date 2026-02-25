@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         } else {
             sql = `UPDATE drafts SET content = ?, title = ?, summary = ?, tags = ?, cover = ?, update_time = ? WHERE id = ?;`;
             values = [content, title, summary, tags, cover, new Date(),draftId];
-            await redis.del(getDraftKey(draftId));
+            // await redis.del(getDraftKey(draftId));
         }
         const [ rows ] = await connection.execute(sql, values);
         return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });

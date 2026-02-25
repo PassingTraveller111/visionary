@@ -72,7 +72,7 @@ const updateReviewAndDraftWithArticleId = async (review_id: number, draft_id: nu
     try {
         await connection.execute(reSql, reValues);
         await connection.execute(drSql, drValues);
-        await redis.del(getDraftKey(draft_id));
+        // await redis.del(getDraftKey(draft_id));
     } catch (error) {
         console.error(error);
     }
@@ -110,14 +110,14 @@ const updateArticle = async (draft: draftTableType, review_id: number, connectio
     const sql = `UPDATE articles SET review_status = ?, review_id = ? where id = ?;`;
     const values = ['pending_review', review_id, draft.article_id];
     await connection.execute(sql, values);
-    await redis.del(getArticleKey(draft.article_id ?? 0));
+    // await redis.del(getArticleKey(draft.article_id ?? 0));
     return draft.article_id ?? 0;
 }
 
 const updateDraftStatus = async (draft: draftTableType, connection: PoolConnection) => {
     const sql = `UPDATE drafts SET status = ? WHERE id = ?;`
     const values = ['hasArticle', draft.id];
-    await redis.del(getDraftKey(draft.id));
+    // await redis.del(getDraftKey(draft.id));
     await connection.execute(sql, values);
 }
 
@@ -152,7 +152,7 @@ const auditArticle = (draft: draftTableType, article_id: number, review_id: numb
             draft.cover,
             article_id];
         await connection.execute(sql, values);
-        await redis.del(getArticleKey(article_id ?? 0));
+        // await redis.del(getArticleKey(article_id ?? 0));
         // 修改审核稿状态
         await updateReviewStatus(review_id, 'review_success', connection);
     }, 1000 * 60);

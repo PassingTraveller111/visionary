@@ -3,7 +3,6 @@ import NavLayout from "@/components/NavLayout";
 import { useGetPublishedArticleListByKeyWord } from "@/hooks/articles/useArticles";
 import {Suspense, useEffect} from "react";
 import styles from './index.module.scss';
-import moment from "moment";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Empty} from "antd";
 import ArticleItem from "@/components/ArticleItem";

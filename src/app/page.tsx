@@ -17,6 +17,8 @@ import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticl
 import {useGetArticleLikeCountByUserId} from "@/hooks/article_likes/useArticleLikes";
 import ArticleItem from "@/components/ArticleItem";
 
+
+
 type tabKeysType = 'new' | 'hot';
 
 export default function Home() {
