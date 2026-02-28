@@ -6,10 +6,11 @@ import {
     useTrackExposure,
     useTrackPageStay,
     useTrackCustom,
+    useTrackFirstRender,
     getFailedTracks,
     retryFailedTracks,
-    getMergedDefaultConfig,
-    FailedTrackParams
+    getTrackGlobalConfig,
+    FailedTrackParams,
 } from 'react-track-hooks';
 
 export default function TrackDemoPage() {
@@ -97,8 +98,13 @@ export default function TrackDemoPage() {
         setFailedTracks(getFailedTracks());
     };
     useEffect(() => {
-        console.log(getMergedDefaultConfig())
+        console.log(getTrackGlobalConfig())
     }, []);
+
+    // 首次渲染测试
+    useTrackFirstRender(
+        'first_render_track_demo',
+    )
 
     return (
         <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
