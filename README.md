@@ -1,81 +1,248 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Visionary
 
-## Getting Started
+Visionary 是一个基于 Next.js App Router 的创作与阅读平台，站点标题为“创见”。项目同时包含前台阅读、用户中心、创作者后台、Markdown 草稿编辑器、流程/脑图编辑器、AI 写作助手、文章审核发布链路，以及面向脚本和 Agent 的本地 CLI。
 
-First, run the development server:
+## 功能概览
+
+- 用户系统：邮箱注册验证码、登录、登出、JWT Cookie 鉴权、用户资料与头像更新。
+- 内容阅读：首页文章流、文章详情、搜索、阅读记录、点赞、收藏、评论、随机格言。
+- 创作者后台：文章、草稿、专栏、图表的列表管理与数据统计。
+- Markdown 编辑：自定义工具栏、代码高亮、KaTeX 公式、表格、图片上传、图表引用和预览渲染。
+- 图表编辑：基于 React Flow 的流程图/脑图编辑器，支持节点、连线、样式工具栏、封面生成与保存。
+- AI 助手：通过 DeepSeek 兼容 OpenAI SDK 的接口发送消息，并保存草稿关联的聊天记录。
+- 文件上传：文章图片、封面、头像、专栏封面、图表封面上传到腾讯云 COS。
+- 行为埋点：前端 TrackProvider 写入单条或批量埋点 API。
+- 本地 CLI：支持登录、创建草稿、读取草稿、更新草稿、发布草稿，便于自动化脚本操作现有站点 API。
+
+## 技术栈
+
+- 框架：Next.js 15、React 18、TypeScript、App Router。
+- UI：Ant Design、Sass Modules、Tailwind CSS 配置。
+- 状态管理：Redux Toolkit、React Redux。
+- 编辑与渲染：react-markdown-editor-lite、react-markdown、remark-gfm、remark-math、rehype-katex、rehype-highlight、KaTeX、highlight.js。
+- 图表：@xyflow/react、html-to-image。
+- 服务端能力：Next Route Handlers、mysql2、ioredis、jsonwebtoken、nodemailer、cos-nodejs-sdk-v5、openai。
+- 图表统计：recharts。
+
+## 项目结构
+
+```text
+.
+├── public/                         # 静态资源，包含站点 logo、favicon、编辑器插件图标
+├── scripts/
+│   └── visionary-cli.mjs           # 面向脚本/Agent 的 Visionary CLI
+├── src/
+│   ├── app/                        # Next.js App Router 页面、布局、中间件匹配的 API Routes
+│   │   ├── api/                    # 后端接口：用户、文章、草稿、专栏、图表、COS、AI、埋点等
+│   │   │   ├── protected/          # 需要 token Cookie 的受保护接口
+│   │   │   ├── sql/                # MySQL 表访问封装与实体类型
+│   │   │   ├── track/              # 埋点写入接口
+│   │   │   └── user/               # 登录、登出、JWT、注册验证码接口
+│   │   ├── creator/                # 创作者后台：主页、文章、草稿、专栏、图表管理
+│   │   ├── editor/                 # 草稿编辑器和图表编辑器页面
+│   │   ├── reader/                 # 文章阅读页和审核稿阅读页
+│   │   ├── search/                 # 文章搜索页
+│   │   ├── userCenter/             # 用户主页、收藏、专栏、阅读历史、数据统计
+│   │   ├── layout.tsx              # 全局 Redux、Antd、埋点和客户端初始化入口
+│   │   └── page.tsx                # 登录后首页文章流
+│   ├── clientApi/                  # 前端 API endpoint 清单与 fetch 包装
+│   ├── components/                 # 通用组件、Markdown 编辑/渲染器、图表编辑器、导航、登录表单等
+│   ├── hooks/                      # 按业务域封装的请求 Hook
+│   ├── lib/                        # MySQL、Redis、邮件、DeepSeek/OpenAI 客户端
+│   ├── store/                      # Redux store、provider 和业务 slices
+│   ├── styles/                     # Sass 变量
+│   ├── utils/                      # JWT 鉴权、本地存储工具
+│   └── middleware.ts               # 页面/API 鉴权与草稿编辑权限校验
+├── next.config.ts                  # Next 配置，包含 COS 图片域名和构建检查策略
+├── package.json                    # npm scripts 与依赖声明
+└── tsconfig.json                   # TypeScript 与 @/* 路径别名配置
+```
+
+## 页面路由
+
+- `/`：文章流首页，展示最新/热门 Tab、当前用户信息、文章/阅读/获赞统计和随机格言。
+- `/login`：登录入口。
+- `/search`：文章关键词搜索。
+- `/reader/[articleId]`：已发布文章阅读页。
+- `/reader/review/[reviewId]`：审核稿阅读页。
+- `/creator/home`：创作者后台首页。
+- `/creator/content/article`：文章管理。
+- `/creator/content/draft`：草稿管理。
+- `/creator/content/columns`：专栏管理。
+- `/creator/content/columns/manage/[column_id]`：专栏文章管理。
+- `/creator/content/diagram`：图表管理。
+- `/editor/draft/[draftId]`：Markdown 草稿编辑器，`new` 表示新建草稿。
+- `/editor/diagram/[diagramId]`：图表编辑器。
+- `/userCenter/[userId]/article`：用户文章主页。
+- `/userCenter/[userId]/column`：用户专栏。
+- `/userCenter/[userId]/collect`：用户收藏。
+- `/userCenter/Columns/[column_id]`：专栏详情。
+- `/userCenter/readHistory`：阅读历史。
+- `/userCenter/myData`：个人数据统计。
+- `/userAgreement`：用户协议，当前在中间件中免登录放行。
+
+## API 分组
+
+- `api/user/*`：登录、登出、JWT 解析、注册验证码发送与校验。
+- `api/protected/user/*`：用户信息、作者信息、用户统计和统计图表。
+- `api/protected/profile/*`：个人资料与头像。
+- `api/protected/article/*`：文章读取、列表、搜索、删除、封面/正文图片上传、作者文章数。
+- `api/protected/draft/*`：草稿读取、保存、发布、删除和编辑权限校验。
+- `api/protected/review/*`：审核稿读取。
+- `api/protected/article_likes/*`：点赞状态、点赞/取消赞、作者获赞数。
+- `api/protected/article_collections/*`：收藏状态、收藏/取消收藏、收藏列表。
+- `api/protected/article_comments/*`：评论创建、列表、软删除。
+- `api/protected/article_reading_records/*`：阅读记录写入、阅读历史、作者阅读总量。
+- `api/protected/columns/*`：专栏创建/更新、删除、读取、文章列表维护、封面上传。
+- `api/protected/diagrams/*`：图表保存、读取、列表、删除、重命名、封面上传与封面读取。
+- `api/protected/cos/*`：COS 服务与上传。
+- `api/protected/assistant/*`：AI 消息发送和聊天记录读写。
+- `api/protected/quotes/*`：随机格言。
+- `api/track/*`：埋点上报。
+
+受保护接口依赖 `middleware.ts` 检查 `token` Cookie。除 `/userAgreement` 外，页面路由也会被鉴权保护；登录用户访问 `/login` 会被重定向到首页。
+
+## 数据模型
+
+主要 MySQL 表在 `src/app/api/sql/type.ts` 中声明了 TypeScript 类型：
+
+- `users`：用户账号、邮箱、角色、头像、昵称等。
+- `articles`：已发布文章内容、标题、摘要、标签、审核状态、发布状态、作者、封面等。
+- `drafts`：草稿内容、标题、摘要、标签、作者、关联文章/审核稿、封面等。
+- `reviews`：发布审核稿与审核状态。
+- `article_likes`：文章点赞记录。
+- `article_collections`：文章收藏记录。
+- `article_reading_records`：阅读记录。
+- `article_comments`：文章评论，支持父评论和软删除。
+- `assistant_chat_record`：草稿关联的 AI 聊天记录。
+- `email_verification`：注册邮箱验证码。
+- `quotes`：首页随机格言。
+- `columns` / `article_columns`：专栏与文章专栏关系。
+- `diagrams`：流程图/脑图数据、标题、简介、标签、作者、封面和类型。
+
+## 环境变量
+
+本地开发建议创建 `.env.local`，至少按实际使用的能力配置以下变量。不要提交真实密钥。
+
+```bash
+# JWT
+SECRET_KEY=
+
+# MySQL
+DATABASE_HOST=localhost
+DATABASE_USER=root
+DATABASE_PASSWORD=
+DATABASE_NAME=visionary
+
+# Redis，端口当前固定为 6379
+REDIS_HOST=localhost
+REDIS_PASSWORD=
+
+# 邮件验证码，当前邮件客户端固定使用 smtp.163.com:465 SSL
+EMAIL_SERVICE=163
+EMAIL_USER=
+EMAIL_AUTHORIZATION_CODE=
+
+# 腾讯云 COS 上传
+UPLOAD_COS_SECRETID=
+UPLOAD_COS_SECRETKEY=
+UPLOAD_COS_BUCKET=
+UPLOAD_COS_REGION=ap-beijing
+
+# AI 助手，OpenAI SDK baseURL 指向 https://api.deepseek.com
+DEEPSEEK_API_KEY=
+```
+
+`next.config.ts` 已配置远程图片域名 `visionary-1305469650.cos.ap-beijing.myqcloud.com`，如果更换 COS Bucket 域名，需要同步更新 `images.remotePatterns`。
+
+## 本地开发
+
+安装依赖：
+
+```bash
+npm install
+```
+
+启动开发服务：
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+默认访问：
+
+```text
+http://localhost:3000
+```
+
+常用脚本：
+
+```bash
+npm run dev       # 启动 Next.js 开发服务
+npm run build     # 构建生产包
+npm run start     # 启动生产服务
+npm run lint      # 运行 lint 脚本
+npm run visionary # 运行本地 Visionary CLI
+```
+
+注意：当前 `next.config.ts` 中配置了 `eslint.ignoreDuringBuilds` 和 `typescript.ignoreBuildErrors`，生产构建不会因为 ESLint 或 TypeScript 错误失败。提交前仍建议单独检查类型和质量问题。
 
 ## Visionary CLI
 
-The local CLI is intended for agents and scripts that need to operate drafts through the existing website API.
+本地 CLI 位于 `scripts/visionary-cli.mjs`，用于通过现有网站 API 操作草稿。输出始终为 JSON，适合自动化脚本和 Agent 使用。
 
-Login once and save the token locally:
+登录并保存 token：
 
 ```bash
 npm run visionary -- auth login --base-url https://visionaryblog.cn --username <username> --password <password> --remember --json
 ```
 
-The token is stored in `~/.visionary-cli/config.json`. You can still override auth with environment variables:
+token 会保存到：
+
+```text
+~/.visionary-cli/config.json
+```
+
+也可以通过环境变量覆盖：
 
 ```bash
 export VISIONARY_BASE_URL=https://visionaryblog.cn
 export VISIONARY_TOKEN=<token-cookie-value>
-# or
+# 或
 export VISIONARY_COOKIE='token=<token-cookie-value>'
 ```
 
-Create a draft:
+创建草稿：
 
 ```bash
 npm run visionary -- draft create --title "Article title" --content-file ./draft.md --summary "Short summary" --tags "Next.js,React" --json
 ```
 
-Read a draft:
+读取草稿：
 
 ```bash
 npm run visionary -- draft get --id 1 --json
 ```
 
-Update a draft:
+更新草稿：
 
 ```bash
 npm run visionary -- draft update --id 1 --content-file ./draft.md --title "Updated title" --json
 ```
 
-Publish a draft:
+发布草稿：
 
 ```bash
 npm run visionary -- draft publish --id 1 --confirm --json
 ```
 
-Publishing requires `--confirm` to avoid accidental release by agents or scripts.
+发布命令必须显式传入 `--confirm`，避免脚本误发布。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 开发约定
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 前端请求入口优先使用 `src/clientApi/index.ts` 中的 `apiList` 和 `apiClient`，保持 endpoint 集中维护。
+- 新增受保护接口时放在 `src/app/api/protected` 下，默认会经过中间件校验 `token` Cookie。
+- 新增数据库访问逻辑时优先放入 `src/app/api/sql` 的业务文件，并同步补充实体类型。
+- 前端业务请求 Hook 按领域放在 `src/hooks/<domain>`，页面尽量通过 Hook 调用 API。
+- 全局状态放在 `src/store/features` 中，并在 `rootReducer.ts` 注册。
+- 编辑器插件放在 `src/components/MdEditor/plugins`，图表编辑器能力放在 `src/components/Diagram`。
