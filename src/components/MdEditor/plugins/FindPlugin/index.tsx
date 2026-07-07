@@ -17,9 +17,9 @@ const FindPlugin = (props: PluginProps) => {
     const [matches, setMatches] = useState<number[]>([]);
     const [findInputValue, setFindInputValue] = useState('');
     const findInputRef = useRef<InputRef>(null);
+    const cleanupFindLayerRef = useRef<(() => void) | null>(null);
     const [replaceInputValue, setReplaceInputValue] = useState('');
     const [currentIndex, setCurrentIndex] = useState(-1);
-    const [isCaseSensitive, setIsCaseSensitive] = useState(false); // 区分大小写，后续加
     const openFindBox = () => {
         // 打开查找框
         setShowFind(true);
@@ -35,16 +35,15 @@ const FindPlugin = (props: PluginProps) => {
         const initCurrentIndex = initMatches.length > 0 ? 0 : -1;
         setCurrentIndex(initCurrentIndex);
         // 初始化元素
-        initFindElems();
+        cleanupFindLayerRef.current?.();
+        cleanupFindLayerRef.current = initFindElems();
         // 添加高光
         setHighlight(findKey, initMatches, initCurrentIndex);
     }
     const closeFindBox = () => {
         setShowFind(false);
-        // 移除查找层
-        const findLayerEle =  getFindLayerElm();
-        if(!findLayerEle) return;
-        findLayerEle.remove();
+        cleanupFindLayerRef.current?.();
+        cleanupFindLayerRef.current = null;
     }
     const onPre = () => {
         const newCurrentIndex = currentIndex <= 0 ? matches.length - 1 : currentIndex - 1;
@@ -92,6 +91,11 @@ const FindPlugin = (props: PluginProps) => {
             findInputRef.current.focus();
         }
     }, [showFind]);
+    useEffect(() => {
+        return () => {
+            cleanupFindLayerRef.current?.();
+        }
+    }, []);
     return <Tooltip
         title={<PluginTitle title='查找' keyName='find' />}
     >
@@ -192,7 +196,7 @@ const getReplacedAllText = (text: string, replaceKey: string, findKey: string, m
     const escapedReplaceKey = escapeHTML(replaceKey);
     let newText = escapedText;
     // 从后往前进行替换，不然索引会乱
-    matches.reverse().forEach((index) => {
+    [...matches].reverse().forEach((index) => {
         newText = newText.slice(0, index) + escapedReplaceKey + newText.slice(index + escapedFindKey.length);
     })
     // 最后对替换后的文本进行 HTML 逆转义，恢复文本的原始状态
@@ -240,6 +244,7 @@ const initFindElems = () => {
     const editorElm = getEditorElm();
     const parentElm = getEditorParentElm();
     if(!editorElm || !parentElm) return null;
+    getFindLayerElm()?.remove();
     // 初始化
     parentElm.style.position = 'relative';
     const findLayerElement = document.createElement("div");
@@ -248,16 +253,24 @@ const initFindElems = () => {
     parentElm.insertBefore(findLayerElement, editorElm);
     // 同步textarea的内容到findLayer
     findLayerElement.textContent = editorElm.value;
-    editorElm.addEventListener("input", () => {
+    const handleInput = () => {
         findLayerElement.textContent = editorElm.value;
-    });
+    };
+    editorElm.addEventListener("input", handleInput);
     // 同步滚动位置
     findLayerElement.scrollTop = editorElm.scrollTop;
     findLayerElement.scrollLeft = editorElm.scrollLeft;
-    editorElm.addEventListener("scroll", () => {
+    const handleScroll = () => {
         findLayerElement.scrollTop = editorElm.scrollTop;
         findLayerElement.scrollLeft = editorElm.scrollLeft;
-    });
+    };
+    editorElm.addEventListener("scroll", handleScroll);
+
+    return () => {
+        editorElm.removeEventListener("input", handleInput);
+        editorElm.removeEventListener("scroll", handleScroll);
+        findLayerElement.remove();
+    }
 }
 
 // 对字符串中的正则表达式特殊字符进行转义
