@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
         uploadData.append("file", file);
         uploadData.append("fileName", avatarName);
         const res = await apiClient(apiList.post.protected.cos.upload, {
+            baseUrl: `${req.nextUrl.origin}/api/`,
             method: 'POST',
             body: uploadData,
             headers: {

@@ -9,6 +9,7 @@ async function jwtMiddleware(req: NextRequest) {
     if (token) {
         try {
             const res = await apiClient(apiList.post.user.jwt, {
+                baseUrl: `${req.nextUrl.origin}/api/`,
                 method: 'POST',
                 body: JSON.stringify({
                     token,
@@ -45,6 +46,7 @@ async function editorAuthMiddleware(req: NextRequest) {
             }
             // 鉴权
             const auth = await apiClient(apiList.post.protected.draft.editorAuth, {
+                baseUrl: `${req.nextUrl.origin}/api/`,
                 method: 'POST',
                 body: JSON.stringify(apiData),
                 headers: {
