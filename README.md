@@ -16,6 +16,51 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Visionary CLI
+
+The local CLI is intended for agents and scripts that need to operate drafts through the existing website API.
+
+Login once and save the token locally:
+
+```bash
+npm run visionary -- auth login --base-url https://visionaryblog.cn --username <username> --password <password> --remember --json
+```
+
+The token is stored in `~/.visionary-cli/config.json`. You can still override auth with environment variables:
+
+```bash
+export VISIONARY_BASE_URL=https://visionaryblog.cn
+export VISIONARY_TOKEN=<token-cookie-value>
+# or
+export VISIONARY_COOKIE='token=<token-cookie-value>'
+```
+
+Create a draft:
+
+```bash
+npm run visionary -- draft create --title "Article title" --content-file ./draft.md --summary "Short summary" --tags "Next.js,React" --json
+```
+
+Read a draft:
+
+```bash
+npm run visionary -- draft get --id 1 --json
+```
+
+Update a draft:
+
+```bash
+npm run visionary -- draft update --id 1 --content-file ./draft.md --title "Updated title" --json
+```
+
+Publish a draft:
+
+```bash
+npm run visionary -- draft publish --id 1 --confirm --json
+```
+
+Publishing requires `--confirm` to avoid accidental release by agents or scripts.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
