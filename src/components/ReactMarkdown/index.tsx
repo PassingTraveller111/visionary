@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm"; // 识别表格、任务列表等
 import ImageComponents from "@/components/ReactMarkdown/components/image";
 import rehypeRaw from "rehype-raw";
 import PreParseComponents from "@/components/ReactMarkdown/components/PreParse"; // 允许渲染html标签
+import {ComponentType} from "@/components/ReactMarkdown/components/type";
 
 type HastNode = {
     type?: string;
@@ -128,6 +129,21 @@ const rehypeSanitizeMarkdownHtml = () => (tree: HastNode) => {
 
 const safeUrlTransform: UrlTransform = (url, key) => sanitizeUrl(url, key) ?? '';
 
+const hasImageNode = (node?: HastNode): boolean => {
+    if (!node) return false;
+    if (node.type === 'element' && node.tagName === 'img') return true;
+    return node.children?.some(hasImageNode) ?? false;
+}
+
+const ParagraphComponents: ComponentType = ({node, children, ...props}) => {
+    if (hasImageNode(node as HastNode)) {
+        const className = [props.className, styles.paragraph].filter(Boolean).join(' ');
+        return <div {...props} className={className}>{children}</div>;
+    }
+
+    return <p {...props}>{children}</p>;
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const MyReactMarkdown = (props) => {
@@ -138,6 +154,7 @@ const MyReactMarkdown = (props) => {
                 rehypePlugins={[rehypeRaw, rehypeSanitizeMarkdownHtml, rehypeHighlight, rehypeKatex]} // 输入和输出为html，负责html的解析和转换
                 urlTransform={safeUrlTransform}
                 components={{
+                    p: ParagraphComponents,
                     pre: PreParseComponents, // 通过pre标签获得代码块
                     img: ImageComponents,
                     ...props.components,
