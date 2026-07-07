@@ -2,8 +2,6 @@ import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {draftTableType, reviewStatusType} from "@/app/api/sql/type";
 import {PoolConnection} from "mysql2/promise";
-import redis from "@/lib/redis";
-import {getArticleKey, getDraftKey} from "@/app/api/redisKeys";
 
 export type publishDraftDataType = {
     draftId: number;
@@ -72,7 +70,6 @@ const updateReviewAndDraftWithArticleId = async (review_id: number, draft_id: nu
     try {
         await connection.execute(reSql, reValues);
         await connection.execute(drSql, drValues);
-        // await redis.del(getDraftKey(draft_id));
     } catch (error) {
         console.error(error);
     }

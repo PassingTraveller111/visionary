@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
     try {
         if (Math.random() < 0.1) {
             return NextResponse.json({ msg: '上报失败', code: 500 }, { status: 500 });

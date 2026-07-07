@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 // 单个列表项组件 - 固定高度50px
 const ListItem = ({ index, data }: { index: number, data: string}) => {
@@ -37,7 +37,7 @@ const VirtualList = ({ dataList }: VirtualListProps) => {
     const [paddingTop, setPaddingTop] = useState(0);
 
     // 核心方法：处理滚动事件，计算所有关键参数
-    const handleScroll = () => {
+    const handleScroll = useCallback(() => {
         const container = listContainerRef.current;
         if (!container) return;
         const { scrollTop } = container; // 获取滚动偏移量
@@ -54,7 +54,7 @@ const VirtualList = ({ dataList }: VirtualListProps) => {
         // 更新状态：渲染数据 + 空白占位高度
         setRenderList(showList);
         setPaddingTop(top);
-    };
+    }, [dataList, VISIBLE_COUNT]);
 
     // 初始化渲染：页面加载时，渲染第一屏数据
     useEffect(() => {
@@ -65,7 +65,7 @@ const VirtualList = ({ dataList }: VirtualListProps) => {
         container.addEventListener('scroll', handleScroll);
         // 组件卸载：解绑滚动事件，避免内存泄漏
         return () => container.removeEventListener('scroll', handleScroll);
-    }, [dataList]); // 依赖：列表数据源变化时重新初始化
+    }, [handleScroll]); // 依赖：列表数据源变化时重新初始化
 
     return (
         <div

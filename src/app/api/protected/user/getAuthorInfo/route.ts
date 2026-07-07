@@ -1,8 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {userTableType} from "@/app/api/sql/type";
-import {getUserInfoKey} from "@/app/api/redisKeys";
-import redis from "@/lib/redis";
 
 export type getAuthorInfoRequestType = {
     authorId: number;
@@ -19,9 +17,6 @@ export async function POST(req: NextRequest) {
     const connection = await pool.getConnection();
     try {
         const data: getAuthorInfoRequestType = await req.json();
-        // const cacheData = await redis.get(getUserInfoKey(data.authorId));
-        // if (cacheData) return NextResponse.json({msg: 'success', data: JSON.parse(cacheData)}, {status: 200});
-
         const [ rows ] = await connection.execute(`SELECT * FROM users WHERE id = ?`, [data.authorId]);
         if (Array.isArray(rows) && rows.length > 0) {
             const res: getAuthorInfoResponseType = {

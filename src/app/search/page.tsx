@@ -3,12 +3,11 @@ import NavLayout from "@/components/NavLayout";
 import { useGetPublishedArticleListByKeyWord } from "@/hooks/articles/useArticles";
 import {Suspense, useEffect} from "react";
 import styles from './index.module.scss';
-import {useRouter, useSearchParams} from "next/navigation";
+import {useSearchParams} from "next/navigation";
 import {Empty} from "antd";
 import ArticleItem from "@/components/ArticleItem";
 
 function SearchPage() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const initKeyword = searchParams.get('keyword');
     const { articleList, getArticleList, loadMore, messageContext } = useGetPublishedArticleListByKeyWord();

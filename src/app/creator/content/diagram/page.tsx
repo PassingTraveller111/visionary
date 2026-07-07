@@ -1,8 +1,7 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
 import styles from "./index.module.scss";
-import { Modal, message, Flex, Dropdown, Input, Button } from "antd";
-import { useAppSelector } from "@/store";
+import { Modal, message, Flex, Dropdown, Input } from "antd";
 import CreatorSideBarLayout from "@/components/CreatorSideBarLayout";
 import CreatorList from "@/components/CreatorList";
 import {useDeleteDiagram, useGetDiagramsList, useRenameDiagram} from "@/hooks/diagrams/useDiagram";
@@ -11,9 +10,8 @@ import Image from "next/image";
 import {forwardRef, useImperativeHandle, useRef, useState} from "react";
 
 const DiagramPage = () => {
-    const { id: userId, isLoading } = useAppSelector(state => state.rootReducer.userReducer.value);
     const [modalApi, modalContextHolder] = Modal.useModal();
-    const [messageApi, messageContextHolder] = message.useMessage();
+    const [, messageContextHolder] = message.useMessage();
     const [diagramsList, getDiagramsList] = useGetDiagramsList();
     const delDiagram = useDeleteDiagram();
     const renameModalRef = useRef<RenameModalRef>(null);

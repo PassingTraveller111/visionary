@@ -1,8 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import pool from "@/lib/db";
 import {verifyToken} from "@/utils/auth";
-import redis from "@/lib/redis";
-import {getUserInfoKey} from "@/app/api/redisKeys";
 
 export type updateUserInfoRequestType = {
     nick_name: string
@@ -18,7 +16,6 @@ export async function POST(req: NextRequest) {
         const sql = `UPDATE users SET nick_name = ? WHERE id = ?`;
         const values = [data.nick_name, userId];
         const [ rows ] = await connection.execute(sql, values);
-        // await redis.del(getUserInfoKey(userId));
         return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
     } catch (error) {
         console.error(error);

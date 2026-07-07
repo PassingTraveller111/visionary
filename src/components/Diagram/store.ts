@@ -53,6 +53,7 @@ const useStore = create<RFState>((set, get) => ({
     // 侧边栏拖动的节点数据
     sidebarDragNode: {
         id: 'new Node',
+        type: 'flow',
         position: {
             x: 0,
             y: 0,

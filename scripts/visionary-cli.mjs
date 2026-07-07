@@ -236,7 +236,8 @@ async function login(options) {
 
 function sanitizeUser(user) {
   if (!user) return undefined;
-  const { password, ...safeUser } = user;
+  const safeUser = { ...user };
+  delete safeUser.password;
   return safeUser;
 }
 

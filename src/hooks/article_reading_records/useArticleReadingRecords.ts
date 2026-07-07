@@ -20,10 +20,10 @@ export const useInsertArticleReadingRecord = () => {
             articleId: article_id,
             userId: user_id,
         }
-        const res: insertArticleReadingRecordResponseType = await apiClient(apiList.post.protected.article_reading_records.insert, {
+        await apiClient(apiList.post.protected.article_reading_records.insert, {
             method: "POST",
             body: JSON.stringify(apiData)
-        });
+        }) as insertArticleReadingRecordResponseType;
     }, [])
 }
 

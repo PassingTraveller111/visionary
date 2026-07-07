@@ -103,7 +103,7 @@ export const useDeleteDiagram = () => {
         const apiData: delDiagramReqType = {
             id,
         }
-        const res = await apiClient(apiList.post.protected.diagrams.delDiagram, {
+        await apiClient(apiList.post.protected.diagrams.delDiagram, {
             method: 'POST',
             body: JSON.stringify(apiData),
         });
@@ -116,7 +116,7 @@ export const useRenameDiagram = () => {
             title,
             id,
         }
-        const res = await apiClient(apiList.post.protected.diagrams.renameDiagram, {
+        await apiClient(apiList.post.protected.diagrams.renameDiagram, {
             method: 'POST',
             body: JSON.stringify(apiData),
         })

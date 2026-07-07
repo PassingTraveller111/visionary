@@ -3,14 +3,13 @@ import Diagram from "@/components/Diagram";
 import styles from './index.module.scss';
 import DiagramHeader from "../../../../components/Diagram/DiagramHeader";
 import DiagramToolBar from "../../../../components/Diagram/DiagramSideBar";
-import {useParams, useRouter, useSearchParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch} from "react-redux";
 import {AppDispatch, useAppSelector} from "@/store";
 import {setDiagram} from "@/store/features/diagramSlice";
 import {useGetDiagram, useUpdateDiagram} from "@/hooks/diagrams/useDiagram";
 import useStore from "@/components/Diagram/store";
-import useMessage from "antd/es/message/useMessage";
 import {getNodesBounds, getViewportForBounds, ReactFlowProvider, useReactFlow} from "@xyflow/react";
 import {toPng} from "html-to-image";
 import {apiClient, apiList} from "@/clientApi";
@@ -24,7 +23,6 @@ const DiagramPage = () => {
 
 const DiagramContainer = () => {
     const diagramId = useParams().diagramId;
-    const type = useSearchParams().get('type');
     const dispatch = useDispatch<AppDispatch>();
     const diagram = useAppSelector(state => state.rootReducer.diagramReducer.value);
     const updateDiagram = useUpdateDiagram();
@@ -49,11 +47,13 @@ const DiagramContainer = () => {
                 router.push('/editor/diagram/' + res.id);
             })
         }
-    }, [diagram, diagramId, dispatch, updateDiagram, userInfo]);
+    }, [diagram, diagramId, dispatch, getDiagram, router, updateDiagram, userInfo]);
 
     useEffect(() => {
         if(userInfo.id === 0) return;
         initDiagram();
+        // Diagram initialization should only run when the active user becomes available.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userInfo.id]);
     // 修改title
     const onTitleChange = (title: string) => {

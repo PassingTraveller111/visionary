@@ -108,7 +108,7 @@ const UserBar = () => {
         getLookCount(userInfo.id).then(res => {
             if(res.msg === 'success') setLookCount(res.data.look_count);
         })
-    }, [userInfo.id]);
+    }, [getArticleCount, getLikeCount, getLookCount, userInfo.id]);
     return <div className={styles.userBar}>
         <div className={styles.top}>
             <div className={styles.avatar}>

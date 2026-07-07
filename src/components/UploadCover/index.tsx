@@ -69,6 +69,7 @@ const UploadCover = (props: { onChange?: (fileList: UploadFile[]) => void, initV
                         afterOpenChange: (visible) => !visible && setPreviewImage(''),
                     }}
                     src={previewImage}
+                    alt=""
                 />
             )}
         </>

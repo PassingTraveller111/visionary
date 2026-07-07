@@ -122,7 +122,6 @@ const CreateDiagramModal = forwardRef<CreateDiagramModalRef, CreateDiagramModalP
     return <Modal
         open={open}
         onCancel={() => setOpen(false)}
-        onClose={() => setOpen(false)}
         title={'新建图表'}
     >
         <Button
@@ -165,7 +164,6 @@ const InsertDiagramModal = forwardRef<InsertDiagramModalRef, InsertDiagramModalP
     return <Modal
         open={open}
         onCancel={() => setOpen(false)}
-        onClose={() => setOpen(false)}
         title={'选择插入图表'}
         width={650}
         footer={null}

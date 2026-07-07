@@ -1,5 +1,5 @@
 'use client'
-import React, {useCallback, useEffect} from 'react';
+import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import boldIcon from '../../../../../public/icon/pluginIcon/bold.svg';

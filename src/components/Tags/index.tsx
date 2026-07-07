@@ -16,8 +16,9 @@ type TagsProps = {
 }
 
 const Tags = (props: TagsProps) => {
+    const { tags: initialTags, onChange } = props;
     const { token } = theme.useToken();
-    const [tags, setTags] = useState<string[]>(props.tags);
+    const [tags, setTags] = useState<string[]>(initialTags);
     const [inputVisible, setInputVisible] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [editInputIndex, setEditInputIndex] = useState(-1);
@@ -26,8 +27,8 @@ const Tags = (props: TagsProps) => {
     const editInputRef = useRef<InputRef>(null);
 
     useEffect(() => {
-        props.onChange(tags);
-    }, [tags]);
+        onChange(tags);
+    }, [onChange, tags]);
 
     useEffect(() => {
         if (inputVisible) {
