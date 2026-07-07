@@ -8,9 +8,7 @@ import {useDispatch} from "react-redux";
 import {draftType, setDraft} from "@/store/features/draftSlice";
 import {useGetDraft, usePublishDraft, useUpdateDraft} from "@/hooks/drafts/useDrafts";
 import useMessage from "antd/es/message/useMessage";
-import Assistant from "@/components/Assistant";
 import styles from './index.module.scss';
-import {useInitAssistantChat} from "@/hooks/assistant_chat/useAssistantChant";
 import {debounce} from "next/dist/server/utils";
 import {UserInfoType} from "@/store/features/userSlice";
 import {Spin} from "antd";
@@ -22,7 +20,6 @@ const DraftPage = () => {
     const [messageApi, contextHandle] = useMessage();
     const router = useRouter();
     const updateDraft = useUpdateDraft();
-    const initAssistant = useInitAssistantChat();
     const getDraft = useGetDraft();
     const publishDraft = usePublishDraft();
     const dispatch = useDispatch<AppDispatch>();
@@ -50,17 +47,11 @@ const DraftPage = () => {
         }));
         if (typeof id === 'number') {
             // 获取草稿数据
-            getDraft(id)
-                .then(async () => {
-                    // 获取聊天记录
-                    await initAssistant(id, false);
-                });
+            getDraft(id);
         } else {
             // 新建草稿记录
             updateDraft(draft, userInfo)
-            .then(async (res) => {
-                // 新建聊天记录
-                await initAssistant(res.id);
+            .then((res) => {
                 return {
                     draftId: res.id
                 }
@@ -141,9 +132,7 @@ const DraftPage = () => {
                     onSaveDraft={onSaveDraft}
                 />
             </div>
-            <Assistant/>
         </div>
     </>
 }
 export default DraftPage;
-
