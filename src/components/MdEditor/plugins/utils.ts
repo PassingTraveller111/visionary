@@ -43,6 +43,65 @@ const findLineBoundsInRange = (text: string, startIndex: number, endIndex: numbe
     return lineBounds;
 }
 
+type SelectionRange = {
+    start: number;
+    end: number;
+}
+
+const setEditorSelection = (editor: Editor, selection: SelectionRange) => {
+    setTimeout(() => {
+        editor.setSelection(selection);
+    });
+}
+
+export const replaceEditorRange = (editor: Editor, start: number, end: number, insertText: string, newSelection?: SelectionRange) => {
+    const textArea = editor.getMdElement();
+    const selection = newSelection ?? {
+        start: start + insertText.length,
+        end: start + insertText.length,
+    };
+
+    if (!textArea) {
+        editor.setSelection({ start, end });
+        editor.insertText(insertText, true, {
+            start: selection.start - start,
+            end: selection.end - start,
+        });
+        return;
+    }
+
+    textArea.focus();
+    textArea.setSelectionRange(start, end, 'forward');
+
+    const isInserted = document.execCommand('insertText', false, insertText);
+    if (isInserted) {
+        setEditorSelection(editor, selection);
+        return;
+    }
+
+    textArea.setRangeText(insertText, start, end, 'end');
+    textArea.dispatchEvent(new Event('input', { bubbles: true }));
+    setEditorSelection(editor, selection);
+}
+
+export const replaceChangedText = (editor: Editor, prevText: string, nextText: string, newSelection?: SelectionRange) => {
+    if (prevText === nextText) return;
+
+    let start = 0;
+    while (start < prevText.length && start < nextText.length && prevText[start] === nextText[start]) {
+        start++;
+    }
+
+    let prevEnd = prevText.length;
+    let nextEnd = nextText.length;
+    while (prevEnd > start && nextEnd > start && prevText[prevEnd - 1] === nextText[nextEnd - 1]) {
+        prevEnd--;
+        nextEnd--;
+    }
+
+    replaceEditorRange(editor, start, prevEnd, nextText.slice(start, nextEnd), newSelection);
+}
+
 /**
  * 在当前 所有选中行 每行第一个位置插入文本
  * @param editor 编辑器实例
@@ -98,9 +157,7 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string | 
         firstModifiedLineStart = Math.min(firstModifiedLineStart, start);
     });
     lastModifiedLineEnd += insertOffset;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    editor.setText(newText, ()=>{}, {
+    replaceChangedText(editor, text, newText, {
         start: firstModifiedLineStart,
         end: lastModifiedLineEnd,
     });
@@ -122,9 +179,7 @@ export const insertToPreAndLast = (editor: Editor, insertTextPre: string, insert
             newText,
             newSelection,
         } = sentenceSegmentation(text, selection.start, insertTextPre, insertTextLast);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        editor.setText(newText, () => {}, newSelection);
+        replaceChangedText(editor, text, newText, newSelection);
     } else {
         // 选中
         const {
@@ -142,9 +197,7 @@ export const insertToPreAndLast = (editor: Editor, insertTextPre: string, insert
                 start: newBefore.length,
                 end: newBefore.length + toInsert.length,
             }
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            editor.setText(`${newBefore}${toInsert}${newAfter}`, ()=>{}, newSelection);
+            replaceChangedText(editor, text, `${newBefore}${toInsert}${newAfter}`, newSelection);
             return;
         }
         /*

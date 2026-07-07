@@ -9,6 +9,7 @@ import { Tooltip } from "antd";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
 import {PluginTitle} from "@/components/MdEditor/PluginTitle";
 import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
+import {replaceEditorRange} from "@/components/MdEditor/plugins/utils";
 
 const ImagePlugin = (props: PluginProps) => {
     const { editor } = props;
@@ -21,19 +22,33 @@ const ImagePlugin = (props: PluginProps) => {
         if (fileInputRef.current)
             fileInputRef.current.click();
     };
+    const uploadImage = useCallback((file: File) => {
+        const placeholderId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+        const placeholder = `![uploading-${placeholderId}]()`;
+        const selection = editor.getSelection();
+        const formData = new FormData();
+        formData.append('file', file);
+        replaceEditorRange(editor, selection.start, selection.end, placeholder);
+        apiClient(apiList.post.protected.article.uploadImage, {
+            method: 'POST',
+            body: formData
+        }).then(res => {
+            const currentText = editor.getMdValue();
+            const placeholderStart = currentText.indexOf(placeholder);
+            if (placeholderStart === -1) return;
+            replaceEditorRange(
+                editor,
+                placeholderStart,
+                placeholderStart + placeholder.length,
+                `![](https://${res.data.Location})`,
+            );
+        })
+    }, [editor])
     // 处理文件选择事件
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-            editor.insertPlaceholder('![]()', apiClient(apiList.post.protected.article.uploadImage, {
-                    method: 'POST',
-                    body: formData
-                }).then(res => {
-                    return `![](https://${res.data.Location})`
-                })
-            )
+            uploadImage(event.target.files[0]);
+            event.target.value = '';
         }
     };
     const handlePaste = useCallback((event: ClipboardEvent) => {
@@ -47,19 +62,11 @@ const ImagePlugin = (props: PluginProps) => {
                     event.preventDefault();
                     const file = item.getAsFile();
                     if (!file) return;
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    editor.insertPlaceholder('![]()', apiClient(apiList.post.protected.article.uploadImage, {
-                            method: 'POST',
-                            body: formData
-                        }).then(res => {
-                            return `![](https://${res.data.Location})`
-                        })
-                    )
+                    uploadImage(file);
                 }
             }
         }
-    }, [editor]);
+    }, [uploadImage]);
     useEffect(() => {
         const editorElm =  getEditorElm();
         if(editorElm) editorElm.addEventListener('paste', handlePaste);

@@ -8,6 +8,7 @@ import {IconFont} from "@/components/IconFont";
 import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 import {debounce} from "next/dist/server/utils";
 import {PluginTitle} from "@/components/MdEditor/PluginTitle";
+import {replaceChangedText} from "@/components/MdEditor/plugins/utils";
 
 
 const FindPlugin = (props: PluginProps) => {
@@ -56,9 +57,10 @@ const FindPlugin = (props: PluginProps) => {
         setHighlight(findInputValue, matches, newCurrentIndex);
     }
     const onReplace = () => {
-        const newText = getReplacedText(editor.getMdValue(), replaceInputValue, findInputValue, currentIndex, matches);
+        const currentText = editor.getMdValue();
+        const newText = getReplacedText(currentText, replaceInputValue, findInputValue, currentIndex, matches);
         // 这个是异步操作，所以后面的添加高光不能从元素上获取新文本
-        editor.setText(newText);
+        replaceChangedText(editor, currentText, newText);
         // 查找匹配项
         const initMatches =  findAllMatches(newText, findInputValue);
         setMatches(initMatches);
@@ -70,8 +72,9 @@ const FindPlugin = (props: PluginProps) => {
         setHighlight(findInputValue, initMatches, newCurrentIndex, newText);
     }
     const onReplaceAll = () => {
-        const newText = getReplacedAllText(editor.getMdValue(), replaceInputValue, findInputValue, matches);
-        editor.setText(newText);
+        const currentText = editor.getMdValue();
+        const newText = getReplacedAllText(currentText, replaceInputValue, findInputValue, matches);
+        replaceChangedText(editor, currentText, newText);
         // 查找匹配项
         const initMatches =  findAllMatches(newText, findInputValue);
         setMatches(initMatches);
