@@ -53,9 +53,8 @@ export const useUpdateDraft = () => {
 }
 
 export const useGetDraft = () => {
-    const draft = useAppSelector(state => state.rootReducer.draftReducer.value);
     const dispatch = useDispatch();
-    return async (id: number) => {
+    return useCallback(async (id: number) => {
         const apiData: getDraftDataType = {
             draftId: id,
         };
@@ -64,9 +63,7 @@ export const useGetDraft = () => {
             body: JSON.stringify(apiData),
         });
         if (res.msg === "success") {
-            console.log('res', draft, res.data);
             dispatch(setDraft({
-                ...draft,
                 ...res.data,
             }))
             return {
@@ -77,7 +74,7 @@ export const useGetDraft = () => {
         return {
             msg: 'error',
         }
-    }
+    }, [dispatch])
 };
 
 export const usePublishDraft = () => {

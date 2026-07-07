@@ -23,6 +23,7 @@ const DraftPage = () => {
     const getDraft = useGetDraft();
     const publishDraft = usePublishDraft();
     const dispatch = useDispatch<AppDispatch>();
+    const [isEditorReady, setIsEditorReady] = useState(draftId === 'new');
     const onEditorHeaderChange = (title: string) => {
         dispatch(setDraft(
             {
@@ -39,33 +40,61 @@ const DraftPage = () => {
             }
         ))
     }
-    const initDraft = useCallback(() => {
-        const id = draftId === 'new' ? draftId : Number(draftId);
-        dispatch(setDraft({
-            ...draft,
-            id,
-        }));
-        if (typeof id === 'number') {
-            // 获取草稿数据
-            getDraft(id);
-        } else {
-            // 新建草稿记录
-            updateDraft(draft, userInfo)
+    const [DraftSaveStatus, setDraftSaveStatus] = useState<'success' | 'error' | 'loading'>('success');
+    useEffect(() => {
+        if(userInfo.id === 0) return;
+        let isActive = true;
+        const initDraft = async () => {
+            const id = draftId === 'new' ? draftId : Number(draftId);
+            setIsEditorReady(false);
+
+            if (typeof id === 'number') {
+                dispatch(setDraft({
+                    id,
+                    title: '',
+                    content: '',
+                    isLoading: true,
+                }));
+                await getDraft(id);
+                if (!isActive) return;
+                dispatch(setDraft({
+                    isLoading: false,
+                }));
+                setIsEditorReady(true);
+                return;
+            }
+
+            const newDraft: draftType = {
+                id: 'new',
+                title: '',
+                content: '',
+                summary: '',
+                tags: [],
+                status: 'onlyDraft',
+                article_id: 0,
+                review_id: 0,
+                author_id: userInfo.id,
+                cover: '',
+                isLoading: false,
+            };
+            dispatch(setDraft(newDraft));
+            setIsEditorReady(true);
+            updateDraft(newDraft, userInfo)
             .then((res) => {
                 return {
                     draftId: res.id
                 }
             }).then(res => {
+                if (!isActive) return;
                 // 跳转到新页面
                 router.push('/editor/draft/' + res.draftId);
             })
         }
-    }, [dispatch, draft, draftId, getDraft, router, updateDraft, userInfo]);
-    const [DraftSaveStatus, setDraftSaveStatus] = useState<'success' | 'error' | 'loading'>('success');
-    useEffect(() => {
-        if(userInfo.id === 0) return;
         initDraft();
-    }, [userInfo.id]);
+        return () => {
+            isActive = false;
+        }
+    }, [dispatch, draftId, getDraft, router, updateDraft, userInfo]);
     // 使用useRef存储防抖函数，确保实例唯一
     const debounceSaveRef = useRef(null);
 
@@ -125,12 +154,13 @@ const DraftPage = () => {
                 {draft.isLoading && <div className={styles.loading}>
                     <Spin size={'large'} />
                 </div>}
-                <MdEditor
+                {isEditorReady && <MdEditor
+                    key={draft.id}
                     className={styles.editor}
                     value={draft.content}
                     onChange={onEditorChange}
                     onSaveDraft={onSaveDraft}
-                />
+                />}
             </div>
         </div>
     </>

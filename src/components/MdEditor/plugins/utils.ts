@@ -1,7 +1,6 @@
 import Editor from "react-markdown-editor-lite";
 import {unified} from "unified";
 import remarkParse from "remark-parse";
-import remarkStringify from "remark-stringify";
 
 /**
  * 找到从开始索引到结束索引的所有行的开始位置和结束位置
@@ -14,7 +13,10 @@ const findLineBoundsInRange = (text: string, startIndex: number, endIndex: numbe
         start: number;
         end: number;
     }[] = [];
-    let currentIndex = startIndex;
+    const safeStartIndex = Math.max(0, Math.min(startIndex, text.length));
+    const safeEndIndex = Math.max(safeStartIndex, Math.min(endIndex, text.length));
+    const rangeEndIndex = safeEndIndex > safeStartIndex ? safeEndIndex - 1 : safeEndIndex;
+    let currentIndex = safeStartIndex;
 
     // 找到开始索引所在行的起始位置
     while (currentIndex > 0 && text[currentIndex - 1]!== '\n') {
@@ -23,7 +25,7 @@ const findLineBoundsInRange = (text: string, startIndex: number, endIndex: numbe
 
     let lineStart = currentIndex;
 
-    while (currentIndex <= endIndex) {
+    while (currentIndex <= rangeEndIndex) {
         let lineEnd = currentIndex;
         // 找到当前行的结束位置
         while (lineEnd < text.length && text[lineEnd]!== '\n') {
@@ -53,6 +55,7 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string | 
     // 开始插入的位置是换行符的位置+1
     // bounds数组存有每行的第一个位置的索引
     const bounds = findLineBoundsInRange(text, selection.start, selection.end);
+    if(bounds.length === 0) return;
     let newText = text;
     // 记录被修改区域的开始和结束位置
     let firstModifiedLineStart = Infinity;
@@ -60,11 +63,11 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string | 
     let insertOffset = 0;
     bounds.reverse().forEach((bound, index) => {
         // 从后往前
-        const { start } = bound;
+        const { start, end } = bound;
         // 行号
         const lineIndex = bounds.length - index;
         // 从整体的文本中，截取当前行的内容
-        const lineText = newText.slice(start);
+        const lineText = newText.slice(start, end);
         // 插入的内容 可能是固定的文本，也可能是根据行号发生变化的文本
         const insertContent = typeof insertText === 'string' ? insertText : insertText(lineIndex);
         // 检测到的目标的长度
@@ -80,7 +83,7 @@ export const insertToSelectLinePrevious = (editor: Editor, insertText: string | 
         ) {
             // 如果包含关键字
             // 删掉关键字后进行拼接
-            newText = newText.slice(0, start) + insertContent + lineText.slice(detectedTextLen);
+            newText = newText.slice(0, start) + insertContent + newText.slice(start + detectedTextLen);
             // 删掉关键字，偏移量变小
             insertOffset -= detectedTextLen;
 
@@ -309,15 +312,14 @@ export const insertTab = (editor: Editor) => {
         return;
     }
     const processor = unified()
-        .use(remarkParse) // 转换为语法树的插件
-        .use(remarkStringify); // 将语法树转换为markdown的插件
+        .use(remarkParse); // 转换为语法树的插件
     const ast = processor.parse(markdown);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const res =  isListItemAtIndex(ast, selection.start);
     // 如果是listItem就进行降级操作
     if (res.node) {
-        insertToSelectLinePrevious(editor, '\n    ');
+        insertToSelectLinePrevious(editor, '    ');
     } else {
         editor.insertText('    ', true, { // 四个空格
             start: 4,
