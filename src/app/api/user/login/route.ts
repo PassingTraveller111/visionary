@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
             && res[0]?.username === username
             && res[0]?.password === password
         ) {
-            const token = createToken(username, res[0].id, res[0].role);
+            const token = createToken(username, res[0].id, res[0].role, isRemember ? 60 * 60 * 60 : undefined);
             const response = NextResponse.json({ status: 200, msg: 'success', data: res[0]}, { status: 200});
             response.cookies.set('token', token, {
                 expires: isRemember ? new Date(new Date().getTime() + 1000 * 60 * 60 * 60) : undefined,

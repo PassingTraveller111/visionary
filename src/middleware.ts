@@ -1,7 +1,18 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {accessDecode, decodeType} from "@/utils/auth";
 import {apiClient, apiList} from "@/clientApi";
 import {draftEditorAuthDataType} from "@/app/api/protected/draft/editorAuth/route";
+
+type decodeType = {
+    userId: number;
+    username: string;
+    role: 0 | 1 | 2;
+    iat: number;
+    exp: number;
+};
+
+const hasAccess = (decoded: decodeType) => {
+    return !decoded.exp || Math.floor(Date.now() / 1000) <= decoded.exp;
+}
 
 async function jwtMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
@@ -16,9 +27,7 @@ async function jwtMiddleware(req: NextRequest) {
                 }),
             });
             const decoded: decodeType = res.decoded;
-            console.log(accessDecode(decoded));
-            const accessInfo = accessDecode(decoded);
-            if(accessInfo.access){
+            if(hasAccess(decoded)){
                 if(pathname !== '/login') return NextResponse.next();
                 return NextResponse.redirect(new URL('/', req.url)); // login页直接重定向到主页
             }else{

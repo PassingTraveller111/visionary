@@ -116,7 +116,7 @@ function generateComplexPassword(length: number = 8) {
 }
 
 const login = (userInfo: Pick<userTableType, 'username' | 'role' | 'email' | 'password' | 'nick_name' | 'id'>) => {
-    const token = createToken(userInfo.username, userInfo.id, userInfo.role);
+    const token = createToken(userInfo.username, userInfo.id, userInfo.role, 60 * 60 * 60);
     const response = NextResponse.json({
             status: 200,
             message: 'success',

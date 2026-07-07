@@ -1,8 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import jwt from 'jsonwebtoken';
-const secretKey = process.env.SECRET_KEY;
-const expiresIn = 60 * 60 * 1000; // 1小时
+
+const DEFAULT_EXPIRES_IN_SECONDS = 60 * 60; // 1 hour
 
 export type decodeType = {
     userId: number;
@@ -12,7 +10,13 @@ export type decodeType = {
     exp: number; // token到期时间
 };
 
-export const createToken = (username: string, userId: number, role: 0 | 1 | 2 ) => {
+const getSecretKey = () => {
+    const secretKey = process.env.SECRET_KEY;
+    if (!secretKey) throw new Error('Missing SECRET_KEY');
+    return secretKey;
+}
+
+export const createToken = (username: string, userId: number, role: 0 | 1 | 2, expiresIn = DEFAULT_EXPIRES_IN_SECONDS ) => {
     /*
     * payload 一个对象，经过加密后存储到token里
     * secretKey 密钥，用来加密解密token
@@ -22,16 +26,16 @@ export const createToken = (username: string, userId: number, role: 0 | 1 | 2 ) 
     *   notBefore: 在一定时间以后生效
     * }
     * */
-    return jwt.sign({ username, userId, role }, secretKey, { expiresIn: Math.floor(new Date().getTime()) + expiresIn });
+    return jwt.sign({ username, userId, role }, getSecretKey(), { expiresIn });
 }
 
 export const verifyToken = (token: string): decodeType => {
-    return jwt.verify(token, secretKey);
+    return jwt.verify(token, getSecretKey()) as decodeType;
 }
 
 export const accessDecode = (decode: decodeType) => {
     const { exp } = decode;
-    if ( exp && new Date().getTime() > exp ) {
+    if ( exp && Math.floor(Date.now() / 1000) > exp ) {
         return {
             access: false,
             msg: 'Token expired',
