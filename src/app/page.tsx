@@ -23,6 +23,7 @@ type tabKeysType = 'new' | 'hot';
 
 export default function Home() {
     const [currentTab, setCurrentTab] = useState<tabKeysType>('new');
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const { articleList, getPublishedArticleList, loadMore, messageContext } = useGetPublishedArticleList();
     useEffect(() => {
         getPublishedArticleList({ isInit: true });
@@ -63,15 +64,15 @@ export default function Home() {
                     }}
                 >
                     <Tabs
-                        className={styles.tabContainer}
+                        className={`${styles.tabContainer} ${!userInfo.login ? styles.tabContainerFull : ''}`}
                         items={items}
                         onChange={(tabKey) => {
                             setCurrentTab(tabKey as tabKeysType);
                         }}
                     />
-                    <div className={styles.leftBar}>
+                    {userInfo.login && <div className={styles.leftBar}>
                         <UserBar/>
-                    </div>
+                    </div>}
                 </div>
             </NavLayout>
         </div>

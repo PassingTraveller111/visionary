@@ -29,6 +29,9 @@ const hasAccess = (decoded: decodeType) => {
 
 const isProtectedApi = (pathname: string) => pathname.startsWith('/api/protected/');
 
+const isPublicAsset = (pathname: string) =>
+    !pathname.startsWith('/api/') && /\.[^/]+$/.test(pathname);
+
 const unauthorizedResponse = (pathname: string, req: NextRequest) => {
     if (isProtectedApi(pathname)) {
         return NextResponse.json({ msg: 'unauthorized' }, { status: 401 });
@@ -108,6 +111,9 @@ function noAuthMiddleware(req: NextRequest) {
 }
 
 export async function middleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
+    // public 目录下的静态资源不需要鉴权
+    if(isPublicAsset(pathname)) return NextResponse.next();
     // 免token页直接放行
     if(noAuthMiddleware(req)) return NextResponse.next();
     // 程序使用权限

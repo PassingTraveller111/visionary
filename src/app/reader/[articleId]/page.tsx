@@ -26,15 +26,24 @@ import {delCommentReqType} from "@/app/api/protected/article_comments/delComment
 
 const ReaderPage = () => {
     const articleId =  Number(useParams().articleId);
+    const router = useRouter();
     const hasInsertedData = useRef(false);
     const [ messageApi, MessageContext ] = useMessage();
-    const { isLoading, id: userId } = useAppSelector(state => state.rootReducer.userReducer.value);
+    const { isLoading, id: userId, login } = useAppSelector(state => state.rootReducer.userReducer.value);
     const { isLike, setArticleIsLike  } = useArticleLike();
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
     const scrollContainerRef = React.createRef<HTMLDivElement>();
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const getArticle = useGetArticle();
     const { isCollected, setArticleIsCollected } = useSetArticleIsCollected();
+    const requireLogin = useCallback(() => {
+        if(login) return true;
+        messageApi.warning('请先登录');
+        window.setTimeout(() => {
+            router.push('/login');
+        }, 800);
+        return false;
+    }, [login, messageApi, router]);
     // 分享
     const onShare = async () => {
         try {
@@ -73,6 +82,7 @@ const ReaderPage = () => {
                                 type='icon-like'
                                 isActive={isLike}
                                 onClick={() => {
+                                    if(!requireLogin()) return;
                                     setArticleIsLike(userId, articleId, !isLike);
                                 }}
                             />
@@ -81,6 +91,7 @@ const ReaderPage = () => {
                                 type='icon-shoucang'
                                 isActive={isCollected}
                                 onClick={() => {
+                                    if(!requireLogin()) return;
                                     setArticleIsCollected(userId, articleId, !isCollected);
                                 }}
                             />
@@ -297,30 +308,31 @@ const Comments = ({ articleId }: { articleId: number } ) => {
         initCommentList();
     }, [initCommentList]);
     return <div className={styles.comments} >
-        <SendComment articleId={articleId} userId={userInfo.id} avatar={userInfo.profile ?? ''} initCommentList={initCommentList}/>
+        <SendComment articleId={articleId} userId={userInfo.id} avatar={userInfo.profile ?? ''} disabled={!userInfo.login} initCommentList={initCommentList}/>
         <CommentsList articleId={articleId} commentList={commentList} userId={userInfo.id} initCommentList={initCommentList} />
     </div>
 }
 
-const SendComment = ({ articleId, parentCommentId, avatar, userId, initCommentList }: { articleId: number, parentCommentId?: number, avatar: string, userId: number, initCommentList: () => void }) => {
+const SendComment = ({ articleId, parentCommentId, avatar, userId, disabled = false, initCommentList }: { articleId: number, parentCommentId?: number, avatar: string, userId: number, disabled?: boolean, initCommentList: () => void }) => {
     return <div className={styles.sendComments}>
         <div className={styles.title}>评论</div>
         <div className={styles.Input}>
             <div className={styles.avatar}>
                 {avatar && <Image src={avatar} alt={''} width={60} height={60}/>}
             </div>
-            <SendCommentInput articleId={articleId} parentCommentId={parentCommentId} userId={userId} onSendComment={initCommentList} />
+            <SendCommentInput articleId={articleId} parentCommentId={parentCommentId} userId={userId} disabled={disabled} onSendComment={initCommentList} />
         </div>
     </div>
 }
 
-const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?: boolean, parentCommentId?: number, onSendComment?: () => void, onFocus?: () => void, onBlur?: () => void }) => {
-    const { userId, parentCommentId, articleId, onSendComment, onFocus, onBlur, autoFocus = false } = props;
+const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?: boolean, disabled?: boolean, parentCommentId?: number, onSendComment?: () => void, onFocus?: () => void, onBlur?: () => void }) => {
+    const { userId, parentCommentId, articleId, onSendComment, onFocus, onBlur, autoFocus = false, disabled = false } = props;
     const [commentText, setCommentText] = useState('');
     const [messageApi, contextHandle] = useMessage();
     const [isFocus, setIsFocus] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const sendComment = () => {
+        if(disabled) return;
         setIsLoading(true);
         const apiData: sendCommentReqType = {
             userId,
@@ -356,6 +368,7 @@ const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?
                 value={commentText}
                 maxLength={100}
                 autoFocus={autoFocus}
+                disabled={disabled}
                 onFocus={() => {
                     setIsFocus(true);
                     if (onFocus) onFocus();
@@ -365,7 +378,7 @@ const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?
                     if (onBlur) onBlur();
                 }}
                 style={{height: 80, resize: 'none'}}
-                placeholder={'发表评论'}
+                placeholder={disabled ? '登录后发表评论' : '发表评论'}
                 onChange={(e) => {
                     setCommentText(e.target.value);
                 }}
@@ -376,7 +389,7 @@ const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?
                 <span className={styles.count}>{commentText.length + '/100'}</span>
                 <Button
                     type="primary"
-                    disabled={commentText.length === 0 || isLoading}
+                    disabled={disabled || commentText.length === 0 || isLoading}
                     onClick={sendComment}
                     loading={isLoading}
                 >

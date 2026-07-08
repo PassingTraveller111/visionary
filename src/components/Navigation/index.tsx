@@ -7,9 +7,12 @@ import React from "react";
 import {Profile} from "@/components/Profile";
 import classNames from "classnames";
 import ArticleSearch from "@/components/Navigation/components/ArticleSearch";
+import {useAppSelector} from "@/store";
 
 const Navigation = () => {
     const router = useRouter();
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+
     return <div className={styles['nav-container']}>
         <span className={styles['nav-left']}>
             <span
@@ -29,7 +32,7 @@ const Navigation = () => {
                     router.push('/creator/home');
                 }}
             >创作中心</Button>
-            <Profile/>
+            {userInfo.login ? <Profile/> : <Button type="primary" onClick={() => router.push('/login')}>登录</Button>}
         </span>
     </div>
 }
