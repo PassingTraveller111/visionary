@@ -1,5 +1,20 @@
 import {query} from "@/app/api/utils";
-import {commentItem} from "@/app/api/protected/article_comments/getCommentListByArticleId/route";
+import {article_commentsTableType} from "@/app/api/sql/type";
+
+export type commentUserInfoType = {
+    id: number;
+    nickname: string;
+    avatar: string;
+}
+
+export type commentItem = article_commentsTableType & {
+    children: commentItem[];
+    userInfo: commentUserInfoType;
+    replyComment?: {
+        id: number;
+        userInfo: commentUserInfoType;
+    };
+}
 
 
 const sendArticleComment = async (userId: number, articleId: number, commentText: string, parentCommentId?: number ) => {

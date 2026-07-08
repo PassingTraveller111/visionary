@@ -8,11 +8,11 @@ import {Skeleton, Tabs, TabsProps} from "antd";
 import Image from "next/image";
 import {useAppSelector} from "@/store";
 import {apiClient, apiList} from "@/clientApi";
-import {getQuoteRandomResponseType} from "@/app/api/protected/quotes/getQuoteRandom/route";
-import {getArticleCountByUserIdResponse} from "@/app/api/protected/article/getArticleCountByUserId/route";
+import {getQuoteRandomResponseType} from "@/app/api/public/quotes/getQuoteRandom/route";
+import {getArticleCountByUserIdResponse} from "@/app/api/public/article/getArticleCountByUserId/route";
 import {
     getArticleLikeCountByUserIdResponseType
-} from "@/app/api/protected/article_likes/getArticleLikeCountByUserId/route";
+} from "@/app/api/public/article_likes/getArticleLikeCountByUserId/route";
 import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import {useGetArticleLikeCountByUserId} from "@/hooks/article_likes/useArticleLikes";
 import ArticleItem from "@/components/ArticleItem";
@@ -93,7 +93,7 @@ const UserBar = () => {
         router.push('/userCenter/' + userInfo.id + '/article');
     }
     useEffect(() => {
-        apiClient(apiList.get.protected.quotes.getQuoteRandom).then((res: getQuoteRandomResponseType) => {
+        apiClient(apiList.get.public.quotes.getQuoteRandom).then((res: getQuoteRandomResponseType) => {
             if(res.msg === 'success') setQuote(res.data.quote_text);
         });
     }, []);

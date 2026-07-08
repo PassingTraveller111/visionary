@@ -10,8 +10,30 @@ type decodeType = {
     exp: number;
 };
 
+const publicPages = [
+    '/',
+    '/search',
+    '/userAgreement',
+];
+
+const publicPagePatterns = [
+    /^\/reader\/[^/]+$/,
+    /^\/userCenter\/[^/]+\/article$/,
+    /^\/userCenter\/[^/]+\/column$/,
+    /^\/userCenter\/Columns\/[^/]+$/,
+];
+
 const hasAccess = (decoded: decodeType) => {
     return !decoded.exp || Math.floor(Date.now() / 1000) <= decoded.exp;
+}
+
+const isProtectedApi = (pathname: string) => pathname.startsWith('/api/protected/');
+
+const unauthorizedResponse = (pathname: string, req: NextRequest) => {
+    if (isProtectedApi(pathname)) {
+        return NextResponse.json({ msg: 'unauthorized' }, { status: 401 });
+    }
+    return NextResponse.redirect(new URL('/login', req.url));
 }
 
 async function jwtMiddleware(req: NextRequest) {
@@ -31,15 +53,15 @@ async function jwtMiddleware(req: NextRequest) {
                 if(pathname !== '/login') return NextResponse.next();
                 return NextResponse.redirect(new URL('/', req.url)); // login页直接重定向到主页
             }else{
-                if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url)); // 非login页的请求直接重定向到login页
+                if(pathname !== '/login') return unauthorizedResponse(pathname, req); // 非login页的请求直接重定向到login页
                 return NextResponse.next(); // login页直接放行，避免死循环
             }
         } catch (error) {
             console.error(error);
-            if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url));
+            if(pathname !== '/login') return unauthorizedResponse(pathname, req);
         }
     } else {
-        if(pathname !== '/login') return NextResponse.redirect(new URL('/login', req.url));
+        if(pathname !== '/login') return unauthorizedResponse(pathname, req);
     }
 }
 
@@ -81,12 +103,8 @@ async function editorAuthMiddleware(req: NextRequest) {
 
 function noAuthMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
-    for (const url of noAuthPage) {
-        if (pathname === url) {
-            return true;
-        }
-    }
-    return false;
+    return publicPages.includes(pathname)
+        || publicPagePatterns.some(pattern => pattern.test(pathname));
 }
 
 export async function middleware(req: NextRequest) {
@@ -110,8 +128,3 @@ export const config = {
         '/((?!api|_next/static|_next/image|favicon.ico).*)', // 正则表达式过滤内部请求、静态资源
     ],
 };
-
-
-const noAuthPage = [
-    '/userAgreement',
-]

@@ -1,6 +1,11 @@
 //根据分页查询用户列表
 import { query } from "@/app/api/utils";
-import { publishedItemType } from "@/app/api/protected/article/getPublishedArticleList/route";
+import {articleTableType} from "@/app/api/sql/type";
+
+type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags' | 'cover'> & {
+    like_count: number;
+    look_count: number;
+};
 
 const getPublishedArticlesList = async (pageNum: number, pageSize: number) => {
     const offset = pageNum * pageSize;
@@ -28,7 +33,7 @@ const getPublishedArticlesList = async (pageNum: number, pageSize: number) => {
                                  a.updated_time
                         ORDER BY updated_time
                         DESC 
-                        LIMIT ${offset},${pageSize}`) as null | publishedItemType[];
+                        LIMIT ${offset},${pageSize}`) as null | [publishedItemType[]];
 }
 
 const getPublishedArticleCount = async () => {
@@ -48,10 +53,10 @@ const getArticleListByKeyWord = async (keyword: string, pageNum: number, pageSiz
                             (LENGTH(content) - LENGTH(REPLACE(content, ?, ''))) / LENGTH(?) * 1
                         ) AS score
                         FROM articles
-                        WHERE title LIKE ? OR content LIKE ? OR articles.summary LIKE ? AND is_published = 1
+                        WHERE (title LIKE ? OR content LIKE ? OR articles.summary LIKE ?) AND is_published = 1
                         ORDER BY  score DESC
                         LIMIT ${offset},${pageSize}`
-        , [keyword, keyword, keyword, keyword, keyword, keyword, fuzzyKeyword, fuzzyKeyword, fuzzyKeyword]) as null | publishedItemType[];
+        , [keyword, keyword, keyword, keyword, keyword, keyword, fuzzyKeyword, fuzzyKeyword, fuzzyKeyword]) as null | [publishedItemType[]];
 }
 
 const getArticleCountByUserId = async (userId: number) => {
@@ -71,13 +76,14 @@ const getArticleToAddColumn = async (userId: number) => {
                          `, [userId]))
 }
 
-const getArticleListByColumnId = async (column_id: number) => {
+const getArticleListByColumnId = async (column_id: number, includeUnpublished = false) => {
+    const publishedFilter = includeUnpublished ? '' : 'AND a.is_published = 1';
     return (await query(`SELECT a.id, a.title, a.updated_time, a.cover, a.summary, a.tags 
-                         FROM articles a
-                         LEFT JOIN article_columns ac ON a.id = ac.article_id
-                         WHERE ac.column_id = ?
-                         GROUP BY a.id
-                         `, [column_id]))
+                          FROM articles a
+                          LEFT JOIN article_columns ac ON a.id = ac.article_id
+                          WHERE ac.column_id = ? ${publishedFilter}
+                          GROUP BY a.id
+                          `, [column_id]))
 }
 export const article = {
     getPublishedArticlesList,

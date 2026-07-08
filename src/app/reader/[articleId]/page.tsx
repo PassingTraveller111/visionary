@@ -20,7 +20,7 @@ import {sendCommentReqType} from "@/app/api/protected/article_comments/sendComme
 import {
     commentItem,
     getCommentListByArticleIdResType
-} from "@/app/api/protected/article_comments/getCommentListByArticleId/route";
+} from "@/app/api/public/article_comments/getCommentListByArticleId/route";
 import dayjs from "dayjs";
 import {delCommentReqType} from "@/app/api/protected/article_comments/delComment/route";
 
@@ -284,7 +284,7 @@ const Comments = ({ articleId }: { articleId: number } ) => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     // 获取评论列表
     const initCommentList = useCallback(() => {
-        apiClient(apiList.post.protected.article_comments.getCommentListByArticleId, {
+        apiClient(apiList.post.public.article_comments.getCommentListByArticleId, {
             method: 'POST',
             body: JSON.stringify({
                 article_id: articleId,

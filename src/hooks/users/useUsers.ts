@@ -8,7 +8,7 @@ import {
     AuthorInfoType,
     getAuthorInfoRequestType,
     getAuthorInfoResponseType
-} from "@/app/api/protected/user/getAuthorInfo/route";
+} from "@/app/api/public/user/getAuthorInfo/route";
 
 
 export const useUserLogin = () => {
@@ -49,16 +49,18 @@ export const useUserLogout = () => {
 export const useGetUserInfo =  () => {
     const dispatch = useDispatch<AppDispatch>();
     return () => {
-        setLoading({
+        dispatch(setLoading({
             isLoading: true,
-        });
+        }));
         apiClient(apiList.get.protected.user.getUserInfo).then(res => {
-            dispatch(setUserInfo(
-                res.data
-            ));
-            setLoading({
+            if(res.msg === 'success') {
+                dispatch(setUserInfo(
+                    res.data
+                ));
+            }
+            dispatch(setLoading({
                 isLoading: false,
-            })
+            }));
         })
     }
 }
@@ -81,7 +83,7 @@ export const useGetAuthorInfo = () => {
         const apiData: getAuthorInfoRequestType = {
             authorId: id,
         }
-        apiClient(apiList.post.protected.user.getAuthorInfo, {
+        apiClient(apiList.post.public.user.getAuthorInfo, {
             method: 'POST',
             body: JSON.stringify(apiData),
         }).then((res: getAuthorInfoResponseType) => {

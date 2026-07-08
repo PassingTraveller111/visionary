@@ -1,34 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
-import { articleTableType } from "@/app/api/sql/type";
+import { getArticle } from "@/app/api/services/article";
+import { getOptionalUserId } from "@/app/api/services/auth";
 
-export type getArticleRequestType = {
-    articleId: number;
-}
-
-export type getArticleResponseType = {
-    msg: 'success' | 'error';
-    data: articleTableType;
-}
+export type { getArticleRequestType, getArticleResponseType } from "@/app/api/services/article";
 
 export async function POST(req: NextRequest) {
-    const connection = await pool.getConnection();
     try {
-        const data: getArticleRequestType = await req.json();
-        const sql = `SELECT * FROM articles WHERE id = ? AND view_permission = 'all'`;
-        const values = [data.articleId];
-        const [ rows ] = await connection.execute(sql, values);
-        if(Array.isArray(rows) && rows.length > 0) {
-            return NextResponse.json({ msg: 'success', data: rows[0] }, { status: 200 });
-        } else {
-            return NextResponse.json({ msg: 'error', data: '文章不存在' }, { status: 200 });
-        }
+        const { articleId } = await req.json();
+        const data = await getArticle(articleId, getOptionalUserId(req));
+        if(data) return NextResponse.json({ msg: 'success', data }, { status: 200 });
+        return NextResponse.json({ msg: 'error', data: '文章不存在' }, { status: 200 });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ status: 200, msg: 'error' }, { status: 200 });
-    } finally {
-        if (connection) {
-            connection.release();
-        }
     }
 }

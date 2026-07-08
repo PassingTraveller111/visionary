@@ -13,7 +13,7 @@ import {renameDiagramReqType} from "@/app/api/protected/diagrams/renameDiagram/r
 import {
     getDiagramCoverByIdReqType,
     getDiagramCoverByIdResType
-} from "@/app/api/protected/diagrams/getDiagramCoverById/route";
+} from "@/app/api/public/diagrams/getDiagramCoverById/route";
 
 
 export const useUpdateDiagram = () => {
@@ -128,7 +128,7 @@ export const useGetDiagramCoverById = () => {
         const apiData: getDiagramCoverByIdReqType = {
             id,
         }
-        const res: getDiagramCoverByIdResType = await apiClient(apiList.post.protected.diagrams.getDiagramCoverById, {
+        const res: getDiagramCoverByIdResType = await apiClient(apiList.post.public.diagrams.getDiagramCoverById, {
             method: 'POST',
             body: JSON.stringify(apiData),
         })

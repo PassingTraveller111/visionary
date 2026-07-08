@@ -4,20 +4,20 @@ import {apiClient, apiList} from "@/clientApi";
 import {
     getColumnsByUserIdReqType,
     getColumnsByUserIdResType
-} from "@/app/api/protected/columns/getColumnsByUserId/route";
+} from "@/app/api/public/columns/getColumnsByUserId/route";
 import {deleteColumnReqType} from "@/app/api/protected/columns/deleteColumn/route";
 import {getArticleListToAddColumnResType} from "@/app/api/protected/article/getArticleListToAddColumn/route";
-import {getArticleListByColumnIdResType} from "@/app/api/protected/article/getArticleListByColumnId/route";
+import {getArticleListByColumnIdResType} from "@/app/api/public/article/getArticleListByColumnId/route";
 
 
-export const useGetColumns = () => {
+export const useGetColumns = (autoLoad = true) => {
     const [ columns, setColumns ] = useState<getColumnsByUserIdResType['data']>([]);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const getColumns =  useCallback((userId: number) => {
         const apiData: getColumnsByUserIdReqType = {
             userId,
         }
-        apiClient(apiList.post.protected.columns.getColumnsByUserId,
+        apiClient(apiList.post.public.columns.getColumnsByUserId,
             {
                 method: "POST",
                 body: JSON.stringify(apiData)
@@ -28,8 +28,8 @@ export const useGetColumns = () => {
         });
     }, []);
     useEffect(() => {
-        if(userInfo.id) getColumns(userInfo.id)
-    },[getColumns, userInfo.id]);
+        if(autoLoad && userInfo.id) getColumns(userInfo.id)
+    },[autoLoad, getColumns, userInfo.id]);
     return [ columns, getColumns ] as [ columns: getColumnsByUserIdResType['data'], (userId: number) => void ];
 }
 
@@ -69,7 +69,7 @@ export const useGetColumn = (column_id: number) => {
     });
 
     const getColumn = useCallback((column_id: number) => {
-        apiClient(apiList.post.protected.columns.getColumn, {
+        apiClient(apiList.post.public.columns.getColumn, {
             method: 'POST',
             body: JSON.stringify({
                 column_id,
@@ -102,7 +102,7 @@ export const useGetArticleListToColumn = () => {
 export const useGetArticleListByColumnId = () => {
     const [articleList, setArticleList] = useState<getArticleListByColumnIdResType['data']>([]);
     const getArticleListByColumn = useCallback(async (column_id: number) => {
-        const res: getArticleListByColumnIdResType = await apiClient(apiList.post.protected.article.getArticleListByColumnId, {
+        const res: getArticleListByColumnIdResType = await apiClient(apiList.post.public.article.getArticleListByColumnId, {
             method: 'POST',
             body: JSON.stringify({
                 column_id,

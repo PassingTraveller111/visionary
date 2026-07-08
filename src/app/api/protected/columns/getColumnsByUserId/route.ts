@@ -1,31 +1,15 @@
 import {NextRequest, NextResponse} from "next/server";
-import {columns} from "@/app/api/sql/columns";
-// import {verifyToken} from "@/utils/auth";
-import {columnsTableType} from "@/app/api/sql/type";
+import {getColumnsByUserId} from "@/app/api/services/columns";
 
-export type getColumnsByUserIdReqType = {
-    userId: number;
-}
-
-export type getColumnsByUserIdResType = {
-    msg: 'success' | 'error',
-    data: columnsTableType[],
-}
+export type { getColumnsByUserIdReqType, getColumnsByUserIdResType } from "@/app/api/services/columns";
 
 export async function POST(req: NextRequest){
     try {
-        const data: getColumnsByUserIdReqType = await req.json();
-        // const token = req.cookies.get('token')?.value ?? '';
-        // const { userId } = verifyToken(token);
-        const result = await columns.getColumnsByUserId(data.userId);
-        if (result) {
-            const [ rows ] = result;
-            if(Array.isArray(rows)){
-                return NextResponse.json({ msg: 'success', data: rows }, { status: 200 });
-            }
-        }
-        return NextResponse.json({ msg: 'error', data: result }, { status: 500 });
-    } catch (e) {
-        return NextResponse.json({ msg: 'error', data: e }, { status: 500 });
+        const { userId } = await req.json();
+        const data = await getColumnsByUserId(userId);
+        if (data) return NextResponse.json({ msg: 'success', data }, { status: 200 });
+        return NextResponse.json({ msg: 'error', data }, { status: 500 });
+    } catch (error) {
+        return NextResponse.json({ msg: 'error', data: error }, { status: 500 });
     }
 }

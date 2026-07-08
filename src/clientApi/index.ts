@@ -17,6 +17,38 @@ export const apiList = {
                 verifyCode: 'user/register/verifyCode', // 验证邮箱验证码
             }
         },
+        public: {
+            profile: {
+                getProfile: 'public/profile/getProfile', // 获取公开用户资料
+            },
+            user: {
+                getAuthorInfo: 'public/user/getAuthorInfo', // 获取作者信息
+            },
+            article: {
+                getArticle: 'public/article/getArticle', // 获取公开文章
+                getArticleList: 'public/article/getArticleList', // 获取作者文章列表
+                getPublishedArticleList: 'public/article/getPublishedArticleList', // 获取公开文章列表
+                getArticleListByKeyWord: 'public/article/getArticleListByKeyWord', // 模糊搜索公开文章
+                getArticleCountByUserId: 'public/article/getArticleCountByUserId', // 获取公开文章数量
+                getArticleListByColumnId: 'public/article/getArticleListByColumnId', // 获取专栏下的公开文章列表
+            },
+            article_likes: {
+                getArticleLikeCountByUserId: 'public/article_likes/getArticleLikeCountByUserId', // 获取用户的总获赞数
+            },
+            article_reading_records: {
+                getLookCountByUserId: 'public/article_reading_records/getLookCountsByUserId', // 获取用户的文章被阅读总量
+            },
+            article_comments: {
+                getCommentListByArticleId: 'public/article_comments/getCommentListByArticleId', // 获取评论列表
+            },
+            columns: {
+                getColumnsByUserId: 'public/columns/getColumnsByUserId', // 获取公开专栏列表
+                getColumn: 'public/columns/getColumn', // 获取公开专栏
+            },
+            diagrams: {
+                getDiagramCoverById: 'public/diagrams/getDiagramCoverById', // 获取图表封面
+            }
+        },
         // 受保护的请求
         protected: {
             profile: {
@@ -99,6 +131,11 @@ export const apiList = {
         },
     },
     get: {
+        public: {
+            quotes: {
+                getQuoteRandom: 'public/quotes/getQuoteRandom', // 随机获取格言
+            },
+        },
         // 受保护的请求
         protected: {
             user: {

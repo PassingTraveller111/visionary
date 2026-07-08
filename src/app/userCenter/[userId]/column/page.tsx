@@ -1,13 +1,18 @@
 'use client'
 import styles from './index.module.scss';
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {columnsTableType} from "@/app/api/sql/type";
 import { useGetColumns } from "@/hooks/columns/useColumns";
 import Image from "next/image";
 import dayjs from "dayjs";
+import {useEffect} from "react";
 
 const ColumnPage = () => {
-    const [ columns ] = useGetColumns();
+    const userId = Number(useParams().userId);
+    const [ columns, getColumns ] = useGetColumns(false);
+    useEffect(() => {
+        getColumns(userId);
+    }, [getColumns, userId]);
     return <>
         <div
             className={styles.collectContainer}

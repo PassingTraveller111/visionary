@@ -72,7 +72,7 @@ const UserInfoBar = React.memo(function UserInfoBar(props: { userId: number, rou
 
     // 将 fetchProfileInfo 定义移出 useEffect
     const fetchProfileInfo = useCallback(() => {
-        apiClient(apiList.post.protected.profile.getProfile, {
+        apiClient(apiList.post.public.profile.getProfile, {
             method: 'POST',
             body: JSON.stringify({
                 userId,

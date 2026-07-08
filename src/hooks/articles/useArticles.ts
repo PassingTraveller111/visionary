@@ -3,17 +3,17 @@ import {apiClient, apiList} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
 import {useCallback, useEffect, useState} from "react";
-import {getArticleRequestType, getArticleResponseType} from "@/app/api/protected/article/getArticle/route";
-import {getArticleListResponseType, itemType} from "@/app/api/protected/article/getArticleList/route";
+import {getArticleRequestType, getArticleResponseType} from "@/app/api/public/article/getArticle/route";
+import {getArticleListResponseType, itemType} from "@/app/api/public/article/getArticleList/route";
 import {
     getPublishedArticleListRequestType,
     getPublishedArticleListResponseType
-} from "@/app/api/protected/article/getPublishedArticleList/route";
+} from "@/app/api/public/article/getPublishedArticleList/route";
 import useMessage from "antd/es/message/useMessage";
 import {
     getArticleListByKeyWordRequestType,
     getArticleListByKeyWordResponseType
-} from "@/app/api/protected/article/getArticleListByKeyWord/route";
+} from "@/app/api/public/article/getArticleListByKeyWord/route";
 import {
     getArticleIsLikeRequestType,
     getArticleIsLikeResponseType
@@ -22,7 +22,7 @@ import {
     setArticleIsLikeRequestType,
     setArticleIsLikeResponseType
 } from "@/app/api/protected/article_likes/setArticleIsLike/route";
-import {getArticleCountByUserIdResponse} from "@/app/api/protected/article/getArticleCountByUserId/route";
+import {getArticleCountByUserIdResponse} from "@/app/api/public/article/getArticleCountByUserId/route";
 
 
 export const useGetArticle = () => {
@@ -31,7 +31,7 @@ export const useGetArticle = () => {
         const apiData: getArticleRequestType = {
             articleId: id
         }
-        const res = await apiClient(apiList.post.protected.article.getArticle,  {
+        const res = await apiClient(apiList.post.public.article.getArticle,  {
             method: 'POST',
             body: JSON.stringify(apiData)
         }) as getArticleResponseType;
@@ -79,7 +79,7 @@ export const useGetArticleList = () => {
     // 获取文章列表
     const getArticleList =  useCallback((userId: number) => {
         if(!userId) return [];
-        apiClient(apiList.post.protected.article.getArticleList, {
+        apiClient(apiList.post.public.article.getArticleList, {
             method: "POST",
             body: JSON.stringify({
                 authorId: userId,
@@ -113,7 +113,7 @@ export const useGetPublishedArticleList = () => {
             pageNum,
             pageSize,
         };
-        const res: getPublishedArticleListResponseType = await apiClient(apiList.post.protected.article.getPublishedArticleList, {
+        const res: getPublishedArticleListResponseType = await apiClient(apiList.post.public.article.getPublishedArticleList, {
             method: 'POST',
             body: JSON.stringify(apiData)
         });
@@ -165,7 +165,7 @@ export const useGetPublishedArticleListByKeyWord = () => {
             pageSize,
             keyword,
         };
-        const res: getArticleListByKeyWordResponseType = await apiClient(apiList.post.protected.article.getArticleListByKeyWord, {
+        const res: getArticleListByKeyWordResponseType = await apiClient(apiList.post.public.article.getArticleListByKeyWord, {
             method: 'POST',
             body: JSON.stringify(apiData)
         });
@@ -255,7 +255,7 @@ export const useArticleLike = () => {
 
 export const useGetArticleCountByUserId = () => {
     return useCallback(async (userId: number) => {
-        const res: getArticleCountByUserIdResponse = await apiClient(apiList.post.protected.article.getArticleCountByUserId, {
+        const res: getArticleCountByUserIdResponse = await apiClient(apiList.post.public.article.getArticleCountByUserId, {
             method: 'POST',
             body: JSON.stringify({
                 userId: userId,

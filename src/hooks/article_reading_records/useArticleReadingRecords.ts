@@ -10,7 +10,7 @@ import {article_reading_recordsTableType, articleTableType} from "@/app/api/sql/
 import useMessage from "antd/es/message/useMessage";
 import {
     getLookCountsByUserIdRequestType, getLookCountsByUserIdResponseType
-} from "@/app/api/protected/article_reading_records/getLookCountsByUserId/route";
+} from "@/app/api/public/article_reading_records/getLookCountsByUserId/route";
 
 
 export const useInsertArticleReadingRecord = () => {
@@ -94,7 +94,7 @@ export const useGetLookCountByUserId = () => {
         const apiData: getLookCountsByUserIdRequestType = {
             userId,
         }
-        const res: getLookCountsByUserIdResponseType = await apiClient(apiList.post.protected.article_reading_records.getLookCountByUserId, {
+        const res: getLookCountsByUserIdResponseType = await apiClient(apiList.post.public.article_reading_records.getLookCountByUserId, {
             method: "POST",
             body: JSON.stringify(apiData)
         });
