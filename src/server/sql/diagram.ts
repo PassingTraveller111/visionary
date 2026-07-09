@@ -1,5 +1,5 @@
-import {diagramTableType} from "@/app/api/sql/type";
-import {query} from "@/app/api/utils";
+import {diagramTableType} from "@/server/sql/type";
+import {query} from "@/server/db/query";
 
 
 const insertDiagram = async (diagram: Pick<diagramTableType, 'data' | 'cover' | 'tags' | 'author_id' | 'title' | 'intro' | 'type'>) => {
@@ -42,4 +42,3 @@ export const diagram = {
     renameDiagram,
     getDiagramCoverById,
 }
-

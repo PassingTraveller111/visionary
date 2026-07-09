@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {quotesTableType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {quotesTableType} from "@/server/sql/type";
 
 
 const getQuoteRandom = async () => {

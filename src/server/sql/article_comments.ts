@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {article_commentsTableType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {article_commentsTableType} from "@/server/sql/type";
 
 export type commentUserInfoType = {
     id: number;

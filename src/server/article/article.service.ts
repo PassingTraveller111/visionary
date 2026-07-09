@@ -1,8 +1,8 @@
 import {randomUUID} from "crypto";
 import type {PoolConnection} from "mysql2/promise";
 import pool from "@/lib/db";
-import {article} from "@/app/api/sql/article";
-import {columns} from "@/app/api/sql/columns";
+import {article} from "@/server/sql/article";
+import {columns} from "@/server/sql/columns";
 import {uploadImageToCos} from "@/server/cos/upload";
 import type {ArticleDto, ArticleListItemDto, ColumnArticleItemDto, PublishedArticleItemDto} from "@/shared/api/article";
 

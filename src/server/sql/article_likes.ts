@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {articleLikesTableType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {articleLikesTableType} from "@/server/sql/type";
 
 
 const getArticleIsLike = async (userId: number, articleId: number) => {

@@ -1,6 +1,6 @@
 import type {Key} from "react";
 import pool from "@/lib/db";
-import {columns} from "@/app/api/sql/columns";
+import {columns} from "@/server/sql/columns";
 import {uploadImageToCos} from "@/server/cos/upload";
 import type {UpdateColumnRequest} from "@/shared/api/columns";
 

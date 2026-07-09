@@ -1,5 +1,5 @@
 import {NextRequest} from "next/server";
-import {article} from "@/app/api/sql/article";
+import {article} from "@/server/sql/article";
 import {apiHandler, ApiError} from "@/server/api/response";
 import {requireUser} from "@/server/auth/currentUser";
 

@@ -1,4 +1,4 @@
-import {query} from "@/app/api/utils";
+import {query} from "@/server/db/query";
 
 
 const setEmailVerifyCode = async (email: string, code: string) => {

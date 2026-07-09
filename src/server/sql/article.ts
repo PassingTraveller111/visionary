@@ -1,6 +1,6 @@
 //根据分页查询用户列表
-import { query } from "@/app/api/utils";
-import {articleTableType} from "@/app/api/sql/type";
+import { query } from "@/server/db/query";
+import {articleTableType} from "@/server/sql/type";
 
 type publishedItemType = Pick<articleTableType, 'id' | 'title' | 'review_status' | 'review_id' | 'updated_time' | 'draft_id' | 'is_published' | 'published_time' | 'author_nickname' | 'author_id' | 'summary' | 'tags' | 'cover'> & {
     like_count: number;

@@ -1,6 +1,6 @@
 import type {PoolConnection} from "mysql2/promise";
 import pool from "@/lib/db";
-import type {draftTableType, reviewStatusType} from "@/app/api/sql/type";
+import type {draftTableType, reviewStatusType} from "@/server/sql/type";
 import type {PublishDraftResult, UpdateDraftData} from "@/shared/api/draft";
 
 export const upsertDraft = async (data: UpdateDraftData) => {

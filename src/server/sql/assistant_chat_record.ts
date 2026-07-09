@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {chatContentType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {chatContentType} from "@/server/sql/type";
 
 
 const insertChatRecord = async (draft_id: number, chat_content: chatContentType) => {

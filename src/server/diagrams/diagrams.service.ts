@@ -1,6 +1,6 @@
 import {MarkerType} from "@xyflow/react";
 import pool from "@/lib/db";
-import {diagram} from "@/app/api/sql/diagram";
+import {diagram} from "@/server/sql/diagram";
 import {uploadImageToCos} from "@/server/cos/upload";
 import type {DiagramDto, UpdateDiagramRequest} from "@/shared/api/diagrams";
 

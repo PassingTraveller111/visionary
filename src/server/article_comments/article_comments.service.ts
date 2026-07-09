@@ -1,4 +1,4 @@
-import {article_comments} from "@/app/api/sql/article_comments";
+import {article_comments} from "@/server/sql/article_comments";
 import type {CommentItem} from "@/shared/api/article_comments";
 
 export const getCommentListByArticleId = async (articleId: number): Promise<CommentItem[]> => {

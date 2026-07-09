@@ -1,4 +1,4 @@
-import {article_collections} from "@/app/api/sql/article_collections";
+import {article_collections} from "@/server/sql/article_collections";
 import type {ArticleCollectionItem, ArticleCollectionState} from "@/shared/api/article_collections";
 
 export const setArticleIsCollected = async (userId: number, articleId: number, isCollected: boolean): Promise<ArticleCollectionState | null> => {

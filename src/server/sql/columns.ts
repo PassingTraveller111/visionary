@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {columnsTableType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {columnsTableType} from "@/server/sql/type";
 
 
 const updateColumn = async (column_id: number, column_name: string, author_id: number, description: string, cover_image?: string) => {

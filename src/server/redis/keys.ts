@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 import redis from "@/lib/redis";
-import {TableNames} from "@/app/api/sql/type";
+import {TableNames} from "@/server/sql/type";
 
 /*
 * redisKey命名规范

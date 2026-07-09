@@ -1,4 +1,4 @@
-import {article_reading_records} from "@/app/api/sql/article_reading_records";
+import {article_reading_records} from "@/server/sql/article_reading_records";
 import type {ArticleReadingRecordItem, LookCount} from "@/shared/api/article_reading_records";
 
 export const insertArticleReadingRecord = async (articleId: number, userId: number) => {

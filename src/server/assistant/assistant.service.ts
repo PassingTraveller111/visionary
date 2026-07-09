@@ -1,5 +1,5 @@
 import {openai} from "@/lib/assistant";
-import {assistant_chat_record} from "@/app/api/sql/assistant_chat_record";
+import {assistant_chat_record} from "@/server/sql/assistant_chat_record";
 import type {AssistantChatRecord, ChatContent} from "@/shared/api/assistant";
 
 export const insertChatRecord = async (draftId: number): Promise<AssistantChatRecord | null> => {

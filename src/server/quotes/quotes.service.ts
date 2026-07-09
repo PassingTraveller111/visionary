@@ -1,4 +1,4 @@
-import {quotes} from "@/app/api/sql/quotes";
+import {quotes} from "@/server/sql/quotes";
 import type {QuoteDto} from "@/shared/api/quotes";
 
 export const getQuoteRandom = async (): Promise<QuoteDto | null> => {

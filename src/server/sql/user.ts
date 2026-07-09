@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {userTableType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {userTableType} from "@/server/sql/type";
 import type {statisticDataType} from "@/shared/api/user";
 
 

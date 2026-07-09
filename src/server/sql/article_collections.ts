@@ -1,5 +1,5 @@
-import {query} from "@/app/api/utils";
-import {article_collectionsTableType, articleTableType} from "@/app/api/sql/type";
+import {query} from "@/server/db/query";
+import {article_collectionsTableType, articleTableType} from "@/server/sql/type";
 
 
 const insertArticleCollection = async (userId: number, articleId: number) => {

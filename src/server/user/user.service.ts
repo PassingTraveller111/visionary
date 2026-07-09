@@ -2,9 +2,9 @@ import pool from "@/lib/db";
 import redis from "@/lib/redis";
 import transporter from "@/lib/email";
 import {createToken} from "@/utils/auth";
-import {getEmailTimeDownKey} from "@/app/api/redisKeys";
-import {email_verification} from "@/app/api/sql/email_verification";
-import {user} from "@/app/api/sql/user";
+import {getEmailTimeDownKey} from "@/server/redis/keys";
+import {email_verification} from "@/server/sql/email_verification";
+import {user} from "@/server/sql/user";
 import {uploadImageToCos} from "@/server/cos/upload";
 import type {
     AuthorInfoType,
@@ -16,7 +16,7 @@ import type {
     UserDto,
     chartDataItemType,
 } from "@/shared/api/user";
-import type {email_verificationTableType, userTableType} from "@/app/api/sql/type";
+import type {email_verificationTableType, userTableType} from "@/server/sql/type";
 
 export const login = async ({ username, password, isRemember = false }: LoginRequest) => {
     const connection = await pool.getConnection();

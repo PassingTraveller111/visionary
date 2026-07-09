@@ -1,5 +1,5 @@
-import {article_likes} from "@/app/api/sql/article_likes";
-import {redisInstance} from "@/app/api/redisKeys";
+import {article_likes} from "@/server/sql/article_likes";
+import {redisInstance} from "@/server/redis/keys";
 import type {ArticleLikeCount, ArticleLikeState} from "@/shared/api/article_likes";
 
 export const getArticleIsLike = async (userId: number, articleId: number): Promise<ArticleLikeState | null> => {
