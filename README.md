@@ -32,12 +32,8 @@ Visionary 是一个基于 Next.js App Router 的创作与阅读平台，站点�
 ├── scripts/
 │   └── visionary-cli.mjs           # 面向脚本/Agent 的 Visionary CLI
 ├── src/
-│   ├── app/                        # Next.js App Router 页面、布局、中间件匹配的 API Routes
-│   │   ├── api/                    # 后端接口：用户、文章、草稿、专栏、图表、COS、AI、埋点等
-│   │   │   ├── protected/          # 需要 token Cookie 的受保护接口
-│   │   │   ├── sql/                # MySQL 表访问封装与实体类型
-│   │   │   ├── track/              # 埋点写入接口
-│   │   │   └── user/               # 登录、登出、JWT、注册验证码接口
+│   ├── app/                        # Next.js App Router 页面、布局和 REST API Route Handlers
+│   │   ├── api/                    # 资源式 REST 接口：articles、drafts、users、columns、diagrams 等
 │   │   ├── creator/                # 创作者后台：主页、文章、草稿、专栏、图表管理
 │   │   ├── editor/                 # 草稿编辑器和图表编辑器页面
 │   │   ├── reader/                 # 文章阅读页和审核稿阅读页
@@ -45,10 +41,18 @@ Visionary 是一个基于 Next.js App Router 的创作与阅读平台，站点�
 │   │   ├── userCenter/             # 用户主页、收藏、专栏、阅读历史、数据统计
 │   │   ├── layout.tsx              # 全局 Redux、Antd、埋点和客户端初始化入口
 │   │   └── page.tsx                # 登录后首页文章流
-│   ├── clientApi/                  # 前端 API endpoint 清单与 fetch 包装
+│   ├── clientApi/                  # 前端 API fetch 包装
 │   ├── components/                 # 通用组件、Markdown 编辑/渲染器、图表编辑器、导航、登录表单等
 │   ├── hooks/                      # 按业务域封装的请求 Hook
 │   ├── lib/                        # MySQL、Redis、邮件、DeepSeek/OpenAI 客户端
+│   ├── server/                     # 服务端业务层、数据库访问、鉴权、COS、Redis helper 与响应封装
+│   │   ├── api/                    # API 响应与错误封装
+│   │   ├── auth/                   # 当前用户解析
+│   │   ├── db/                     # MySQL query helper
+│   │   ├── redis/                  # Redis key 与缓存 helper
+│   │   ├── sql/                    # MySQL 表访问封装与实体类型
+│   │   └── */                      # 按业务域划分的 server service
+│   ├── shared/api/                 # 前后端共享的 REST 请求/响应 DTO 类型
 │   ├── store/                      # Redux store、provider 和业务 slices
 │   ├── styles/                     # Sass 变量
 │   ├── utils/                      # JWT 鉴权、本地存储工具
@@ -83,28 +87,25 @@ Visionary 是一个基于 Next.js App Router 的创作与阅读平台，站点�
 
 ## API 分组
 
-- `api/user/*`：登录、登出、JWT 解析、注册验证码发送与校验。
-- `api/protected/user/*`：用户信息、作者信息、用户统计和统计图表。
-- `api/protected/profile/*`：个人资料与头像。
-- `api/protected/article/*`：文章读取、列表、搜索、删除、封面/正文图片上传、作者文章数。
-- `api/protected/draft/*`：草稿读取、保存、发布、删除和编辑权限校验。
-- `api/protected/review/*`：审核稿读取。
-- `api/protected/article_likes/*`：点赞状态、点赞/取消赞、作者获赞数。
-- `api/protected/article_collections/*`：收藏状态、收藏/取消收藏、收藏列表。
-- `api/protected/article_comments/*`：评论创建、列表、软删除。
-- `api/protected/article_reading_records/*`：阅读记录写入、阅读历史、作者阅读总量。
-- `api/protected/columns/*`：专栏创建/更新、删除、读取、文章列表维护、封面上传。
-- `api/protected/diagrams/*`：图表保存、读取、列表、删除、重命名、封面上传与封面读取。
-- `api/protected/cos/*`：COS 服务与上传。
-- `api/protected/assistant/*`：AI 消息发送和聊天记录读写。
-- `api/protected/quotes/*`：随机格言。
+项目 API 已迁移为资源式 REST Route Handlers，旧 `api/public/*`、`api/protected/*`、`api/user/*` RPC 风格接口已移除。
+
+- `api/auth/*`：登录、登出、注册验证码发送与校验。
+- `api/users/me/*`：当前登录用户资料、头像、统计和统计图表。
+- `api/users/[userId]/*`：作者资料、文章/草稿/专栏/图表列表、收藏、阅读记录、获赞数、阅读数和文章数。
+- `api/articles/*`：文章列表、搜索、详情、删除、封面/正文图片上传、专栏候选文章、点赞、收藏、评论和阅读记录。
+- `api/drafts/*`：草稿创建、读取、保存、发布、删除、编辑权限校验和草稿关联 AI 聊天。
+- `api/columns/*`：专栏创建/更新、删除、读取、文章列表维护和封面上传。
+- `api/diagrams/*`：图表保存、读取、列表、删除、重命名、封面上传与封面读取。
+- `api/reviews/[reviewId]`：审核稿读取。
+- `api/assistant/chats/[chatId]/messages`：AI 消息发送和聊天记录读写。
+- `api/quotes/random`：随机格言。
 - `api/track/*`：埋点上报。
 
-受保护接口依赖 `middleware.ts` 检查 `token` Cookie。除 `/userAgreement` 外，页面路由也会被鉴权保护；登录用户访问 `/login` 会被重定向到首页。
+受保护接口依赖 `middleware.ts` 检查 `token` Cookie。除 `/userAgreement` 外，页面路由也会被鉴权保护；登录用户访问 `/login` 会被重定向到首页。API 响应由 `src/server/api/response.ts` 统一封装，共享 DTO 位于 `src/shared/api/*`。
 
 ## 数据模型
 
-主要 MySQL 表在 `src/app/api/sql/type.ts` 中声明了 TypeScript 类型：
+主要 MySQL 表在 `src/server/sql/type.ts` 中声明了 TypeScript 类型，数据库访问 helper 位于 `src/server/sql/*`：
 
 - `users`：用户账号、邮箱、角色、头像、昵称等。
 - `articles`：已发布文章内容、标题、摘要、标签、审核状态、发布状态、作者、封面等。
@@ -240,9 +241,9 @@ npm run visionary -- draft publish --id 1 --confirm --json
 
 ## 开发约定
 
-- 前端请求入口优先使用 `src/clientApi/index.ts` 中的 `apiList` 和 `apiClient`，保持 endpoint 集中维护。
-- 新增受保护接口时放在 `src/app/api/protected` 下，默认会经过中间件校验 `token` Cookie。
-- 新增数据库访问逻辑时优先放入 `src/app/api/sql` 的业务文件，并同步补充实体类型。
+- 前端请求入口优先使用 `src/clientApi/index.ts` 中的 `apiClient`，endpoint 使用资源式 REST 路径。
+- 新增接口时放在 `src/app/api/<resource>` 下，Route Handler 只负责参数解析、鉴权入口和响应封装。
+- 服务端业务逻辑放在 `src/server/<domain>`，数据库访问放在 `src/server/sql`，共享请求/响应类型放在 `src/shared/api`。
 - 前端业务请求 Hook 按领域放在 `src/hooks/<domain>`，页面尽量通过 Hook 调用 API。
 - 全局状态放在 `src/store/features` 中，并在 `rootReducer.ts` 注册。
 - 编辑器插件放在 `src/components/MdEditor/plugins`，图表编辑器能力放在 `src/components/Diagram`。
