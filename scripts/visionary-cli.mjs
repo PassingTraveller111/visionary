@@ -350,7 +350,7 @@ async function createDraft(options) {
     success: true,
     action: 'draft.create',
     draftId,
-    editUrl: draftId ? `${resolvedBaseUrl}/editor/draft/${draftId}` : undefined,
+    editUrl: draftId ? `${resolvedBaseUrl}/editor/draft/v2/${draftId}` : undefined,
     data,
   });
 }
@@ -381,7 +381,7 @@ async function updateDraft(options) {
     success: true,
     action: 'draft.update',
     draftId: Number(id),
-    editUrl: `${resolvedBaseUrl}/editor/draft/${id}`,
+    editUrl: `${resolvedBaseUrl}/editor/draft/v2/${id}`,
     data,
   });
 }

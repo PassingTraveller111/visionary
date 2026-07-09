@@ -98,7 +98,12 @@ async function jwtMiddleware(req: NextRequest) {
 async function editorAuthMiddleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     if (!pathname.startsWith('/editor/draft/')) return NextResponse.next();
-    const draftId = pathname.split('/')[3] === 'new' ? 'new' : Number(pathname.split('/')[3]);
+    const pathnameParts = pathname.split('/').filter(Boolean);
+    const draftIdValue = pathnameParts[2] === 'v2' ? pathnameParts[3] : pathnameParts[2];
+    const draftId = draftIdValue === 'new' ? 'new' : Number(draftIdValue);
+    if (!draftIdValue || (draftId !== 'new' && Number.isNaN(draftId))) {
+        return NextResponse.redirect(new URL('/', req.url));
+    }
     const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
     if (token) {
         try {

@@ -41,7 +41,7 @@ const ArticlePage = () => {
                                         key: 'edit',
                                         label: (
                                             <span onClick={() => {
-                                                window.open('/editor/draft/' + article.draft_id);
+                                                window.open('/editor/draft/v2/' + article.draft_id);
                                             }}>编辑</span>
                                         ),
                                     },
@@ -107,4 +107,3 @@ const ArticlePage = () => {
 
 
 export default ArticlePage;
-

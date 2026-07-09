@@ -38,7 +38,7 @@ const DraftPage = () => {
                                         key: 'edit',
                                         label: (
                                             <span onClick={() => {
-                                                window.open('/editor/draft/' + draft.id);
+                                                window.open('/editor/draft/v2/' + draft.id);
                                             }}>编辑</span>
                                         ),
                                     },
@@ -78,7 +78,7 @@ const DraftPage = () => {
                                     tags={draft.tags}
                                     summary={draft.summary}
                                     updateTime={draft.update_time}
-                                    itemOnClick={() => window.open('/editor/draft/' + draft.id)}
+                                    itemOnClick={() => window.open('/editor/draft/v2/' + draft.id)}
                                 />
                             })}
                         </div>
@@ -92,4 +92,3 @@ const DraftPage = () => {
 
 
 export default DraftPage;
-

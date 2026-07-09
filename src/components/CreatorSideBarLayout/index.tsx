@@ -23,7 +23,7 @@ const CreatorSideBarLayout = (props: CreatorSideBarLayoutProps) => {
             key: 'draft',
             icon: <IconFont type='icon-article'/>,
             onClick: () => {
-                window.open('/editor/draft/new', '_blank');
+                window.open('/editor/draft/v2/new', '_blank');
             }
         },
         {
