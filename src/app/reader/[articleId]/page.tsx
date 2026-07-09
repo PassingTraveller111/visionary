@@ -31,7 +31,7 @@ const ReaderPage = () => {
     const { isLoading, id: userId, login } = useAppSelector(state => state.rootReducer.userReducer.value);
     const { isLike, setArticleIsLike  } = useArticleLike();
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
-    const scrollContainerRef = React.createRef<HTMLDivElement>();
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
     const getArticle = useGetArticle();
     const { isCollected, setArticleIsCollected } = useSetArticleIsCollected();
@@ -203,6 +203,22 @@ const OutlineBar = (props: OutlineBarProps) => {
     if(!renderAnchor) return <></>;
     if(outline.length === 0) return <></>;
 
+    const scrollToHeading = (event: React.MouseEvent<HTMLElement>, href?: string) => {
+        if (!href || !href.startsWith('#')) return;
+        const scrollContainer = scrollContainerRef.current;
+        const target = document.getElementById(href.slice(1));
+        if (!scrollContainer || !target) return;
+
+        event.preventDefault();
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        scrollContainer.scrollTo({
+            top: scrollContainer.scrollTop + targetRect.top - containerRect.top - 16,
+            behavior: 'smooth',
+        });
+        window.history.replaceState(null, '', href);
+    }
+
     return <div className={styles.outlineBarContainer}>
         <div className={styles.outlineHeader}>
             <span>目录</span>
@@ -220,6 +236,7 @@ const OutlineBar = (props: OutlineBarProps) => {
             })}
         >
             <Anchor
+                onClick={(event, link) => scrollToHeading(event, link.href)}
                 getContainer={() =>  {
                     if (scrollContainerRef.current) {
                         return scrollContainerRef.current as HTMLDivElement;
