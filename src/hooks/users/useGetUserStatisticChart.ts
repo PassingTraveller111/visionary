@@ -1,9 +1,10 @@
 import {useCallback, useState} from "react";
 import {
-    getUserStatisticChartReqType,
-    getUserStatisticChartResType
-} from "@/app/api/protected/user/getUserStatisticChart/route";
-import {apiClient, apiList} from "@/clientApi";
+    chartDataItemType,
+    getUserStatisticChartReqType
+} from "@/shared/api/user";
+import {apiClient} from "@/clientApi";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 export type chartListItemType = {
@@ -21,11 +22,8 @@ export const useGetUserStatisticChart = () => {
             startDate,
             endDate,
         }
-        apiClient(apiList.post.protected.user.getUserStatisticChart, {
-            method: "POST",
-            body: JSON.stringify(apiData),
-        }).then((res: getUserStatisticChartResType) => {
-            if(res.msg === 'success')
+        apiClient(`users/me/statistics/chart?startDate=${encodeURIComponent(apiData.startDate)}&endDate=${encodeURIComponent(apiData.endDate)}`).then((res: ApiResponse<chartDataItemType[]>) => {
+            if(res.ok)
             setChartData(res.data.map(item => {
                 return {
                     name: item.date,

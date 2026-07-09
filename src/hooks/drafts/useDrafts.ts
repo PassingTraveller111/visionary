@@ -1,19 +1,16 @@
 import {useAppSelector} from "@/store";
-import {apiClient, apiList} from "@/clientApi";
-import {updateDraftDataType} from "@/app/api/protected/draft/updateDraft/route";
+import {apiClient} from "@/clientApi";
 import {draftType, setDraft} from "@/store/features/draftSlice";
 import {useDispatch} from "react-redux";
-import {getDraftDataType, getDraftResponseType} from "@/app/api/protected/draft/getDraft/route";
-import {publishDraftDataType, publishDraftResponseType} from "@/app/api/protected/draft/publishDraft/route";
 import {useCallback, useState} from "react";
-import {getDraftListResponseType, itemType} from "@/app/api/protected/draft/getDraftList/route";
-import {delDraftRequestType} from "@/app/api/protected/draft/delDraft/route";
 import {UserInfoType} from "@/store/features/userSlice";
+import type {DraftDto, DraftListItemDto, PublishDraftResult, UpdateDraftData} from "@/shared/api/draft";
+import type {ApiResponse} from "@/shared/api/response";
 
 export const useUpdateDraft = () => {
     const dispatch = useDispatch();
     return useCallback(async (draft: draftType, userInfo: UserInfoType) => {
-        const apiData: updateDraftDataType = {
+        const apiData: UpdateDraftData = {
             draftId: draft.id,
             summary: draft.summary,
             tags: draft.tags,
@@ -23,11 +20,12 @@ export const useUpdateDraft = () => {
             author_nickname: userInfo.nick_name,
             cover: draft.cover,
         }
-        const res = await apiClient(apiList.post.protected.draft.updateDraft,  {
-            method: 'POST',
+        const endpoint = draft.id === 'new' ? 'drafts' : `drafts/${draft.id}`;
+        const res = await apiClient(endpoint,  {
+            method: draft.id === 'new' ? 'POST' : 'PATCH',
             body: JSON.stringify(apiData),
-        });
-        if(res.msg === "success") {
+        }) as ApiResponse<{ insertId?: number }>;
+        if(res.ok) {
             if(res.data.insertId){
                 // 新建的会带insertId,更新操作的insertId是0
                 dispatch(setDraft({
@@ -55,14 +53,8 @@ export const useUpdateDraft = () => {
 export const useGetDraft = () => {
     const dispatch = useDispatch();
     return useCallback(async (id: number) => {
-        const apiData: getDraftDataType = {
-            draftId: id,
-        };
-        const res: getDraftResponseType = await apiClient(apiList.post.protected.draft.getDraft, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        });
-        if (res.msg === "success") {
+        const res = await apiClient(`drafts/${id}`) as ApiResponse<DraftDto>;
+        if (res.ok) {
             dispatch(setDraft({
                 ...res.data,
             }))
@@ -80,18 +72,15 @@ export const useGetDraft = () => {
 export const usePublishDraft = () => {
     const draft = useAppSelector(state => state.rootReducer.draftReducer.value);
     return async () => {
-        const apiData: publishDraftDataType = {
-            draftId: draft.id as number,
-        };
-        const res: publishDraftResponseType = await apiClient(apiList.post.protected.draft.publishDraft, {
+        const res = await apiClient(`drafts/${draft.id}/publish`, {
             method: 'POST',
-            body: JSON.stringify(apiData),
-        });
-        return res;
+        }) as ApiResponse<PublishDraftResult>;
+        if (res.ok) return { msg: 'success' as const, data: res.data };
+        return { msg: 'error' as const };
     }
 }
 
-type draftListType = itemType[];
+type draftListType = DraftListItemDto[];
 
 export const useGetDraftList = () => {
     // 草稿列表数据
@@ -99,13 +88,8 @@ export const useGetDraftList = () => {
     // 获取文章列表
     const getDraftList =  useCallback((userId: number) => {
         if(!userId) return [];
-        apiClient(apiList.post.protected.draft.getDraftList, {
-            method: "POST",
-            body: JSON.stringify({
-                authorId: userId,
-            })
-        }).then((res: getDraftListResponseType) => {
-            return setDraftList(res.data);
+        apiClient(`users/${userId}/drafts`).then((res: ApiResponse<DraftListItemDto[]>) => {
+            if (res.ok) return setDraftList(res.data);
         })
     }, []);
     return { draftList, getDraftList };
@@ -113,13 +97,9 @@ export const useGetDraftList = () => {
 
 export const useDeleteDraft = () => {
     return async (id?: number) => {
-        if(!id) return;
-        const apiData: delDraftRequestType = {
-            id,
-        }
-        return apiClient(apiList.post.protected.draft.delDraft, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        })
+        if(!id) return { msg: 'error' as const, data: '' };
+        const res = await apiClient(`drafts/${id}`, { method: 'DELETE' }) as ApiResponse<string>;
+        if (res.ok) return { msg: 'success' as const, data: res.data };
+        return { msg: 'error' as const, data: '' };
     }
 }

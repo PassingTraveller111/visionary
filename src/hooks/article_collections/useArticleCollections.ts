@@ -1,17 +1,16 @@
 import {useCallback, useEffect, useState} from "react";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {
     setArticleIsCollectedRequestType,
-    setArticleIsCollectedResponseType
-} from "@/app/api/protected/article_collections/setArticleIsCollected/route";
+} from "@/shared/api/article_collections";
 import {
     getArticleIsCollectedRequestType,
-    getArticleIsCollectedResponseType
-} from "@/app/api/protected/article_collections/getArticleIsCollected/route";
+} from "@/shared/api/article_collections";
 import {useAppSelector} from "@/store";
 import {
-    getArticleCollectionsByUserIdRequestType, getArticleCollectionsByUserIdResponseType
-} from "@/app/api/protected/article_collections/getArticleCollectionsByUserId/route";
+    ArticleCollectionItem, ArticleCollectionState, getArticleCollectionsByUserIdRequestType, getArticleCollectionsByUserIdResponseType
+} from "@/shared/api/article_collections";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 export const useSetArticleIsCollected = () => {
@@ -27,11 +26,11 @@ export const useSetArticleIsCollected = () => {
             articleId,
             isCollected,
         }
-        const res: setArticleIsCollectedResponseType = await apiClient(apiList.post.protected.article_collections.setArticleIsCollected, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        })
-        if(res.msg === 'success') {
+        const res = await apiClient(`articles/${apiData.articleId}/collection`, {
+            method: 'PUT',
+            body: JSON.stringify({ isCollected: apiData.isCollected }),
+        }) as ApiResponse<ArticleCollectionState>;
+        if(res.ok) {
             setIsCollected(res.data.isCollected === 1);
         }
         setIsLoading(false);
@@ -41,11 +40,8 @@ export const useSetArticleIsCollected = () => {
             userId,
             articleId,
         };
-        const res: getArticleIsCollectedResponseType = await apiClient(apiList.post.protected.article_collections.getArticleIsCollected, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        });
-        if(res.msg === 'success') {
+        const res = await apiClient(`articles/${apiData.articleId}/collection`) as ApiResponse<ArticleCollectionState>;
+        if(res.ok) {
             setIsCollected(res.data.isCollected === 1);
         }
     }, []);
@@ -64,14 +60,12 @@ export const useArticleCollections = () => {
         const apiData: getArticleCollectionsByUserIdRequestType = {
             userId,
         };
-        const res: getArticleCollectionsByUserIdResponseType = await apiClient(apiList.post.protected.article_collections.getArticleCollectionsByUserId, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        });
-        if(res.msg === 'success') {
+        const res = await apiClient(`users/${apiData.userId}/collections`) as ApiResponse<ArticleCollectionItem[]>;
+        if(res.ok) {
             setCollectionList(res.data);
         }
-        return res;
+        if (res.ok) return { msg: 'success' as const, data: res.data } satisfies getArticleCollectionsByUserIdResponseType;
+        return { msg: 'error' as const, data: [] } satisfies getArticleCollectionsByUserIdResponseType;
     }, []);
     useEffect(() => {
         if(userInfo.id === 0) return;

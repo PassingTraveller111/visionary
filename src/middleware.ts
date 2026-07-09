@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {apiClient, apiList} from "@/clientApi";
-import {draftEditorAuthDataType} from "@/app/api/protected/draft/editorAuth/route";
+import {apiClient} from "@/clientApi";
+import type {draftEditorAuthDataType} from "@/shared/api/draft";
+import type {ApiResponse} from "@/shared/api/response";
 
 type decodeType = {
     userId: number;
@@ -27,15 +28,48 @@ const hasAccess = (decoded: decodeType) => {
     return !decoded.exp || Math.floor(Date.now() / 1000) <= decoded.exp;
 }
 
-const isProtectedApi = (pathname: string) => pathname.startsWith('/api/protected/');
+const base64UrlToBytes = (value: string) => {
+    const base64 = value.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
+    return Uint8Array.from(atob(base64), char => char.charCodeAt(0));
+}
+
+const base64UrlToJson = <T,>(value: string): T => {
+    const bytes = base64UrlToBytes(value);
+    return JSON.parse(new TextDecoder().decode(bytes)) as T;
+}
+
+const verifyTokenInEdge = async (token: string): Promise<decodeType> => {
+    const [encodedHeader, encodedPayload, encodedSignature] = token.split('.');
+    if (!encodedHeader || !encodedPayload || !encodedSignature) throw new Error('Invalid token');
+
+    const header = base64UrlToJson<{ alg?: string }>(encodedHeader);
+    if (header.alg !== 'HS256') throw new Error('Unsupported token algorithm');
+
+    const secretKey = process.env.SECRET_KEY;
+    if (!secretKey) throw new Error('Missing SECRET_KEY');
+
+    const key = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(secretKey),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['verify']
+    );
+    const isValid = await crypto.subtle.verify(
+        'HMAC',
+        key,
+        base64UrlToBytes(encodedSignature),
+        new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`)
+    );
+    if (!isValid) throw new Error('Invalid token signature');
+
+    return base64UrlToJson<decodeType>(encodedPayload);
+}
 
 const isPublicAsset = (pathname: string) =>
     !pathname.startsWith('/api/') && /\.[^/]+$/.test(pathname);
 
 const unauthorizedResponse = (pathname: string, req: NextRequest) => {
-    if (isProtectedApi(pathname)) {
-        return NextResponse.json({ msg: 'unauthorized' }, { status: 401 });
-    }
     return NextResponse.redirect(new URL('/login', req.url));
 }
 
@@ -44,14 +78,7 @@ async function jwtMiddleware(req: NextRequest) {
     const token = req.cookies.get('token')?.value ?? ''; // 从cookie中获取token
     if (token) {
         try {
-            const res = await apiClient(apiList.post.user.jwt, {
-                baseUrl: `${req.nextUrl.origin}/api/`,
-                method: 'POST',
-                body: JSON.stringify({
-                    token,
-                }),
-            });
-            const decoded: decodeType = res.decoded;
+            const decoded = await verifyTokenInEdge(token);
             if(hasAccess(decoded)){
                 if(pathname !== '/login') return NextResponse.next();
                 return NextResponse.redirect(new URL('/', req.url)); // login页直接重定向到主页
@@ -79,7 +106,7 @@ async function editorAuthMiddleware(req: NextRequest) {
                 draftId,
             }
             // 鉴权
-            const auth = await apiClient(apiList.post.protected.draft.editorAuth, {
+            const auth = await apiClient('drafts/editor-auth', {
                 baseUrl: `${req.nextUrl.origin}/api/`,
                 method: 'POST',
                 body: JSON.stringify(apiData),
@@ -87,8 +114,9 @@ async function editorAuthMiddleware(req: NextRequest) {
                     Cookie: req.cookies.toString()
                 }
             });
-            if(auth.msg === 'success') {
-                if(auth.data.auth === true) {
+            const authData = auth as ApiResponse<{ auth: boolean }>;
+            if(authData.ok) {
+                if(authData.data.auth === true) {
                     return NextResponse.next();
                 }
             }
@@ -130,7 +158,6 @@ export const config = {
     matcher: [
         // '/welcome', // 特定路径
         // '/b/:path*', // 前缀匹配
-        '/api/protected/:path*', // 受保护的api需要通过中间件
         '/((?!api|_next/static|_next/image|favicon.ico).*)', // 正则表达式过滤内部请求、静态资源
     ],
 };

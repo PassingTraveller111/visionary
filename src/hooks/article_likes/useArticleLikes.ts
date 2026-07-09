@@ -1,18 +1,16 @@
 import {useCallback} from "react";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {
+    ArticleLikeCount,
     getArticleLikeCountByUserIdResponseType
-} from "@/app/api/public/article_likes/getArticleLikeCountByUserId/route";
+} from "@/shared/api/article_likes";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 export const useGetArticleLikeCountByUserId = () => {
     return useCallback(async (userId: number) => {
-        const res: getArticleLikeCountByUserIdResponseType = await apiClient(apiList.post.public.article_likes.getArticleLikeCountByUserId, {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: userId,
-            })
-        });
-        return res;
+        const res = await apiClient(`users/${userId}/like-count`) as ApiResponse<ArticleLikeCount>;
+        if (res.ok) return { msg: 'success' as const, data: res.data } satisfies getArticleLikeCountByUserIdResponseType;
+        return { msg: 'error' as const } satisfies getArticleLikeCountByUserIdResponseType;
     }, []);
 }

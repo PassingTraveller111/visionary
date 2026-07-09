@@ -5,9 +5,9 @@ import CreatorList from "@/components/CreatorList";
 import {Button, Dropdown, Form, Input, Modal} from "antd";
 import UploadCover from "@/components/UploadCover";
 import {forwardRef, useImperativeHandle, useRef, useState} from "react";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {useDeleteColumn, useGetColumns} from "@/hooks/columns/useColumns";
-import {columnsTableType} from "@/app/api/sql/type";
+import type {ColumnDto} from "@/shared/api/columns";
 import styles from "./index.module.scss";
 import Image from "next/image";
 import {IconFont} from "@/components/IconFont";
@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import {useAppSelector} from "@/store";
 import useMessage from "antd/es/message/useMessage";
 import {useRouter} from "next/navigation";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 const ColumnsPage = () => {
@@ -93,12 +94,13 @@ const ColumnModal = forwardRef<ColumnModalMethods, { getColumns: () => void }>(f
             description: formValue.description,
             cover_image: formValue.cover_image,
         }
-        apiClient(apiList.post.protected.columns.updateColumn, {
-            method: 'POST',
+        const endpoint = formValue.column_id === 0 ? 'columns' : `columns/${formValue.column_id}`;
+        apiClient(endpoint, {
+            method: formValue.column_id === 0 ? 'POST' : 'PATCH',
             body: JSON.stringify(apiData),
-        }).then(res => {
+        }).then((res: ApiResponse<unknown>) => {
             setModalIsOpen(false);
-            if (res.msg === 'success') {
+            if (res.ok) {
                 messageApi.success(formValue.column_id === 0 ? '创建成功' : '修改成功');
             } else {
                 messageApi.success(formValue.column_id === 0 ? '创建失败' : '修改失败');
@@ -180,7 +182,7 @@ const ColumnModal = forwardRef<ColumnModalMethods, { getColumns: () => void }>(f
 
 })
 
-const ColumnList = (props: { columns: columnsTableType[], onUpdateColumns: (column_id: number, column_name: string, description: string, cover_image: string) => void, getColumns: () => void }) => {
+const ColumnList = (props: { columns: ColumnDto[], onUpdateColumns: (column_id: number, column_name: string, description: string, cover_image: string) => void, getColumns: () => void }) => {
     const { columns, getColumns } = props;
     const deleteColumn = useDeleteColumn();
     const [ messageApi, messageContext ] = useMessage();

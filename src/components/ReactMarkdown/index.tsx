@@ -136,12 +136,13 @@ const hasImageNode = (node?: HastNode): boolean => {
 }
 
 const ParagraphComponents: ComponentType = ({node, children, ...props}) => {
+    const elementProps = { ...props, ref: undefined };
     if (hasImageNode(node as HastNode)) {
         const className = [props.className, styles.paragraph].filter(Boolean).join(' ');
-        return <div {...props} className={className}>{children}</div>;
+        return <div {...elementProps} className={className}>{children}</div>;
     }
 
-    return <p {...props}>{children}</p>;
+    return <p {...elementProps}>{children}</p>;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Upload} from 'antd';
 import type { UploadFile, UploadProps } from 'antd';
 import ImgCrop from 'antd-img-crop';
-import {apiBaseUrl, apiClient, apiList} from "@/clientApi";
+import {apiBaseUrl, apiClient} from "@/clientApi";
 import {useAppSelector} from "@/store";
 import styles from './index.module.scss';
 import {useGetUserInfo} from "@/hooks/users/useUsers";
@@ -19,8 +19,9 @@ const App: React.FC = () => {
         if(newFileList[0].xhr){
             const request = newFileList[0].xhr;
             const res = JSON.parse(request.response);
-            if(res.data.statusCode === 200)
-            setAvatarUrl('https://' + res.data.Location);
+            const uploadData = res.ok ? res.data : res.data;
+            if(uploadData.statusCode === 200)
+            setAvatarUrl('https://' + uploadData.Location);
         }
         if(newFileList.length > 0) {
             if(newFileList[0]?.url === userinfo.profile) setIsChange(false);
@@ -42,8 +43,8 @@ const App: React.FC = () => {
     }, [userinfo.profile]);
 
     const onSave = async () => {
-        const res = await apiClient(apiList.post.protected.user.updateUserAvatar, {
-            method: 'POST',
+        const res = await apiClient('users/me/avatar', {
+            method: 'PATCH',
             body: JSON.stringify({
                 avatarUrl,
             }),
@@ -71,7 +72,7 @@ const App: React.FC = () => {
             <div className={styles['avatar-container']}>
                 <ImgCrop>
                          <Upload
-                             action={apiBaseUrl + apiList.post.protected.profile.uploadAvatar}
+                              action={apiBaseUrl + 'users/me/avatar-upload'}
                              listType="picture-card"
                              fileList={fileList}
                              onChange={onChange}
@@ -88,4 +89,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-

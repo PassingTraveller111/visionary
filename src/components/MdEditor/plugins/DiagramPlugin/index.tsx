@@ -113,7 +113,7 @@ const CreateDiagramModal = forwardRef<CreateDiagramModalRef, CreateDiagramModalP
             create_time: "",
             update_time: "",
         }, userInfo).then(res => {
-            insertDiagram(res.id);
+            if (typeof res.id === 'number') insertDiagram(res.id);
             setTimeout(() => {
                 setIsLoading(false);
             })

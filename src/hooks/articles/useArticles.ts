@@ -1,41 +1,25 @@
 import {AppDispatch, useAppSelector} from "@/store";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {useDispatch} from "react-redux";
 import {setArticle} from "@/store/features/articleSlice";
 import {useCallback, useEffect, useState} from "react";
-import {getArticleRequestType, getArticleResponseType} from "@/app/api/public/article/getArticle/route";
-import {getArticleListResponseType, itemType} from "@/app/api/public/article/getArticleList/route";
-import {
-    getPublishedArticleListRequestType,
-    getPublishedArticleListResponseType
-} from "@/app/api/public/article/getPublishedArticleList/route";
 import useMessage from "antd/es/message/useMessage";
 import {
-    getArticleListByKeyWordRequestType,
-    getArticleListByKeyWordResponseType
-} from "@/app/api/public/article/getArticleListByKeyWord/route";
-import {
+    ArticleLikeState,
     getArticleIsLikeRequestType,
-    getArticleIsLikeResponseType
-} from "@/app/api/protected/article_likes/getArticleIsLike/route";
+} from "@/shared/api/article_likes";
 import {
     setArticleIsLikeRequestType,
-    setArticleIsLikeResponseType
-} from "@/app/api/protected/article_likes/setArticleIsLike/route";
-import {getArticleCountByUserIdResponse} from "@/app/api/public/article/getArticleCountByUserId/route";
+} from "@/shared/api/article_likes";
+import type {ArticleDto, ArticleListItemDto, ArticleQueryResult, PublishedArticleItemDto} from "@/shared/api/article";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 export const useGetArticle = () => {
     const dispatch = useDispatch<AppDispatch>();
     return useCallback(async (id: number) => {
-        const apiData: getArticleRequestType = {
-            articleId: id
-        }
-        const res = await apiClient(apiList.post.public.article.getArticle,  {
-            method: 'POST',
-            body: JSON.stringify(apiData)
-        }) as getArticleResponseType;
-        if (res.msg === 'success') {
+        const res = await apiClient(`articles/${id}`) as ApiResponse<ArticleDto>;
+        if (res.ok) {
             const { title, id, content, author_nickname, author_id, published_time, is_published, updated_time, draft_id, review_id, review_status, tags, summary, collects } = res.data;
             dispatch(setArticle(
                 {
@@ -62,16 +46,14 @@ export const useGetArticle = () => {
 
 export const useDelArticle =() => {
     return async (id?: number) => {
-        return await apiClient(apiList.post.protected.article.delArticle,  {
-            method: 'POST',
-            body: JSON.stringify({
-                articleId: id,
-            })
-        });
+        if (!id) return { msg: 'error' as const };
+        const res = await apiClient(`articles/${id}`, { method: 'DELETE' }) as ApiResponse<string>;
+        if (res.ok) return { msg: 'success' as const, data: res.data };
+        return { msg: 'error' as const };
     }
 }
 
-type articleListType = itemType[];
+type articleListType = ArticleListItemDto[];
 
 export const useGetArticleList = () => {
     // 文章列表数据
@@ -79,20 +61,15 @@ export const useGetArticleList = () => {
     // 获取文章列表
     const getArticleList =  useCallback((userId: number) => {
         if(!userId) return [];
-        apiClient(apiList.post.public.article.getArticleList, {
-            method: "POST",
-            body: JSON.stringify({
-                authorId: userId,
-            })
-        }).then((res: getArticleListResponseType) => {
-            return setArticleList(res.data);
+        apiClient(`users/${userId}/articles`).then((res: ApiResponse<ArticleListItemDto[]>) => {
+            if (res.ok) return setArticleList(res.data);
         })
     }, []);
     return { articleList, getArticleList };
 }
 
 export const useGetPublishedArticleList = () => {
-    const [articleList, setArticleList] = useState<getPublishedArticleListResponseType['data']>([]);
+    const [articleList, setArticleList] = useState<PublishedArticleItemDto[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [pageInfo, setPageInfo] = useState({
@@ -109,27 +86,20 @@ export const useGetPublishedArticleList = () => {
             });
             setHasMore(true);
         }
-        const apiData: getPublishedArticleListRequestType = {
-            pageNum,
-            pageSize,
-        };
-        const res: getPublishedArticleListResponseType = await apiClient(apiList.post.public.article.getPublishedArticleList, {
-            method: 'POST',
-            body: JSON.stringify(apiData)
-        });
-        if (res.msg === 'success') {
-            if (res.data.length === 0) {
+        const res = await apiClient(`articles?pageNum=${pageNum}&pageSize=${pageSize}`) as ApiResponse<ArticleQueryResult>;
+        if (res.ok) {
+            if (res.data.items.length === 0) {
                 messageApi.info('没有更多数据了');
                 setHasMore(false);
                 return;
             }
             if (isInit) {
-                setArticleList(res.data);
+                setArticleList(res.data.items);
                 return;
             }
             setArticleList(preArticleList => [
                 ...preArticleList,
-                ...res.data,
+                ...res.data.items,
             ]);
         }
     }, [messageApi]);
@@ -150,7 +120,7 @@ export const useGetPublishedArticleList = () => {
 }
 
 export const useGetPublishedArticleListByKeyWord = () => {
-    const [articleList, setArticleList] = useState<getArticleListByKeyWordResponseType['data']>([]);
+    const [articleList, setArticleList] = useState<PublishedArticleItemDto[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [pageInfo, setPageInfo] = useState({
@@ -160,28 +130,20 @@ export const useGetPublishedArticleListByKeyWord = () => {
 
     const [messageApi, contextHandle] = useMessage();
     const getArticleList = useCallback(async ({keyword = '', pageNum = 0, pageSize = 8, isInit = false }) => {
-        const apiData: getArticleListByKeyWordRequestType = {
-            pageNum,
-            pageSize,
-            keyword,
-        };
-        const res: getArticleListByKeyWordResponseType = await apiClient(apiList.post.public.article.getArticleListByKeyWord, {
-            method: 'POST',
-            body: JSON.stringify(apiData)
-        });
-        if (res.msg === 'success') {
-            if (res.data.length === 0) {
+        const res = await apiClient(`articles?keyword=${encodeURIComponent(keyword)}&pageNum=${pageNum}&pageSize=${pageSize}`) as ApiResponse<ArticleQueryResult>;
+        if (res.ok) {
+            if (res.data.items.length === 0) {
                 messageApi.info('没有更多数据了');
                 setHasMore(false);
                 return;
             }
             if (isInit) {
-                setArticleList(res.data);
+                setArticleList(res.data.items);
                 return;
             }
             setArticleList(preArticleList => [
                 ...preArticleList,
-                ...res.data,
+                ...res.data.items,
             ]);
         }
     }, [ messageApi ]);
@@ -215,11 +177,8 @@ export const useArticleLike = () => {
             userId,
             articleId: articleId as number,
         }
-        apiClient(apiList.post.protected.article_likes.getArticleIsLike, {
-            method: 'POST',
-            body: JSON.stringify(apiData)
-        }).then((res: getArticleIsLikeResponseType) => {
-            if (res.msg === 'success') {
+        apiClient(`articles/${apiData.articleId}/like`).then((res: ApiResponse<ArticleLikeState>) => {
+            if (res.ok) {
                 setIsLike(res.data.isLike);
             }
         })
@@ -233,12 +192,12 @@ export const useArticleLike = () => {
             articleId,
             isLike: like,
         }
-        apiClient(apiList.post.protected.article_likes.setArticleIsLike, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        }).then((res: setArticleIsLikeResponseType) => {
+        apiClient(`articles/${apiData.articleId}/like`, {
+            method: 'PUT',
+            body: JSON.stringify({ isLike: apiData.isLike }),
+        }).then((res: ApiResponse<ArticleLikeState>) => {
             console.log(res);
-            if (res.msg === 'success') {
+            if (res.ok) {
                 setIsLoading(false);
                 setIsLike(res.data.isLike);
             }
@@ -255,12 +214,8 @@ export const useArticleLike = () => {
 
 export const useGetArticleCountByUserId = () => {
     return useCallback(async (userId: number) => {
-        const res: getArticleCountByUserIdResponse = await apiClient(apiList.post.public.article.getArticleCountByUserId, {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: userId,
-            })
-        })
-        return res;
+        const res = await apiClient(`users/${userId}/article-count`) as ApiResponse<{ articleCounts: number }>;
+        if (res.ok) return { msg: 'success' as const, data: res.data };
+        return { msg: 'error' as const };
     }, [])
 }

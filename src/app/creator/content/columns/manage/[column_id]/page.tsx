@@ -13,13 +13,10 @@ import {IconFont} from "@/components/IconFont";
 import styles from './index.module.scss';
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import ArticleItem from "@/components/ArticleItem";
-import {apiClient, apiList} from "@/clientApi";
-import {
-    updateColumnArticleListReqType,
-    updateColumnArticleListResType
-} from "@/app/api/protected/columns/updateColumnArticleList/route";
+import {apiClient} from "@/clientApi";
 import {Key} from "react";
 import useMessage from "antd/es/message/useMessage";
+import type {ApiResponse} from "@/shared/api/response";
 
 const ColumnsPage = () => {
     const column_id = Number(useParams().column_id);
@@ -141,15 +138,14 @@ const ManageArticleModal = forwardRef<ManageArticleModalRef, ManageArticleModalP
     };
 
     const onUpdateColumnArticleList = async () => {
-        const apiData: updateColumnArticleListReqType = {
-            column_id,
+        const apiData = {
             article_ids: targetKeys,
         }
-        const res: updateColumnArticleListResType = await apiClient(apiList.post.protected.columns.updateColumnArticleList, {
-            method: 'POST',
+        const res = await apiClient(`columns/${column_id}/articles`, {
+            method: 'PUT',
             body: JSON.stringify(apiData),
-        })
-        messageApi.success(res.msg === 'success' ? '修改成功' : '修改失败');
+        }) as ApiResponse<{ updated: boolean }>;
+        messageApi.success(res.ok ? '修改成功' : '修改失败');
         setOpen(false);
         onReload();
     }

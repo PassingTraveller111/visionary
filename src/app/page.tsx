@@ -7,15 +7,16 @@ import { useRouter } from "next/navigation";
 import {Skeleton, Tabs, TabsProps} from "antd";
 import Image from "next/image";
 import {useAppSelector} from "@/store";
-import {apiClient, apiList} from "@/clientApi";
-import {getQuoteRandomResponseType} from "@/app/api/public/quotes/getQuoteRandom/route";
-import {getArticleCountByUserIdResponse} from "@/app/api/public/article/getArticleCountByUserId/route";
+import {apiClient} from "@/clientApi";
+import type {QuoteDto} from "@/shared/api/quotes";
+import type {getArticleCountByUserIdResponse} from "@/shared/api/article";
 import {
     getArticleLikeCountByUserIdResponseType
-} from "@/app/api/public/article_likes/getArticleLikeCountByUserId/route";
+} from "@/shared/api/article_likes";
 import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticleReadingRecords";
 import {useGetArticleLikeCountByUserId} from "@/hooks/article_likes/useArticleLikes";
 import ArticleItem from "@/components/ArticleItem";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 
@@ -94,8 +95,8 @@ const UserBar = () => {
         router.push('/userCenter/' + userInfo.id + '/article');
     }
     useEffect(() => {
-        apiClient(apiList.get.public.quotes.getQuoteRandom).then((res: getQuoteRandomResponseType) => {
-            if(res.msg === 'success') setQuote(res.data.quote_text);
+        apiClient('quotes/random').then((res: ApiResponse<QuoteDto>) => {
+            if(res.ok) setQuote(res.data.quote_text);
         });
     }, []);
     useEffect(() => {

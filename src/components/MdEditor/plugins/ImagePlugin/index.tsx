@@ -4,12 +4,13 @@ import { PluginProps } from 'react-markdown-editor-lite';
 import styles from './index.module.scss';
 import classNames from "classnames";
 import ImageIcon from '../../../../../public/icon/pluginIcon/image.svg';
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import { Tooltip } from "antd";
 import PluginIcon from "@/components/MdEditor/PluginIcon";
 import {PluginTitle} from "@/components/MdEditor/PluginTitle";
 import {useEditorOnKeyDown} from "@/components/MdEditor/plugins/hooks";
 import {replaceEditorRange} from "@/components/MdEditor/plugins/utils";
+import type {ApiResponse} from "@/shared/api/response";
 
 const ImagePlugin = (props: PluginProps) => {
     const { editor } = props;
@@ -29,10 +30,11 @@ const ImagePlugin = (props: PluginProps) => {
         const formData = new FormData();
         formData.append('file', file);
         replaceEditorRange(editor, selection.start, selection.end, placeholder);
-        apiClient(apiList.post.protected.article.uploadImage, {
+        apiClient('articles/images', {
             method: 'POST',
             body: formData
-        }).then(res => {
+        }).then((res: ApiResponse<{ Location?: string }>) => {
+            if (!res.ok || !res.data.Location) return;
             const currentText = editor.getMdValue();
             const placeholderStart = currentText.indexOf(placeholder);
             if (placeholderStart === -1) return;

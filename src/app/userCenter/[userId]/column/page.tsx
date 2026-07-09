@@ -1,7 +1,7 @@
 'use client'
 import styles from './index.module.scss';
 import { useParams, useRouter } from "next/navigation";
-import {columnsTableType} from "@/app/api/sql/type";
+import type {ColumnDto} from "@/shared/api/columns";
 import { useGetColumns } from "@/hooks/columns/useColumns";
 import Image from "next/image";
 import dayjs from "dayjs";
@@ -27,7 +27,7 @@ const ColumnPage = () => {
 export default ColumnPage;
 
 
-const ColumnList = (props: { columns: columnsTableType[] }) => {
+const ColumnList = (props: { columns: ColumnDto[] }) => {
     const { columns } = props;
     const router = useRouter();
     const gotoManage = (column_id: number) => {

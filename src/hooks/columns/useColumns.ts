@@ -1,47 +1,31 @@
 import {useCallback, useEffect, useState} from "react";
 import {useAppSelector} from "@/store";
-import {apiClient, apiList} from "@/clientApi";
-import {
-    getColumnsByUserIdReqType,
-    getColumnsByUserIdResType
-} from "@/app/api/public/columns/getColumnsByUserId/route";
-import {deleteColumnReqType} from "@/app/api/protected/columns/deleteColumn/route";
-import {getArticleListToAddColumnResType} from "@/app/api/protected/article/getArticleListToAddColumn/route";
-import {getArticleListByColumnIdResType} from "@/app/api/public/article/getArticleListByColumnId/route";
+import {apiClient} from "@/clientApi";
+import type {ColumnArticleItemDto, ColumnCandidateArticleDto} from "@/shared/api/article";
+import type {ApiResponse} from "@/shared/api/response";
+import type {ColumnDto} from "@/shared/api/columns";
 
 
 export const useGetColumns = (autoLoad = true) => {
-    const [ columns, setColumns ] = useState<getColumnsByUserIdResType['data']>([]);
+    const [ columns, setColumns ] = useState<ColumnDto[]>([]);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const getColumns =  useCallback((userId: number) => {
-        const apiData: getColumnsByUserIdReqType = {
-            userId,
-        }
-        apiClient(apiList.post.public.columns.getColumnsByUserId,
-            {
-                method: "POST",
-                body: JSON.stringify(apiData)
-            }
-        ).then((res: getColumnsByUserIdResType) => {
-            if(res.msg === 'success') setColumns(res.data);
+        apiClient(`users/${userId}/columns`).then((res: ApiResponse<ColumnDto[]>) => {
+            if(res.ok) setColumns(res.data);
             else setColumns([]);
         });
     }, []);
     useEffect(() => {
         if(autoLoad && userInfo.id) getColumns(userInfo.id)
     },[autoLoad, getColumns, userInfo.id]);
-    return [ columns, getColumns ] as [ columns: getColumnsByUserIdResType['data'], (userId: number) => void ];
+    return [ columns, getColumns ] as [ columns: ColumnDto[], (userId: number) => void ];
 }
 
 export const useDeleteColumn = () => {
     return useCallback(async (column_id: number) => {
-        const apiData: deleteColumnReqType = {
-            column_id,
-        }
-        return apiClient(apiList.post.protected.columns.deleteColumn, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        })
+        const res = await apiClient(`columns/${column_id}`, { method: 'DELETE' }) as ApiResponse<unknown>;
+        if (res.ok) return { msg: 'success' as const, data: res.data };
+        return { msg: 'error' as const };
     }, [])
 }
 
@@ -69,13 +53,8 @@ export const useGetColumn = (column_id: number) => {
     });
 
     const getColumn = useCallback((column_id: number) => {
-        apiClient(apiList.post.public.columns.getColumn, {
-            method: 'POST',
-            body: JSON.stringify({
-                column_id,
-            }),
-        }).then(res => {
-            if(res.msg === 'success') setColumn(res.data);
+        apiClient(`columns/${column_id}`).then((res: ApiResponse<columnType>) => {
+            if(res.ok) setColumn(res.data);
         })
     }, []);
 
@@ -87,29 +66,28 @@ export const useGetColumn = (column_id: number) => {
 }
 
 export const useGetArticleListToColumn = () => {
-    const [articleList, setArticleList] = useState<getArticleListToAddColumnResType['data']>([]);
+    const [articleList, setArticleList] = useState<ColumnCandidateArticleDto[]>([]);
     const getArticleListToColumn = useCallback(async () => {
-        const res: getArticleListToAddColumnResType = await apiClient(apiList.post.protected.article.getArticleListToAddColumn, {
-            method: 'POST',
-        })
-        if(res.msg === 'success') setArticleList(res.data);
-        return res.data;
+        const res = await apiClient('articles/column-candidates') as ApiResponse<ColumnCandidateArticleDto[]>;
+        if(res.ok) {
+            setArticleList(res.data);
+            return res.data;
+        }
+        return [];
     }, [])
 
-    return [ articleList, getArticleListToColumn ] as [ articleList: getArticleListToAddColumnResType['data'], () => Promise<getArticleListToAddColumnResType['data']> ];
+    return [ articleList, getArticleListToColumn ] as [ articleList: ColumnCandidateArticleDto[], () => Promise<ColumnCandidateArticleDto[]> ];
 }
 
 export const useGetArticleListByColumnId = () => {
-    const [articleList, setArticleList] = useState<getArticleListByColumnIdResType['data']>([]);
+    const [articleList, setArticleList] = useState<ColumnArticleItemDto[]>([]);
     const getArticleListByColumn = useCallback(async (column_id: number) => {
-        const res: getArticleListByColumnIdResType = await apiClient(apiList.post.public.article.getArticleListByColumnId, {
-            method: 'POST',
-            body: JSON.stringify({
-                column_id,
-            }),
-        })
-        if(res.msg === 'success') setArticleList(res.data);
-        return res.data;
+        const res = await apiClient(`columns/${column_id}/articles`) as ApiResponse<ColumnArticleItemDto[]>;
+        if(res.ok) {
+            setArticleList(res.data);
+            return res.data;
+        }
+        return [];
     }, [])
-    return [articleList, getArticleListByColumn] as [getArticleListByColumnIdResType['data'], (column_id: number) => Promise<getArticleListByColumnIdResType['data']> ];
+    return [articleList, getArticleListByColumn] as [ColumnArticleItemDto[], (column_id: number) => Promise<ColumnArticleItemDto[]> ];
 }

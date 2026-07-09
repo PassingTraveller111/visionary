@@ -3,11 +3,13 @@ import NavLayout from "@/components/NavLayout";
 import styles from "./index.module.scss";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { apiClient, apiList } from "@/clientApi";
+import { apiClient } from "@/clientApi";
 import Image from "next/image";
 import { useIsUserOwn } from "@/hooks/users/useUsers";
 import { Tabs } from "antd";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import type {ApiResponse} from "@/shared/api/response";
+import type {ProfileDto} from "@/shared/api/user";
 
 type UserCenterLayoutProps = {
     children: React.ReactNode;
@@ -72,13 +74,8 @@ const UserInfoBar = React.memo(function UserInfoBar(props: { userId: number, rou
 
     // 将 fetchProfileInfo 定义移出 useEffect
     const fetchProfileInfo = useCallback(() => {
-        apiClient(apiList.post.public.profile.getProfile, {
-            method: 'POST',
-            body: JSON.stringify({
-                userId,
-            }),
-        }).then(res => {
-            setProfileInfo(res.data);
+        apiClient(`users/${userId}/profile`).then((res: ApiResponse<ProfileDto>) => {
+            if (res.ok) setProfileInfo(res.data);
         });
     }, [userId]);
 

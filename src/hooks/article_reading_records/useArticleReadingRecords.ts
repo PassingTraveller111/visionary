@@ -1,16 +1,16 @@
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {
-    insertArticleReadingRecordRequestType, insertArticleReadingRecordResponseType
-} from "@/app/api/protected/article_reading_records/insertArticleReadingRecord/route";
+    insertArticleReadingRecordRequestType
+} from "@/shared/api/article_reading_records";
 import {useCallback, useState} from "react";
 import {
-    getArticleReadingRecordsByUserIdRequestType, getArticleReadingRecordsByUserIdResponseType
-} from "@/app/api/protected/article_reading_records/getArticleReadingRecordsByUserId/route";
-import {article_reading_recordsTableType, articleTableType} from "@/app/api/sql/type";
+    ArticleReadingRecordItem, getArticleReadingRecordsByUserIdRequestType
+} from "@/shared/api/article_reading_records";
 import useMessage from "antd/es/message/useMessage";
 import {
-    getLookCountsByUserIdRequestType, getLookCountsByUserIdResponseType
-} from "@/app/api/public/article_reading_records/getLookCountsByUserId/route";
+    getLookCountsByUserIdRequestType, getLookCountsByUserIdResponseType, LookCount
+} from "@/shared/api/article_reading_records";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 export const useInsertArticleReadingRecord = () => {
@@ -20,10 +20,9 @@ export const useInsertArticleReadingRecord = () => {
             articleId: article_id,
             userId: user_id,
         }
-        await apiClient(apiList.post.protected.article_reading_records.insert, {
+        await apiClient(`articles/${apiData.articleId}/reading-records`, {
             method: "POST",
-            body: JSON.stringify(apiData)
-        }) as insertArticleReadingRecordResponseType;
+        }) as ApiResponse<{ insertId: number }>;
     }, [])
 }
 
@@ -35,7 +34,7 @@ export const useGetArticleReadingRecordsByUserId = () => {
         pageSize: 8,
     });
     const [messageApi, contextHandle] = useMessage();
-    const [historyList, setHistoryList] = useState<(article_reading_recordsTableType & Pick<articleTableType, 'title' | 'summary' | 'author_nickname'>)[]>([]);
+    const [historyList, setHistoryList] = useState<ArticleReadingRecordItem[]>([]);
     const getHistoryList = useCallback(async ({ userId = 0, pageNum = 0, pageSize = 8, isInit = false }) => {
         if(isInit) {
             setHistoryList([]);
@@ -50,11 +49,8 @@ export const useGetArticleReadingRecordsByUserId = () => {
             pageNum,
             pageSize,
         }
-        const res: getArticleReadingRecordsByUserIdResponseType = await apiClient(apiList.post.protected.article_reading_records.getByUserId, {
-            method: "POST",
-            body: JSON.stringify(apiData)
-        });
-        if (res.msg === 'success') {
+        const res = await apiClient(`users/${apiData.userId}/reading-records?pageNum=${apiData.pageNum}&pageSize=${apiData.pageSize}`) as ApiResponse<ArticleReadingRecordItem[]>;
+        if (res.ok) {
             if (res.data.length === 0) {
                 messageApi.info('没有更多数据了');
                 setHasMore(false);
@@ -94,10 +90,8 @@ export const useGetLookCountByUserId = () => {
         const apiData: getLookCountsByUserIdRequestType = {
             userId,
         }
-        const res: getLookCountsByUserIdResponseType = await apiClient(apiList.post.public.article_reading_records.getLookCountByUserId, {
-            method: "POST",
-            body: JSON.stringify(apiData)
-        });
-        return res;
+        const res = await apiClient(`users/${apiData.userId}/look-count`) as ApiResponse<LookCount>;
+        if (res.ok) return { msg: 'success' as const, data: res.data } satisfies getLookCountsByUserIdResponseType;
+        return { msg: 'error' as const } satisfies getLookCountsByUserIdResponseType;
     }, [])
 }

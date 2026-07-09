@@ -6,9 +6,10 @@ import {useAppSelector} from "@/store";
 import Image from "next/image";
 import {Card, Col, Row, Statistic} from "antd";
 import {useEffect, useState} from "react";
-import {apiClient, apiList} from "@/clientApi";
-import {getUserStatisticResType, statisticDataType} from "@/app/api/protected/user/getUserStatistic/route";
+import {apiClient} from "@/clientApi";
+import type {statisticDataType} from "@/shared/api/user";
 import StatisticLineChart from "@/components/StatisticLineChart";
+import type {ApiResponse} from "@/shared/api/response";
 
 const HomePage = () => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
@@ -16,8 +17,8 @@ const HomePage = () => {
         days_count: 0, articles_count: 0, collections_count: 0, likes_count: 0, looks_count: 0, comments_count: 0
     });
     useEffect(() => {
-        apiClient(apiList.get.protected.user.getUserStatistic).then((res: getUserStatisticResType)  => {
-            if(res.msg === 'success'){
+        apiClient('users/me/statistics').then((res: ApiResponse<statisticDataType>)  => {
+            if(res.ok){
                 setUserStatistic(res.data);
             }
         })

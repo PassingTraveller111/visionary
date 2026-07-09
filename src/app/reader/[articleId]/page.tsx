@@ -15,14 +15,13 @@ import {useInsertArticleReadingRecord} from "@/hooks/article_reading_records/use
 import useMessage from "antd/es/message/useMessage";
 import classNames from "classnames";
 import { useSetArticleIsCollected} from "@/hooks/article_collections/useArticleCollections";
-import {apiClient, apiList} from "@/clientApi";
-import {sendCommentReqType} from "@/app/api/protected/article_comments/sendComment/route";
+import {apiClient} from "@/clientApi";
 import {
     commentItem,
-    getCommentListByArticleIdResType
-} from "@/app/api/public/article_comments/getCommentListByArticleId/route";
+    SendCommentRequest
+} from "@/shared/api/article_comments";
 import dayjs from "dayjs";
-import {delCommentReqType} from "@/app/api/protected/article_comments/delComment/route";
+import type {ApiResponse} from "@/shared/api/response";
 
 const ReaderPage = () => {
     const articleId =  Number(useParams().articleId);
@@ -295,13 +294,8 @@ const Comments = ({ articleId }: { articleId: number } ) => {
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     // 获取评论列表
     const initCommentList = useCallback(() => {
-        apiClient(apiList.post.public.article_comments.getCommentListByArticleId, {
-            method: 'POST',
-            body: JSON.stringify({
-                article_id: articleId,
-            })
-        }).then((res: getCommentListByArticleIdResType) => {
-            if (res.msg === 'success') setCommentList(res.data);
+        apiClient(`articles/${articleId}/comments`).then((res: ApiResponse<commentItem[]>) => {
+            if (res.ok) setCommentList(res.data);
         })
     }, [articleId]);
     useEffect(() => {
@@ -326,7 +320,7 @@ const SendComment = ({ articleId, parentCommentId, avatar, userId, disabled = fa
 }
 
 const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?: boolean, disabled?: boolean, parentCommentId?: number, onSendComment?: () => void, onFocus?: () => void, onBlur?: () => void }) => {
-    const { userId, parentCommentId, articleId, onSendComment, onFocus, onBlur, autoFocus = false, disabled = false } = props;
+    const { parentCommentId, articleId, onSendComment, onFocus, onBlur, autoFocus = false, disabled = false } = props;
     const [commentText, setCommentText] = useState('');
     const [messageApi, contextHandle] = useMessage();
     const [isFocus, setIsFocus] = useState(false);
@@ -334,17 +328,15 @@ const SendCommentInput = (props: { userId: number, articleId: number, autoFocus?
     const sendComment = () => {
         if(disabled) return;
         setIsLoading(true);
-        const apiData: sendCommentReqType = {
-            userId,
-            articleId,
-            parentCommentId,
+        const apiData: SendCommentRequest = {
             commentText,
+            parentCommentId,
         }
-        apiClient(apiList.post.protected.article_comments.sendArticleComment, {
+        apiClient(`articles/${articleId}/comments`, {
             method: 'POST',
             body: JSON.stringify(apiData)
-        }).then(res => {
-            if(res.msg === 'success') {
+        }).then((res: ApiResponse<unknown>) => {
+            if(res.ok) {
                 messageApi.success('评论成功');
             } else {
                 messageApi.error('评论失败');
@@ -436,12 +428,8 @@ const Comment = ({userId, articleId, comment, topLevelCommentId, initCommentList
 }) => {
     const [showReply, setShowReply] = useState(false);
     const delComment = () => {
-        const apiData: delCommentReqType = {
-            comment_id: comment.comment_id
-        }
-        apiClient(apiList.post.protected.article_comments.delComment, {
-            method: 'POST',
-            body: JSON.stringify(apiData)
+        apiClient(`articles/${articleId}/comments/${comment.comment_id}`, {
+            method: 'DELETE',
         }).then(() => {
             initCommentList();
         });

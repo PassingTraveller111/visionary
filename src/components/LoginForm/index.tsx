@@ -2,7 +2,7 @@
 import styles from './index.module.scss';
 import {Button, Checkbox, Form, FormProps, Input, Tabs, TabsProps} from "antd";
 import { useState } from "react";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import useMessage from "antd/es/message/useMessage";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
@@ -139,7 +139,7 @@ const NoPassForm = () => {
     const [isFirstClick, setIsFirstClick] = useState(true);
     const onFinishNoPassword: FormProps<noPasswordFieldType>['onFinish']  = (values) => {
         const { verificationCode, email } = values;
-        apiClient(apiList.post.user.register.verifyCode, {
+        apiClient('auth/register/verify', {
             method: "POST",
             body: JSON.stringify({
                 email,
@@ -162,7 +162,7 @@ const NoPassForm = () => {
         setVCDisable(60);
         // 验证码发送逻辑
         const { email } = form.getFieldsValue();
-        apiClient(apiList.post.user.register.sendCode, {
+        apiClient('auth/register/code', {
             method: "POST",
             body: JSON.stringify({
                 email,

@@ -2,24 +2,17 @@ import {useCallback, useEffect, useState} from "react";
 import {diagramType, setDiagram} from "@/store/features/diagramSlice";
 import {useDispatch} from "react-redux";
 import {UserInfoType} from "@/store/features/userSlice";
-import {apiClient, apiList} from "@/clientApi";
-import {updateDiagramReqType} from "@/app/api/protected/diagrams/updateDiagram/route";
-import {getDiagramReqType, getDiagramResType} from "@/app/api/protected/diagrams/getDiagram/route";
+import {apiClient} from "@/clientApi";
 import {useAppSelector} from "@/store";
 import useStore from "@/components/Diagram/store";
-import {getDiagramsListResType} from "@/app/api/protected/diagrams/getDiagramsList/route";
-import {delDiagramReqType} from "@/app/api/protected/diagrams/delDiagram/route";
-import {renameDiagramReqType} from "@/app/api/protected/diagrams/renameDiagram/route";
-import {
-    getDiagramCoverByIdReqType,
-    getDiagramCoverByIdResType
-} from "@/app/api/public/diagrams/getDiagramCoverById/route";
+import type {DiagramCoverDto, DiagramDto, UpdateDiagramRequest} from "@/shared/api/diagrams";
+import type {ApiResponse} from "@/shared/api/response";
 
 
 export const useUpdateDiagram = () => {
     const dispatch = useDispatch();
     return useCallback(async (diagram: diagramType, userInfo: UserInfoType) => {
-        const apiData: updateDiagramReqType = {
+        const apiData: UpdateDiagramRequest = {
             id: diagram.id,
             intro: diagram.intro,
             tags: diagram.tags,
@@ -29,11 +22,12 @@ export const useUpdateDiagram = () => {
             cover: diagram.cover,
             type: diagram.type,
         }
-        const res = await apiClient(apiList.post.protected.diagrams.updateDiagram,  {
-            method: 'POST',
+        const endpoint = diagram.id === 'new' ? 'diagrams' : `diagrams/${diagram.id}`;
+        const res = await apiClient(endpoint,  {
+            method: diagram.id === 'new' ? 'POST' : 'PATCH',
             body: JSON.stringify(apiData),
-        });
-        if(res.msg === "success") {
+        }) as ApiResponse<{ insertId?: number }>;
+        if(res.ok) {
             if(res.data.insertId){
                 // 新建的会带insertId,更新操作的insertId是0
                 dispatch(setDiagram({
@@ -64,15 +58,8 @@ export const useGetDiagram = () => {
     const diagram = useAppSelector(state => state.rootReducer.diagramReducer.value);
     const initDiagram = useStore((state) => state.initDiagram);
     return useCallback(async (diagramId: number) => {
-        const apiData: getDiagramReqType = {
-            id: diagramId,
-        }
-        const res: getDiagramResType = await apiClient(apiList.post.protected.diagrams.getDiagram, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        });
-        console.log(res);
-        if(res.msg === "success") {
+        const res = await apiClient(`diagrams/${diagramId}`) as ApiResponse<DiagramDto>;
+        if(res.ok) {
             // 更新全局store
             dispatch(setDiagram({
                 ...diagram,
@@ -85,53 +72,39 @@ export const useGetDiagram = () => {
 }
 
 export const useGetDiagramsList = () => {
-    const [diagramsList, setDiagramsList] = useState<getDiagramsListResType['data']>([]);
+    const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
+    const [diagramsList, setDiagramsList] = useState<DiagramDto[]>([]);
     const getDiagramsList = useCallback(async () => {
-        const res: getDiagramsListResType = await apiClient(apiList.get.protected.diagrams.getDiagramsList);
-        if(res.msg === "success") {
+        if (!userInfo.id) return;
+        const res = await apiClient(`users/${userInfo.id}/diagrams`) as ApiResponse<DiagramDto[]>;
+        if(res.ok) {
             setDiagramsList(res.data);
         }
-    },[]);
+    },[userInfo.id]);
     useEffect(() => {
         getDiagramsList();
     },[getDiagramsList])
-    return[ diagramsList, getDiagramsList ] as [ getDiagramsListResType['data'], () => Promise<void> ];
+    return[ diagramsList, getDiagramsList ] as [ DiagramDto[], () => Promise<void> ];
 }
 
 export const useDeleteDiagram = () => {
     return useCallback(async (id: number) => {
-        const apiData: delDiagramReqType = {
-            id,
-        }
-        await apiClient(apiList.post.protected.diagrams.delDiagram, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        });
+        await apiClient(`diagrams/${id}`, { method: 'DELETE' });
     }, []);
 }
 
 export const useRenameDiagram = () => {
     return useCallback(async (title: string, id: number) => {
-        const apiData: renameDiagramReqType = {
-            title,
-            id,
-        }
-        await apiClient(apiList.post.protected.diagrams.renameDiagram, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
+        await apiClient(`diagrams/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ title }),
         })
     }, []);
 }
 
 export const useGetDiagramCoverById = () => {
     return useCallback(async (id: number) => {
-        const apiData: getDiagramCoverByIdReqType = {
-            id,
-        }
-        const res: getDiagramCoverByIdResType = await apiClient(apiList.post.public.diagrams.getDiagramCoverById, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        })
-        return res.data;
+        const res = await apiClient(`diagrams/${id}?mode=cover`) as ApiResponse<DiagramCoverDto>;
+        return res.ok ? res.data : undefined;
     }, []);
 }

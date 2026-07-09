@@ -12,7 +12,7 @@ import {useGetDiagram, useUpdateDiagram} from "@/hooks/diagrams/useDiagram";
 import useStore from "@/components/Diagram/store";
 import {getNodesBounds, getViewportForBounds, ReactFlowProvider, useReactFlow} from "@xyflow/react";
 import {toPng} from "html-to-image";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {debounce} from "next/dist/server/utils";
 
 const DiagramPage = () => {
@@ -99,11 +99,11 @@ const DiagramContainer = () => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('id', diagram.id.toString());
-        const resCover = await apiClient(apiList.post.protected.diagrams.uploadCover, {
+        const resCover = await apiClient(`diagrams/${diagram.id}/cover`, {
             method: 'POST',
             body: formData,
-        });
-        const newCover = `https://${resCover.data.Location}`;
+        }) as { ok: boolean; data?: { Location?: string } };
+        const newCover = resCover.ok && resCover.data?.Location ? `https://${resCover.data.Location}` : diagram.cover;
 
         return await updateDiagram({
             ...diagram,

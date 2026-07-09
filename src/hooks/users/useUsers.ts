@@ -2,13 +2,14 @@ import {useRouter} from "next/navigation";
 import {useAppSelector, AppDispatch} from "@/store";
 import {useDispatch} from "react-redux";
 import {logIn, logOut, setLoading, setUserInfo} from "@/store/features/userSlice";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {useCallback, useState} from "react";
 import {
     AuthorInfoType,
-    getAuthorInfoRequestType,
-    getAuthorInfoResponseType
-} from "@/app/api/public/user/getAuthorInfo/route";
+    getAuthorInfoRequestType
+} from "@/shared/api/user";
+import type {ApiResponse} from "@/shared/api/response";
+import type {UserDto} from "@/shared/api/user";
 
 
 export const useUserLogin = () => {
@@ -16,7 +17,7 @@ export const useUserLogin = () => {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
     return async (username:string, password: string, isRemember: boolean = false) => {
-        const res = await apiClient(apiList.post.user.login,  {
+        const res = await apiClient('auth/login',  {
             method: 'POST',
             body: JSON.stringify({
                 username,
@@ -40,7 +41,7 @@ export const useUserLogout = () => {
     const dispatch = useDispatch<AppDispatch>();
     return async () => {
         dispatch(logOut()); // 清除用户信息
-        const res = await apiClient(apiList.get.user.logout);
+        const res = await apiClient('auth/logout');
         if (res.status === 200)
         router.push('/login'); // 跳转login页
     }
@@ -52,10 +53,14 @@ export const useGetUserInfo =  () => {
         dispatch(setLoading({
             isLoading: true,
         }));
-        apiClient(apiList.get.protected.user.getUserInfo).then(res => {
-            if(res.msg === 'success') {
+        apiClient('users/me').then((res: ApiResponse<UserDto>) => {
+            if(res.ok) {
                 dispatch(setUserInfo(
-                    res.data
+                    {
+                        ...res.data,
+                        login: true,
+                        isLoading: false,
+                    }
                 ));
             }
             dispatch(setLoading({
@@ -83,11 +88,8 @@ export const useGetAuthorInfo = () => {
         const apiData: getAuthorInfoRequestType = {
             authorId: id,
         }
-        apiClient(apiList.post.public.user.getAuthorInfo, {
-            method: 'POST',
-            body: JSON.stringify(apiData),
-        }).then((res: getAuthorInfoResponseType) => {
-            setAuthorInfo(res.data);
+        apiClient(`users/${apiData.authorId}/author`).then((res: ApiResponse<AuthorInfoType>) => {
+            if (res.ok) setAuthorInfo(res.data);
         })
     }, [])
     return { authorInfo, getAuthorInfo };

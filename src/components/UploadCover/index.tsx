@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Image, Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
-import {apiBaseUrl, apiList} from "@/clientApi";
+import {apiBaseUrl} from "@/clientApi";
 import styles from './index.module.scss';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -48,11 +48,15 @@ const UploadCover = (props: { onChange?: (fileList: UploadFile[]) => void, initV
             <div style={{ marginTop: 8 }}>上传封面</div>
         </button>
     );
+    const uploadAction = uploadToDir === 'article'
+        ? `${apiBaseUrl}articles/cover`
+        : `${apiBaseUrl}columns/cover`;
+
     return (
         <>
             <Upload
                 className={styles.upload}
-                action={apiBaseUrl + apiList.post.protected[uploadToDir].uploadCover}
+                action={uploadAction}
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}

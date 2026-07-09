@@ -7,7 +7,7 @@ import classNames from "classnames";
 import {IconFont} from "@/components/IconFont";
 import {useAppSelector} from "@/store";
 import Image from "next/image";
-import {chatContentType} from "@/app/api/sql/type";
+import type {ChatContent} from "@/shared/api/assistant";
 import {useSendMessage} from "@/hooks/assistant_chat/useAssistantChant";
 import {useDispatch} from "react-redux";
 import {setAssistant} from "@/store/features/assistantSlice";
@@ -24,7 +24,7 @@ const Assistant = () => {
     const [inputValue, setInputValue] = useState('');
     const onSendMessage = () => {
         if (inputValue === '') return;
-        const problem: chatContentType = [{
+        const problem: ChatContent = [{
             role: 'user',
             content: inputValue,
             sendTime: new Date().toString(),
@@ -65,7 +65,7 @@ const Assistant = () => {
 
 export default Assistant;
 
-const ChatBox = (props: { messageList: chatContentType }) => {
+const ChatBox = (props: { messageList: ChatContent }) => {
     const { messageList = [] } = props;
     const { profile } = useAppSelector(state => state.rootReducer.userReducer.value);
     const scrollRef = useRef<HTMLDivElement>(null);

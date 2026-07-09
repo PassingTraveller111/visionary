@@ -3,7 +3,7 @@ import NavLayout from "@/components/NavLayout";
 import {Button, Divider, Form, FormProps, Input, message} from "antd";
 import {useAppSelector} from "@/store";
 import styles from "./index.module.scss";
-import {apiClient, apiList} from "@/clientApi";
+import {apiClient} from "@/clientApi";
 import {useGetUserInfo} from "@/hooks/users/useUsers";
 import EditAvatar from "../../../components/EditAvatar";
 
@@ -16,14 +16,14 @@ const MyDataPage = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const getUserInfo = useGetUserInfo();
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        const res = await apiClient(apiList.post.protected.user.updateUserInfo, {
-            method: 'POST',
+        const res = await apiClient('users/me', {
+            method: 'PATCH',
             body: JSON.stringify(values),
         })
-        if (res.msg === 'success') {
+        if (res.ok) {
             messageApi.success('保存成功');
         }
-        if (res.msg === 'error') {
+        if (!res.ok) {
             messageApi.error('保存失败');
         }
         getUserInfo();
