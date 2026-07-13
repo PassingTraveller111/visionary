@@ -251,10 +251,26 @@ const OutlineBar = (props: OutlineBarProps) => {
 export default ReaderPage;
 function parseMarkdownOutline(markdown: string) {
     const lines = markdown.split('\n');
-    const headers = [];
+    const headers: Pick<nodeType, 'level' | 'title' | 'key'>[] = [];
+    let codeFence: { marker: '`' | '~', length: number } | null = null;
 
     // 提取所有标题信息
     for (const line of lines) {
+        const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})/);
+        if (fenceMatch) {
+            const marker = fenceMatch[1][0] as '`' | '~';
+            const length = fenceMatch[1].length;
+
+            if (!codeFence) {
+                codeFence = { marker, length };
+            } else if (codeFence.marker === marker && length >= codeFence.length) {
+                codeFence = null;
+            }
+            continue;
+        }
+
+        if (codeFence) continue;
+
         const match = line.match(/^(#+) (.*)$/);
         if (match) {
             const level = match[1].length;
@@ -264,8 +280,8 @@ function parseMarkdownOutline(markdown: string) {
         }
     }
 
-    const tree = [];
-    const stack = [];
+    const tree: nodeType[] = [];
+    const stack: nodeType[] = [];
 
     // 构建树结构
     for (const header of headers) {
