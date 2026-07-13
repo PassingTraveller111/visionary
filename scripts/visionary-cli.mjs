@@ -10,11 +10,8 @@ const CONFIG_DIR = join(homedir(), '.visionary-cli');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
 
 const endpoints = {
-  login: '/api/user/login',
-  getUserInfo: '/api/protected/user/getUserInfo',
-  getDraft: '/api/protected/draft/getDraft',
-  updateDraft: '/api/protected/draft/updateDraft',
-  publishDraft: '/api/protected/draft/publishDraft',
+  login: '/api/auth/login',
+  getUserInfo: '/api/users/me',
 };
 
 let resolvedBaseUrl;
@@ -243,46 +240,43 @@ function sanitizeUser(user) {
 
 async function getCurrentUser(options) {
   const response = await request(endpoints.getUserInfo, options, { method: 'GET' });
-  if (response?.msg !== 'success') {
+  if (response?.ok !== true) {
     throw new Error('Failed to read current user info. Check token/cookie permissions.');
   }
   return response.data;
 }
 
 async function readDraft(options, id) {
-  const response = await request(endpoints.getDraft, options, {
-    method: 'POST',
-    body: JSON.stringify({ draftId: Number(id) }),
-  });
+  const response = await request(`/api/drafts/${Number(id)}`, options, { method: 'GET' });
 
-  if (response?.msg !== 'success') {
-    throw new Error(typeof response?.data === 'string' ? response.data : 'Failed to read draft.');
+  if (response?.ok !== true) {
+    throw new Error(response?.error?.message || 'Failed to read draft.');
   }
 
   return response.data;
 }
 
 async function saveDraft(options, draft) {
-  const response = await request(endpoints.updateDraft, options, {
-    method: 'POST',
+  const isNewDraft = draft.draftId === 'new';
+  const response = await request(isNewDraft ? '/api/drafts' : `/api/drafts/${Number(draft.draftId)}`, options, {
+    method: isNewDraft ? 'POST' : 'PATCH',
     body: JSON.stringify(draft),
   });
 
-  if (response?.msg !== 'success') {
-    throw new Error('Failed to save draft.');
+  if (response?.ok !== true) {
+    throw new Error(response?.error?.message || 'Failed to save draft.');
   }
 
   return response.data;
 }
 
 async function publishDraftRequest(options, draftId) {
-  const response = await request(endpoints.publishDraft, options, {
+  const response = await request(`/api/drafts/${Number(draftId)}/publish`, options, {
     method: 'POST',
-    body: JSON.stringify({ draftId: Number(draftId) }),
   });
 
-  if (response?.msg !== 'success') {
-    throw new Error(typeof response?.data === 'string' ? response.data : 'Failed to publish draft.');
+  if (response?.ok !== true) {
+    throw new Error(response?.error?.message || 'Failed to publish draft.');
   }
 
   return response.data;
