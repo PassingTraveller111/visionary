@@ -3,8 +3,8 @@
 import React from 'react';
 import {Button, Dropdown, Space, Tooltip} from 'antd';
 import type {MenuProps} from 'antd';
-import type {EditorCommand, EditorMode} from './types';
-import styles from './index.module.scss';
+import type {EditorCommand, EditorMode} from '../types';
+import styles from '../index.module.scss';
 
 type MarkdownToolbarProps = {
     mode: EditorMode;

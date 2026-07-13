@@ -1,4 +1,4 @@
-import type {EditorCommand, SelectionRange, TextEditResult} from './types';
+import type {EditorCommand, SelectionRange, TextEditResult} from '../types';
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
 

@@ -1,0 +1,66 @@
+.findMark{
+  color: inherit;
+  background: rgba(255, 214, 10, .45);
+  border-radius: 2px;
+}
+
+.activeFindMark{
+  background: rgba(255, 133, 0, .68);
+  box-shadow: 0 0 0 1px rgba(255, 133, 0, .75);
+}
+
+.syntaxHeading{
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+.syntaxQuote{
+  color: #64748b;
+  font-style: italic;
+}
+
+.syntaxList{
+  color: #0f766e;
+}
+
+.syntaxTable{
+  color: #0369a1;
+}
+
+.syntaxBold{
+  color: #b42318;
+  font-weight: 700;
+}
+
+.syntaxItalic{
+  color: #c2410c;
+  font-style: italic;
+}
+
+.syntaxDelete{
+  color: #71717a;
+  text-decoration: line-through;
+}
+
+.syntaxLink{
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.syntaxInlineCode{
+  color: #be123c;
+  background: rgba(244, 63, 94, .08);
+  border-radius: 3px;
+}
+
+.syntaxBlockCode{
+  color: #475569;
+  background: rgba(15, 23, 42, .06);
+}
+
+.syntaxFormula{
+  color: #9333ea;
+  background: rgba(147, 51, 234, .08);
+  border-radius: 3px;
+}

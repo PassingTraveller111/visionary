@@ -19,6 +19,8 @@ type EditorHeaderProps = {
 const EditorHeader= (props: EditorHeaderProps) => {
     const { draft, onTitleChange, onSaveDraft, onPublicArticle, DraftSaveStatus = 'success' } = props;
     const dispatch = useDispatch();
+    const draftTags = Array.isArray(draft.tags) ? draft.tags : [];
+    const draftSummary = draft.summary ?? '';
     // const [columns] = useGetColumns();
     const status = useMemo(() => {
         switch (DraftSaveStatus) {
@@ -56,11 +58,11 @@ const EditorHeader= (props: EditorHeaderProps) => {
                         <Form.Item
                             required
                             label='标签'
-                            validateStatus={ draft.tags.length ? '' : 'error' }
-                            help={ draft.tags.length ? '' : '至少要有一个标签'}
+                            validateStatus={ draftTags.length ? '' : 'error' }
+                            help={ draftTags.length ? '' : '至少要有一个标签'}
                         >
                             <Tags
-                                tags={draft.tags}
+                                tags={draftTags}
                                 onChange={(value) => {
                                     dispatch(setDraft({
                                         ...draft,
@@ -72,14 +74,14 @@ const EditorHeader= (props: EditorHeaderProps) => {
                         <Form.Item
                             required
                             label='摘要'
-                            validateStatus={ draft.summary ? '' : 'error' }
-                            help={ draft.summary ? '' : '摘要不能为空'}
+                            validateStatus={ draftSummary ? '' : 'error' }
+                            help={ draftSummary ? '' : '摘要不能为空'}
                         >
                             <Input.TextArea
                                 rows={4}
                                 maxLength={100}
                                 showCount
-                                value={draft.summary}
+                                value={draftSummary}
                                 onChange={(e) => {
                                     dispatch(setDraft({
                                         ...draft,
@@ -105,7 +107,7 @@ const EditorHeader= (props: EditorHeaderProps) => {
                     </Form>
                     <div className={styles.publishContainerBottom}>
                         <Button onClick={() => {
-                            if(!draft.summary || draft.tags.length === 0) return;
+                            if(!draftSummary || draftTags.length === 0) return;
                             onPublicArticle()
                         }}>确定并发布</Button>
                     </div>

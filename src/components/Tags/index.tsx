@@ -27,8 +27,8 @@ const Tags = (props: TagsProps) => {
     const editInputRef = useRef<InputRef>(null);
 
     useEffect(() => {
-        onChange(tags);
-    }, [onChange, tags]);
+        setTags(initialTags);
+    }, [initialTags]);
 
     useEffect(() => {
         if (inputVisible) {
@@ -42,8 +42,8 @@ const Tags = (props: TagsProps) => {
 
     const handleClose = (removedTag: string) => {
         const newTags = tags.filter((tag) => tag !== removedTag);
-        console.log(newTags);
         setTags(newTags);
+        onChange(newTags);
     };
 
     const showInput = () => {
@@ -56,7 +56,9 @@ const Tags = (props: TagsProps) => {
 
     const handleInputConfirm = () => {
         if (inputValue && !tags.includes(inputValue)) {
-            setTags([...tags, inputValue]);
+            const newTags = [...tags, inputValue];
+            setTags(newTags);
+            onChange(newTags);
         }
         setInputVisible(false);
         setInputValue('');
@@ -70,6 +72,7 @@ const Tags = (props: TagsProps) => {
         const newTags = [...tags];
         newTags[editInputIndex] = editInputValue;
         setTags(newTags);
+        onChange(newTags);
         setEditInputIndex(-1);
         setEditInputValue('');
     };

@@ -1,0 +1,82 @@
+.tableForm{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tableFormItem{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tablePreview{
+  overflow: auto;
+  max-height: 220px;
+  padding: 12px;
+  color: #646a73;
+  background: #f7f8fa;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.diagramList{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.diagramItem{
+  padding: 12px;
+  border: 1px solid #eef0f4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+
+  &:hover{
+    background: #f7fbff;
+    border-color: #91caff;
+  }
+}
+
+.diagramTitle{
+  overflow: hidden;
+  color: #1f2329;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diagramMeta{
+  margin-top: 4px;
+  color: #8f959e;
+  font-size: 12px;
+}
+
+.emptyDiagram{
+  padding: 28px 0;
+  color: #8f959e;
+  text-align: center;
+}
+
+.imageSizeForm{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.imageUrl{
+  overflow: hidden;
+  padding: 8px 10px;
+  color: #646a73;
+  background: #f7f8fa;
+  border-radius: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

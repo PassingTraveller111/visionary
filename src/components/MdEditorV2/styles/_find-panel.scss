@@ -1,0 +1,32 @@
+.findPanel{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fbfcfe;
+  border-bottom: 1px solid #eceff3;
+
+  :global(.ant-input-affix-wrapper),
+  :global(.ant-input){
+    max-width: 220px;
+  }
+}
+
+.findCount{
+  min-width: 44px;
+  color: #646a73;
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .findPanel{
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    :global(.ant-input-affix-wrapper),
+    :global(.ant-input){
+      max-width: 100%;
+    }
+  }
+}

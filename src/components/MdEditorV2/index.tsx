@@ -2,194 +2,23 @@
 
 import React, {useCallback, useDeferredValue, useEffect, useMemo, useRef, useState} from 'react';
 import classNames from 'classnames';
-import {Button, Divider, Input, InputNumber, Modal, Space, message} from 'antd';
+import {Button, message} from 'antd';
 import ReactMarkdown from '@/components/ReactMarkdown';
 import {apiClient} from '@/clientApi';
 import {useGetDiagramsList, useUpdateDiagram} from '@/hooks/diagrams/useDiagram';
 import {useAppSelector} from '@/store';
 import {validateImageFile} from '@/utils/imageUpload';
 import type {ApiResponse} from '@/shared/api/response';
-import type {EditorCommand, EditorMode, SelectionRange} from './types';
-import {applyMarkdownCommand, insertTabAtSelection, replaceRange} from './utils';
-import MarkdownToolbar from './toolbar';
+import type {EditorCommand, EditorMode, HighlightRange, ImageTarget, MdEditorV2Props, SelectionRange} from './types';
+import {collectMarkdownHighlightRanges, createMarkdownTable, escapeHtmlAttribute, findImageTarget, findMatches, formatSavedAt, getEnterContinuation, getLineColumn, getRandomId} from './lib/editorHelpers';
+import {compressImageFile, EDITOR_IMAGE_UPLOAD_LIMIT} from './lib/imageCompression';
+import {applyMarkdownCommand, insertTabAtSelection, replaceRange} from './lib/textEdit';
+import DiagramModal from './components/DiagramModal';
+import FindPanel from './components/FindPanel';
+import ImageSizeModal from './components/ImageSizeModal';
+import TableModal from './components/TableModal';
+import MarkdownToolbar from './components/Toolbar';
 import styles from './index.module.scss';
-
-type MdEditorV2Props = {
-    value: string;
-    onChange: (value: string) => void;
-    onSaveDraft: (value?: string) => void;
-    saveStatus?: 'loading' | 'success' | 'error';
-    lastSavedAt?: Date | null;
-    hasUnsavedChanges?: boolean;
-    onRetrySave?: () => void;
-    className?: string;
-};
-
-type FindMatch = SelectionRange;
-
-type ImageTarget = {
-    range: SelectionRange;
-    url: string;
-    alt: string;
-    width: string;
-};
-
-type HighlightRange = SelectionRange & {
-    className: string;
-};
-
-const getRandomId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
-
-const escapeHtmlAttribute = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-const getLineColumn = (value: string, cursor: number) => {
-    const safeCursor = Math.max(0, Math.min(cursor, value.length));
-    const beforeCursor = value.slice(0, safeCursor);
-    const lines = beforeCursor.split('\n');
-    return {
-        line: lines.length,
-        column: lines[lines.length - 1].length + 1,
-    };
-}
-
-const formatSavedAt = (date?: Date | null) => {
-    if (!date) return '';
-    return date.toLocaleTimeString('zh-CN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    });
-}
-
-const findMatches = (value: string, query: string): FindMatch[] => {
-    if (!query) return [];
-    const matches: FindMatch[] = [];
-    const normalizedValue = value.toLowerCase();
-    const normalizedQuery = query.toLowerCase();
-    let index = normalizedValue.indexOf(normalizedQuery);
-
-    while (index !== -1) {
-        matches.push({ start: index, end: index + query.length });
-        index = normalizedValue.indexOf(normalizedQuery, index + Math.max(query.length, 1));
-    }
-
-    return matches;
-}
-
-const collectRegexRanges = (value: string, regex: RegExp, className: string) => {
-    const ranges: HighlightRange[] = [];
-    let match: RegExpExecArray | null;
-
-    while ((match = regex.exec(value))) {
-        if (!match[0]) continue;
-        ranges.push({
-            start: match.index,
-            end: match.index + match[0].length,
-            className,
-        });
-    }
-
-    return ranges;
-}
-
-const collectMarkdownHighlightRanges = (value: string) => {
-    return [
-        ...collectRegexRanges(value, /^#{1,6}\s.+$/gm, styles.syntaxHeading),
-        ...collectRegexRanges(value, /^>\s?.+$/gm, styles.syntaxQuote),
-        ...collectRegexRanges(value, /^\s*(?:[-*+]\s+|\d+\.\s+).+$/gm, styles.syntaxList),
-        ...collectRegexRanges(value, /^\|.*\|$/gm, styles.syntaxTable),
-        ...collectRegexRanges(value, /```[\s\S]*?```/g, styles.syntaxBlockCode),
-        ...collectRegexRanges(value, /`[^`\n]+`/g, styles.syntaxInlineCode),
-        ...collectRegexRanges(value, /\$\$[\s\S]*?\$\$/g, styles.syntaxFormula),
-        ...collectRegexRanges(value, /\$[^$\n]+\$/g, styles.syntaxFormula),
-        ...collectRegexRanges(value, /!?\[[^\]\n]+\]\([^\s)]+\)/g, styles.syntaxLink),
-        ...collectRegexRanges(value, /(\*\*|__)(?=\S)([\s\S]*?\S)\1/g, styles.syntaxBold),
-        ...collectRegexRanges(value, /(~~)(?=\S)([\s\S]*?\S)\1/g, styles.syntaxDelete),
-        ...collectRegexRanges(value, /(^|[^*])\*[^*\n]+\*/g, styles.syntaxItalic),
-        ...collectRegexRanges(value, /<img\s+[^>]*>/gi, styles.syntaxLink),
-    ];
-}
-
-const getImageAttribute = (text: string, attribute: string) => {
-    const match = new RegExp(`${attribute}=["']([^"']*)["']`, 'i').exec(text);
-    return match?.[1] ?? '';
-}
-
-const findImageTarget = (value: string, cursor: number): ImageTarget | null => {
-    const candidates: ImageTarget[] = [];
-    const markdownImageRegex = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
-    const htmlImageRegex = /<img\s+[^>]*src=["'][^"']+["'][^>]*>/gi;
-    let match: RegExpExecArray | null;
-
-    while ((match = markdownImageRegex.exec(value))) {
-        candidates.push({
-            range: { start: match.index, end: match.index + match[0].length },
-            url: match[2],
-            alt: match[1],
-            width: '',
-        });
-    }
-
-    while ((match = htmlImageRegex.exec(value))) {
-        const html = match[0];
-        candidates.push({
-            range: { start: match.index, end: match.index + html.length },
-            url: getImageAttribute(html, 'src'),
-            alt: getImageAttribute(html, 'alt'),
-            width: getImageAttribute(html, 'width'),
-        });
-    }
-
-    if (candidates.length === 0) return null;
-    const target = candidates.find(candidate => cursor >= candidate.range.start && cursor <= candidate.range.end);
-    if (target) return target;
-
-    return candidates
-        .map(candidate => ({ candidate, distance: Math.min(Math.abs(cursor - candidate.range.start), Math.abs(cursor - candidate.range.end)) }))
-        .sort((a, b) => a.distance - b.distance)[0].candidate;
-}
-
-const getEnterContinuation = (value: string, selection: SelectionRange) => {
-    if (selection.start !== selection.end) return null;
-    const cursor = selection.start;
-    const lineStart = value.lastIndexOf('\n', Math.max(0, cursor - 1)) + 1;
-    const currentLineBeforeCursor = value.slice(lineStart, cursor);
-    const unorderedMatch = /^(\s*)([-*+])\s+(.*)$/.exec(currentLineBeforeCursor);
-    const orderedMatch = /^(\s*)(\d+)\.\s+(.*)$/.exec(currentLineBeforeCursor);
-    const quoteMatch = /^(\s*>\s?)(.*)$/.exec(currentLineBeforeCursor);
-
-    if (unorderedMatch) {
-        if (!unorderedMatch[3].trim()) return replaceRange(value, { start: lineStart, end: cursor }, '');
-        const prefix = `${unorderedMatch[1]}${unorderedMatch[2]} `;
-        return replaceRange(value, selection, `\n${prefix}`);
-    }
-
-    if (orderedMatch) {
-        if (!orderedMatch[3].trim()) return replaceRange(value, { start: lineStart, end: cursor }, '');
-        const prefix = `${orderedMatch[1]}${Number(orderedMatch[2]) + 1}. `;
-        return replaceRange(value, selection, `\n${prefix}`);
-    }
-
-    if (quoteMatch) {
-        if (!quoteMatch[2].trim()) return replaceRange(value, { start: lineStart, end: cursor }, '');
-        return replaceRange(value, selection, `\n${quoteMatch[1]}`);
-    }
-
-    return null;
-}
-
-const createMarkdownTable = (rows: number, columns: number) => {
-    const header = Array.from({ length: columns }, (_, index) => `标题 ${index + 1}`);
-    const separator = Array.from({ length: columns }, () => '---');
-    const body = Array.from({ length: rows }, () => Array.from({ length: columns }, () => '内容'));
-    const stringifyRow = (cells: string[]) => `| ${cells.join(' | ')} |`;
-
-    return [
-        stringifyRow(header),
-        stringifyRow(separator),
-        ...body.map(stringifyRow),
-    ].join('\n') + '\n';
-}
 
 const MdEditorV2 = (props: MdEditorV2Props) => {
     const { value = '', onChange, onSaveDraft, saveStatus = 'success', lastSavedAt, hasUnsavedChanges = false, onRetrySave, className } = props;
@@ -393,7 +222,31 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     }, [isFullscreen]);
 
     const uploadImage = useCallback(async (file: File) => {
-        const validResult = await validateImageFile(file);
+        let uploadFile = file;
+
+        if (file.size > EDITOR_IMAGE_UPLOAD_LIMIT) {
+            try {
+                const compressResult = await compressImageFile(file);
+                if ('error' in compressResult) {
+                    messageApi.error(compressResult.error);
+                    return;
+                }
+
+                uploadFile = compressResult.file;
+                messageApi.info('图片过大，已压缩后上传');
+            } catch (error) {
+                console.error('图片压缩失败:', error);
+                messageApi.error('图片压缩失败');
+                return;
+            }
+        }
+
+        if (uploadFile.size > EDITOR_IMAGE_UPLOAD_LIMIT) {
+            messageApi.error('图片压缩后仍超过 1MB，请手动压缩后上传');
+            return;
+        }
+
+        const validResult = await validateImageFile(uploadFile);
         if ('error' in validResult) {
             messageApi.error(validResult.error);
             return;
@@ -404,7 +257,7 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         applyChange(placeholderResult.value, placeholderResult.selection);
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', uploadFile);
 
         try {
             const res = await apiClient('articles/images', {
@@ -556,7 +409,7 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
                 : '修改已经保存';
 
     const highlightedValue = useMemo(() => {
-        const ranges: HighlightRange[] = collectMarkdownHighlightRanges(value);
+        const ranges: HighlightRange[] = collectMarkdownHighlightRanges(value, styles);
 
         if (findPanelOpen && debouncedFindQuery && matches.length > 0) {
             matches.forEach((match, index) => {
@@ -604,30 +457,20 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
             onImageSizeClick={openImageSizeModal}
             onDiagramClick={() => setDiagramModalOpen(true)}
         />
-        {findPanelOpen && <div className={styles.findPanel}>
-            <Input
-                size="small"
-                value={findQuery}
-                placeholder="查找"
-                onChange={(event) => {
-                    setFindQuery(event.target.value);
-                }}
-                onKeyDown={onFindInputKeyDown}
-            />
-            <Input
-                size="small"
-                value={replaceText}
-                placeholder="替换为"
-                onChange={(event) => setReplaceText(event.target.value)}
-                onPressEnter={replaceCurrent}
-            />
-            <span className={styles.findCount}>{matches.length ? `${currentMatchIndex + 1}/${matches.length}` : '0/0'}</span>
-            <Button size="small" onClick={findPrevious} disabled={!matches.length}>上一个</Button>
-            <Button size="small" onClick={findNext} disabled={!matches.length}>下一个</Button>
-            <Button size="small" onClick={replaceCurrent} disabled={!matches.length}>替换</Button>
-            <Button size="small" onClick={replaceAll} disabled={!matches.length}>全部替换</Button>
-            <Button size="small" onClick={() => setFindPanelOpen(false)}>关闭</Button>
-        </div>}
+        {findPanelOpen && <FindPanel
+            findQuery={findQuery}
+            replaceText={replaceText}
+            matchCount={matches.length}
+            currentMatchIndex={currentMatchIndex}
+            onFindQueryChange={setFindQuery}
+            onReplaceTextChange={setReplaceText}
+            onFindInputKeyDown={onFindInputKeyDown}
+            onFindPrevious={findPrevious}
+            onFindNext={findNext}
+            onReplaceCurrent={replaceCurrent}
+            onReplaceAll={replaceAll}
+            onClose={() => setFindPanelOpen(false)}
+        />}
         <input
             ref={fileInputRef}
             type="file"
@@ -635,28 +478,15 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
             hidden
             onChange={onFileChange}
         />
-        <Modal
+        <TableModal
             open={tableModalOpen}
-            title="插入表格"
-            okText="插入"
-            cancelText="取消"
+            rows={tableRows}
+            columns={tableColumns}
+            onRowsChange={setTableRows}
+            onColumnsChange={setTableColumns}
             onOk={insertTable}
             onCancel={() => setTableModalOpen(false)}
-        >
-            <div className={styles.tableForm}>
-                <div className={styles.tableFormItem}>
-                    <span>行数</span>
-                    <InputNumber min={1} max={30} value={tableRows} onChange={(value) => setTableRows(value ?? 1)} />
-                </div>
-                <div className={styles.tableFormItem}>
-                    <span>列数</span>
-                    <InputNumber min={1} max={12} value={tableColumns} onChange={(value) => setTableColumns(value ?? 1)} />
-                </div>
-                <div className={styles.tablePreview}>
-                    {createMarkdownTable(tableRows, tableColumns)}
-                </div>
-            </div>
-        </Modal>
+        />
         <div className={classNames(styles.body, {
             [styles.editOnly]: mode === 'edit',
             [styles.previewOnly]: mode === 'preview',
@@ -692,48 +522,22 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
             <span>行 {currentPosition.line}，列 {currentPosition.column}</span>
             {isFullscreen && <span>Esc 退出全屏</span>}
         </div>
-        <Modal
+        <DiagramModal
             open={diagramModalOpen}
-            title="插入图表"
-            footer={null}
+            diagrams={diagramsList}
+            creating={creatingDiagram}
+            onCreate={(type) => void createDiagram(type)}
+            onInsert={insertDiagram}
             onCancel={() => setDiagramModalOpen(false)}
-            width={680}
-        >
-            <Space>
-                <Button loading={creatingDiagram} onClick={() => void createDiagram('flow')}>新建流程图</Button>
-                <Button loading={creatingDiagram} onClick={() => void createDiagram('mindMap')}>新建思维导图</Button>
-            </Space>
-            <Divider />
-            {diagramsList.length ? <div className={styles.diagramList}>
-                {diagramsList.map(diagram => <div
-                    key={diagram.id}
-                    className={styles.diagramItem}
-                    onClick={() => insertDiagram(diagram.id)}
-                >
-                    <div className={styles.diagramTitle}>{diagram.title || '未命名图表'}</div>
-                    <div className={styles.diagramMeta}>{diagram.type === 'mindMap' ? '思维导图' : '流程图'} · ID {diagram.id}</div>
-                </div>)}
-            </div> : <div className={styles.emptyDiagram}>暂无可插入图表</div>}
-        </Modal>
-        <Modal
+        />
+        <ImageSizeModal
             open={imageSizeModalOpen}
-            title="调整图片尺寸"
-            okText="应用"
-            cancelText="取消"
+            imageTarget={imageTarget}
+            imageWidth={imageWidth}
+            onImageWidthChange={setImageWidth}
             onOk={applyImageSize}
             onCancel={() => setImageSizeModalOpen(false)}
-        >
-            <div className={styles.imageSizeForm}>
-                <div className={styles.imageUrl}>{imageTarget?.url}</div>
-                <Input
-                    value={imageWidth}
-                    addonBefore="宽度"
-                    placeholder="例如 50% 或 640"
-                    onChange={(event) => setImageWidth(event.target.value)}
-                    onPressEnter={applyImageSize}
-                />
-            </div>
-        </Modal>
+        />
     </div>
 }
 
