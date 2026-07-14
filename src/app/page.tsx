@@ -24,8 +24,16 @@ type tabKeysType = 'new' | 'hot';
 
 export default function Home() {
     const [currentTab, setCurrentTab] = useState<tabKeysType>('new');
+    const [showUserBar, setShowUserBar] = useState(false);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const { articleList, getPublishedArticleList, loadMore, messageContext } = useGetPublishedArticleList();
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 769px)');
+        const syncShowUserBar = () => setShowUserBar(mediaQuery.matches);
+        syncShowUserBar();
+        mediaQuery.addEventListener('change', syncShowUserBar);
+        return () => mediaQuery.removeEventListener('change', syncShowUserBar);
+    }, []);
     useEffect(() => {
         getPublishedArticleList({ isInit: true });
     }, [getPublishedArticleList, currentTab]);
@@ -71,7 +79,7 @@ export default function Home() {
                             setCurrentTab(tabKey as tabKeysType);
                         }}
                     />
-                    {userInfo.login && <div className={styles.leftBar}>
+                    {userInfo.login && showUserBar && <div className={styles.leftBar}>
                         <UserBar/>
                     </div>}
                 </div>

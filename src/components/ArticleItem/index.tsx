@@ -36,8 +36,7 @@ const ArticleItem = (props: ArticleItemProps) => {
         }}
     >
         <div
-            className={styles.leftBar}
-            style={{ width: `calc(100% - ${cover ? '120px' : '0px'} - ${operateMenuItems.length > 0 ? '50px' : '0px'})` }}
+            className={`${styles.leftBar} ${cover ? styles.leftBarWithCover : ''} ${operateMenuItems.length > 0 ? styles.leftBarWithOperate : ''}`}
         >
             <div className={styles.top}>
                 <div className={styles.title}>{title}</div>

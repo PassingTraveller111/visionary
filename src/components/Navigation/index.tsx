@@ -22,12 +22,13 @@ const Navigation = () => {
                 }}
             >
                 <LogoIcon/>
-                创见
+                <span className={styles.logoText}>创见</span>
             </span>
         </span>
         <span className={styles['nav-right']}>
             <ArticleSearch/>
             <Button
+                className={styles.creatorButton}
                 onClick={() => {
                     router.push('/creator/home');
                 }}

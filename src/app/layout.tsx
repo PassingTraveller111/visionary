@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import 'highlight.js/styles/default.css'; // 引入代码高亮样式
 import 'katex/dist/katex.min.css'; // 引入 KaTeX 样式
@@ -14,6 +14,11 @@ import {TrackProvider} from "@/app/TrackProvider";
 export const metadata: Metadata = {
   title: "创见",
   description: "Visionary",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

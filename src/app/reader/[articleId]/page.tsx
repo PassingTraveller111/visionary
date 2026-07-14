@@ -30,6 +30,7 @@ const ReaderPage = () => {
     const [ messageApi, MessageContext ] = useMessage();
     const { isLoading, id: userId, login } = useAppSelector(state => state.rootReducer.userReducer.value);
     const { isLike, setArticleIsLike  } = useArticleLike();
+    const [showRightBar, setShowRightBar] = useState(false);
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const article = useAppSelector(state => state.rootReducer.articleReducer.value);
@@ -58,6 +59,13 @@ const ReaderPage = () => {
         if(isLoading || !articleId) return;
         getArticle(articleId);
     }, [isLoading, articleId, getArticle])
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 769px)');
+        const syncShowRightBar = () => setShowRightBar(mediaQuery.matches);
+        syncShowRightBar();
+        mediaQuery.addEventListener('change', syncShowRightBar);
+        return () => mediaQuery.removeEventListener('change', syncShowRightBar);
+    }, []);
     // 插入文章阅读数据
     useEffect(() => {
         if (hasInsertedData.current) {
@@ -137,12 +145,12 @@ const ReaderPage = () => {
                         </div>
                         <Comments articleId={articleId} />
                     </div>
-                    <div className={styles.rightBar}>
+                    {showRightBar && <div className={styles.rightBar}>
                         <AuthorBar
                             authorId={article.authorId}
                         />
                         <OutlineBar scrollContainerRef={scrollContainerRef} markdown={article.content}/>
-                    </div>
+                    </div>}
                 </div>
             </div>
         </NavLayout>

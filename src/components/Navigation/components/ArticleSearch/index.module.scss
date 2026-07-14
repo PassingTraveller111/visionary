@@ -5,3 +5,15 @@
   display: flex;
   justify-content: space-between;
 }
+
+@media (max-width: 768px) {
+  .search{
+    width: clamp(130px, 34vw, 220px);
+  }
+}
+
+@media (max-width: 480px) {
+  .search{
+    width: clamp(112px, 38vw, 160px);
+  }
+}

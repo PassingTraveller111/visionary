@@ -81,3 +81,51 @@ $leftBarWidth: 300px;
     }
   }
 }
+
+@media (max-width: 768px) {
+  .container {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    height: calc(100vh - #{var.$nav-container-height});
+    padding: 10px 14px 18px;
+    overflow-y: auto;
+    .tabContainer{
+      width: 100% !important;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      border-radius: 10px;
+      .tabLabel{
+        font-size: 16px;
+      }
+      .articleList {
+        width: 100%;
+      }
+      :global(.ant-tabs-nav){
+        margin-bottom: 6px;
+      }
+      :global(.ant-tabs-content-holder),
+      :global(.ant-tabs-content),
+      :global(.ant-tabs-tabpane){
+        width: 100%;
+        min-width: 0;
+      }
+    }
+    .tabContainerFull{
+      width: 100%;
+    }
+    .leftBar{
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px 10px 14px;
+    .tabContainer{
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+  }
+}
