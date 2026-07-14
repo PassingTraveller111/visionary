@@ -184,6 +184,7 @@ $rightBarWidth: 260px;
       align-items: center;
       .count{
         margin-right: 10px;
+      }
     }
   }
 }
@@ -220,11 +221,13 @@ $rightBarWidth: 260px;
     }
     .centerContent {
       width: 100%;
+      max-width: 100%;
       min-width: 0;
       margin-left: 0;
       .readerContent{
         box-sizing: border-box;
         width: 100%;
+        min-width: 0;
         padding: 0 14px 18px;
         overflow: hidden;
       }
@@ -315,4 +318,3 @@ $rightBarWidth: 260px;
     box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
     outline: 0;
   }
-}
