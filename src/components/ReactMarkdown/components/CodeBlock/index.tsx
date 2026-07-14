@@ -3,11 +3,7 @@ import {useId, useState} from "react";
 import styles from './index.module.scss';
 import {IconFont} from "@/components/IconFont";
 import classNames from "classnames";
-// 正确的引入方式（从 highlight.js 包内引入）
-// import 'highlight.js/styles/monokai-sublime.css';
-// 其他样式示例（任选其一）：
-import 'highlight.js/styles/github-dark.css';
-// import 'highlight.js/styles/atom-one-dark.css';
+import 'highlight.js/styles/atom-one-light.css';
 
 const CodeComponents: ComponentType  = ({children, className}) => {
     const uniqueId = useId(); // 使用 useId 生成唯一 ID

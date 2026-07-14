@@ -30,32 +30,29 @@
 //  border: none !important;
 //}
 
-// 适配 highlight.js 的 github-dark.css 高亮样式
 .codeBlockHeader {
   display: flex;
   justify-content: space-between;
   padding: 5px 12px;
-  // GitHub Dark 核心配色：header背景比代码容器稍浅，形成层次
-  background: #161b22;
-  // 边框和 GitHub 深色代码块保持一致
-  border: 1px solid #30363d;
-  border-bottom: none; // 去掉和代码容器重叠的边框
+  background: #f3f5f8;
+  border: 1px solid #d7dce3;
+  border-bottom: none;
   font-size: 14px;
-  color: #e6edf3; // GitHub Dark 文字主色
+  color: #4b5563;
 
   .headerLeft {
     cursor: pointer;
     display: flex;
     align-items: center;
     padding: 4px 8px;
-    border-radius: 4px; // GitHub 风格圆角
+    border-radius: 4px;
     &:hover {
-      background: #21262d; // GitHub 深色 hover 背景
+      background: #e7ebf0;
     }
     svg {
-      font-size: 18px; // 适配 GitHub 图标大小
-      color: #8b949e; // GitHub 图标灰色
-      margin-left: 8px; // 图标和文字间距
+      font-size: 18px;
+      color: #6b7280;
+      margin-left: 8px;
     }
   }
 
@@ -63,50 +60,29 @@
     padding: 4px 12px;
     border: none;
     background: transparent;
-    color: #e6edf3; // 按钮文字色和 header 统一
+    color: #4b5563;
     border-radius: 4px;
     cursor: pointer;
     &:hover {
-      background: #21262d; // 和 headerLeft hover 保持一致
-      color: #ffffff; // hover 文字变白，增强反馈
+      background: #e7ebf0;
+      color: #111827;
     }
   }
 }
 
 .codeContainer {
   border: none !important;
-  // GitHub Dark 代码块核心背景色（和 github-dark.css 完全匹配）
-  background: #0d1117 !important;
-  padding: 16px 12px !important; // GitHub 原版内边距
-  margin: 0 !important; // 清除 pre 默认外边距
-  color: #e6edf3 !important; // GitHub 代码文字主色
+  background: #fafafa !important;
+  padding: 16px 12px !important;
+  margin: 0 !important;
+  color: #383a42 !important;
   font-size: 14px !important;
-  line-height: 1.5 !important; // GitHub 行高
-  // 补全边框，和 header 对齐
-  border: 1px solid #30363d !important;
-  border-top: none !important; // 去掉和 header 重叠的边框
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; // GitHub 代码字体
+  line-height: 1.6 !important;
+  border: 1px solid #d7dce3 !important;
+  border-top: none !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
 
-// 确保 highlight.js 的 github-dark 样式完全生效，清除冲突样式
 .codeContainer .hljs {
-  background: transparent !important; // 清除高亮插件默认背景
-  color: inherit !important; // 继承容器文字色
-}
-
-// 适配 github-dark 高亮样式的语法颜色细节（可选，增强匹配度）
-.codeContainer .hljs-keyword {
-  color: #ff7b72 !important;
-}
-.codeContainer .hljs-string {
-  color: #a5d6ff !important;
-}
-.codeContainer .hljs-comment {
-  color: #8b949e !important;
-}
-.codeContainer .hljs-function {
-  color: #d2a8ff !important;
-}
-.codeContainer .hljs-variable {
-  color: #79c0ff !important;
+  background: transparent !important;
 }
