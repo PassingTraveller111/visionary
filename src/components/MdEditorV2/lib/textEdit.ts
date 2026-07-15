@@ -88,6 +88,33 @@ const prefixSelectedLines = (
     });
 }
 
+const toggleTaskList = (value: string, selection: SelectionRange): TextEditResult => {
+    const range = getSelectedLineRange(value, selection);
+    const block = value.slice(range.start, range.end);
+    const lines = block.split('\n');
+    const taskPrefix = /^(\s*)[-*+]\s+\[[ xX]\]\s*/;
+    const listPrefix = /^(\s*)(?:[-*+]\s+|\d+\.\s+)/;
+    const hasContent = lines.some(line => line.trim());
+    const allTaskItems = hasContent && lines.every(line => !line.trim() || taskPrefix.test(line));
+
+    const nextLines = lines.map(line => {
+        if (allTaskItems) return line.replace(taskPrefix, '$1');
+
+        const listMatch = listPrefix.exec(line);
+        if (listMatch) return line.replace(listPrefix, `${listMatch[1]}- [ ] `);
+
+        const indentMatch = /^(\s*)/.exec(line);
+        const indent = indentMatch?.[1] ?? '';
+        return `${indent}- [ ] ${line.slice(indent.length)}`;
+    });
+    const nextBlock = nextLines.join('\n');
+
+    return replaceRange(value, range, nextBlock, {
+        start: range.start,
+        end: range.start + nextBlock.length,
+    });
+}
+
 const insertBlock = (value: string, selection: SelectionRange, block: string): TextEditResult => {
     const safeSelection = normalizeSelection(selection, value.length);
     const before = value.slice(0, safeSelection.start);
@@ -122,6 +149,8 @@ export const applyMarkdownCommand = (
             return prefixSelectedLines(value, selection, () => '- ', [/^\s*[-*+]\s+/]);
         case 'ol':
             return prefixSelectedLines(value, selection, index => `${index + 1}. `, [/^\s*\d+\.\s+/]);
+        case 'taskList':
+            return toggleTaskList(value, selection);
         case 'quote':
             return prefixSelectedLines(value, selection, () => '> ', [/^>\s?/]);
         case 'divider':

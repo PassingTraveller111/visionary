@@ -9,6 +9,7 @@ export type EditorCommand =
     | 'delete'
     | 'ul'
     | 'ol'
+    | 'taskList'
     | 'quote'
     | 'divider'
     | 'link'

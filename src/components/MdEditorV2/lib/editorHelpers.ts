@@ -119,9 +119,16 @@ export const getEnterContinuation = (value: string, selection: SelectionRange) =
     const cursor = selection.start;
     const lineStart = value.lastIndexOf('\n', Math.max(0, cursor - 1)) + 1;
     const currentLineBeforeCursor = value.slice(lineStart, cursor);
+    const taskMatch = /^(\s*)([-*+])\s+\[([ xX])\]\s+(.*)$/.exec(currentLineBeforeCursor);
     const unorderedMatch = /^(\s*)([-*+])\s+(.*)$/.exec(currentLineBeforeCursor);
     const orderedMatch = /^(\s*)(\d+)\.\s+(.*)$/.exec(currentLineBeforeCursor);
     const quoteMatch = /^(\s*>\s?)(.*)$/.exec(currentLineBeforeCursor);
+
+    if (taskMatch) {
+        if (!taskMatch[4].trim()) return replaceRange(value, { start: lineStart, end: cursor }, '');
+        const prefix = `${taskMatch[1]}${taskMatch[2]} [ ] `;
+        return replaceRange(value, selection, `\n${prefix}`);
+    }
 
     if (unorderedMatch) {
         if (!unorderedMatch[3].trim()) return replaceRange(value, { start: lineStart, end: cursor }, '');

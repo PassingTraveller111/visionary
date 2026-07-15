@@ -78,6 +78,16 @@ $font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     list-style-type: decimal; /* 使用数字作为序号 */
   }
 
+  input[type='checkbox'] {
+    margin-right: 0.45em;
+    transform: translateY(1px);
+  }
+
+  li:has(> input[type='checkbox']) {
+    list-style: none;
+    margin-left: -1.4em;
+  }
+
   // 代码块样式
   pre {
     background-color: $background-color;

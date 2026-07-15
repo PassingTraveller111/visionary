@@ -43,6 +43,7 @@ const MarkdownToolbar = (props: MarkdownToolbarProps) => {
             <Tooltip title="删除线"><Button size="small" onClick={() => onCommand('delete')}>S</Button></Tooltip>
             <Button size="small" onClick={() => onCommand('ul')}>无序列表</Button>
             <Button size="small" onClick={() => onCommand('ol')}>有序列表</Button>
+            <Button size="small" onClick={() => onCommand('taskList')}>任务列表</Button>
             <Button size="small" onClick={() => onCommand('quote')}>引用</Button>
             <Button size="small" onClick={() => onCommand('divider')}>分割线</Button>
             <Button size="small" onClick={() => onCommand('link')}>链接</Button>
