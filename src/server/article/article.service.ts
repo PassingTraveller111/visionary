@@ -11,6 +11,11 @@ export type DeleteArticleRequest = {
     articleId: number;
 };
 
+export type ArticleSitemapItem = {
+    id: number;
+    updated_time: Date | string | null;
+};
+
 export const getArticle = async (articleId: number, viewerUserId = 0) => {
     const connection = await pool.getConnection();
     try {
@@ -28,6 +33,17 @@ export const getPublishedPublicArticle = async (articleId: number) => {
         const sql = `SELECT * FROM articles WHERE id = ? AND is_published = 1 AND view_permission = 'all'`;
         const [ rows ] = await connection.execute(sql, [articleId]);
         return Array.isArray(rows) && rows.length > 0 ? rows[0] as ArticleDto : null;
+    } finally {
+        connection.release();
+    }
+}
+
+export const getPublishedPublicArticleSitemapItems = async () => {
+    const connection = await pool.getConnection();
+    try {
+        const sql = `SELECT id, updated_time FROM articles WHERE is_published = 1 AND view_permission = 'all' ORDER BY updated_time DESC`;
+        const [ rows ] = await connection.execute(sql);
+        return Array.isArray(rows) ? rows as ArticleSitemapItem[] : [];
     } finally {
         connection.release();
     }
