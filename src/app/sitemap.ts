@@ -1,6 +1,8 @@
 import type {MetadataRoute} from 'next';
 import {getPublishedPublicArticleSitemapItems} from '@/server/article/article.service';
 
+export const revalidate = 86400;
+
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://visionaryblog.cn').replace(/\/$/, '');
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
