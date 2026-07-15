@@ -20,9 +20,9 @@ let storedConfig = {};
 function printUsage() {
   console.log(`Usage:
   npm run visionary -- auth login --username <username> --password <password> [--base-url <url>] [--remember]
-  npm run visionary -- draft create --title <title> --content-file <path> [--summary <text>] [--tags <a,b>] [--cover <url>]
+  npm run visionary -- draft create --title <title> --content-file <path> [--summary <text>] [--tags <a,b>] [--cover <url>] [--keep-title]
   npm run visionary -- draft get --id <id>
-  npm run visionary -- draft update --id <id> [--title <title>] [--content-file <path>] [--summary <text>] [--tags <a,b>] [--cover <url>]
+  npm run visionary -- draft update --id <id> [--title <title>] [--content-file <path>] [--summary <text>] [--tags <a,b>] [--cover <url>] [--keep-title]
   npm run visionary -- draft publish --id <id> --confirm
 
 Options:
@@ -31,6 +31,7 @@ Options:
   --cookie <cookie>    Full Cookie header. Defaults to VISIONARY_COOKIE.
   --remember           Ask login API to issue a longer-lived token.
   --confirm            Required for commands that publish content.
+  --keep-title         Keep a leading H1 from --content-file. By default, leading H1 is stripped before upload.
   --json               Kept for agent compatibility. Output is always JSON.
   --help               Show this help.
 `);
@@ -49,8 +50,8 @@ function parseArgs(argv) {
     }
 
     const key = arg.slice(2);
-    if (key === 'json' || key === 'help' || key === 'remember' || key === 'confirm') {
-      options[key] = true;
+    if (key === 'json' || key === 'help' || key === 'remember' || key === 'confirm' || key === 'keep-title') {
+      options[toCamelCase(key)] = true;
       continue;
     }
 
@@ -284,7 +285,14 @@ async function publishDraftRequest(options, draftId) {
 
 async function loadContent(options, existingContent = '') {
   if (!options.contentFile) return existingContent;
-  return readFile(options.contentFile, 'utf8');
+  const content = await readFile(options.contentFile, 'utf8');
+  return options.keepTitle ? content : stripLeadingH1(content);
+}
+
+function stripLeadingH1(content) {
+  return content
+    .replace(/^\uFEFF?\s*#\s+[^\n]*(?:\n+|$)/, '')
+    .replace(/^\uFEFF?\s*<h1(?:\s+[^>]*)?>[\s\S]*?<\/h1>\s*/i, '');
 }
 
 function parseTags(value, fallback = []) {
