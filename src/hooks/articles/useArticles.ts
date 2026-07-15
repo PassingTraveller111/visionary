@@ -11,7 +11,7 @@ import {
 import {
     setArticleIsLikeRequestType,
 } from "@/shared/api/article_likes";
-import type {ArticleDto, ArticleListItemDto, ArticleQueryResult, PublishedArticleItemDto} from "@/shared/api/article";
+import type {ArticleDto, ArticleListItemDto, ArticleListSort, ArticleQueryResult, PublishedArticleItemDto} from "@/shared/api/article";
 import type {ApiResponse} from "@/shared/api/response";
 
 
@@ -70,53 +70,62 @@ export const useGetArticleList = () => {
 
 export const useGetPublishedArticleList = () => {
     const [articleList, setArticleList] = useState<PublishedArticleItemDto[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [error, setError] = useState('');
     const [pageInfo, setPageInfo] = useState({
         pageNum: 0,
         pageSize: 8,
     });
     const [messageApi, contextHandle] = useMessage();
-    const getPublishedArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false }) => {
+    const getPublishedArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false, sort = 'new' }: { pageNum?: number; pageSize?: number; isInit?: boolean; sort?: ArticleListSort }) => {
         if(isInit) {
             setArticleList([]);
             setPageInfo({
                 pageNum: 0,
-                pageSize: 8,
+                pageSize,
             });
             setHasMore(true);
+            setIsInitialLoading(true);
+        } else {
+            setIsLoadingMore(true);
         }
-        const res = await apiClient(`articles?pageNum=${pageNum}&pageSize=${pageSize}`) as ApiResponse<ArticleQueryResult>;
-        if (res.ok) {
-            if (res.data.items.length === 0) {
-                messageApi.info('没有更多数据了');
-                setHasMore(false);
+        setError('');
+        try {
+            const res = await apiClient(`articles?pageNum=${pageNum}&pageSize=${pageSize}&sort=${sort}`) as ApiResponse<ArticleQueryResult>;
+            if (res.ok) {
+                const items = res.data.items;
+                const currentPageNum = res.data.pageNum ?? pageNum;
+                const currentPageSize = res.data.pageSize ?? pageSize;
+                const loadedCount = currentPageNum * currentPageSize + items.length;
+
+                setArticleList(preArticleList => isInit ? items : [
+                    ...preArticleList,
+                    ...items,
+                ]);
+                setPageInfo({
+                    pageNum: currentPageNum,
+                    pageSize: currentPageSize,
+                });
+                setHasMore(res.data.total === undefined ? items.length === currentPageSize : loadedCount < res.data.total);
                 return;
             }
-            if (isInit) {
-                setArticleList(res.data.items);
-                return;
-            }
-            setArticleList(preArticleList => [
-                ...preArticleList,
-                ...res.data.items,
-            ]);
+            setError(res.error.message);
+            messageApi.error(res.error.message);
+        } catch {
+            setError('文章列表加载失败');
+            messageApi.error('文章列表加载失败');
+        } finally {
+            setIsInitialLoading(false);
+            setIsLoadingMore(false);
         }
     }, [messageApi]);
-    const loadMore = () => {
-        if(isLoading || !hasMore) return;
-        setIsLoading(true);
-        getPublishedArticleList({ pageNum: pageInfo.pageNum + 1, pageSize: pageInfo.pageSize}).then(() => {
-            setIsLoading(false);
-            setPageInfo(prePageInfo => {
-                return {
-                    ...prePageInfo,
-                    pageNum: prePageInfo.pageNum + 1,
-                }
-            });
-        })
-    }
-    return { articleList, getPublishedArticleList, loadMore, messageContext: contextHandle };
+    const loadMore = useCallback((sort: ArticleListSort = 'new') => {
+        if(isInitialLoading || isLoadingMore || !hasMore) return;
+        void getPublishedArticleList({ pageNum: pageInfo.pageNum + 1, pageSize: pageInfo.pageSize, sort });
+    }, [getPublishedArticleList, hasMore, isInitialLoading, isLoadingMore, pageInfo.pageNum, pageInfo.pageSize]);
+    return { articleList, getPublishedArticleList, loadMore, messageContext: contextHandle, isInitialLoading, isLoadingMore, hasMore, error };
 }
 
 export const useGetPublishedArticleListByKeyWord = () => {

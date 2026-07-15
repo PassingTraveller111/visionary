@@ -1,10 +1,10 @@
 "use client"
 import NavLayout from "@/components/NavLayout";
 import {useGetArticleCountByUserId, useGetPublishedArticleList} from "@/hooks/articles/useArticles";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from './index.module.scss';
 import { useRouter } from "next/navigation";
-import {Skeleton, Tabs, TabsProps} from "antd";
+import {Button, Skeleton, Tabs, TabsProps} from "antd";
 import Image from "next/image";
 import {useAppSelector} from "@/store";
 import {apiClient} from "@/clientApi";
@@ -25,8 +25,10 @@ type tabKeysType = 'new' | 'hot';
 export default function Home() {
     const [currentTab, setCurrentTab] = useState<tabKeysType>('new');
     const [showUserBar, setShowUserBar] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
-    const { articleList, getPublishedArticleList, loadMore, messageContext } = useGetPublishedArticleList();
+    const { articleList, getPublishedArticleList, loadMore, messageContext, isInitialLoading, isLoadingMore, hasMore, error } = useGetPublishedArticleList();
     useEffect(() => {
         const mediaQuery = window.matchMedia('(min-width: 769px)');
         const syncShowUserBar = () => setShowUserBar(mediaQuery.matches);
@@ -35,8 +37,23 @@ export default function Home() {
         return () => mediaQuery.removeEventListener('change', syncShowUserBar);
     }, []);
     useEffect(() => {
-        getPublishedArticleList({ isInit: true });
+        void getPublishedArticleList({ isInit: true, sort: currentTab });
     }, [getPublishedArticleList, currentTab]);
+    useEffect(() => {
+        const container = containerRef.current;
+        const sentinel = loadMoreRef.current;
+        if (!container || !sentinel) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0]?.isIntersecting) loadMore(currentTab);
+        }, {
+            root: container,
+            rootMargin: '120px 0px',
+        });
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [currentTab, loadMore]);
     const items: TabsProps['items'] = [
         {
             key: 'new',
@@ -45,6 +62,12 @@ export default function Home() {
             >最新</span>,
             children: <ArticleList
                 articleList={articleList}
+                isInitialLoading={isInitialLoading}
+                isLoadingMore={isLoadingMore}
+                hasMore={hasMore}
+                error={error}
+                onRetry={() => void getPublishedArticleList({ isInit: true, sort: currentTab })}
+                loadMoreRef={loadMoreRef}
             />,
         },
         {
@@ -54,6 +77,12 @@ export default function Home() {
             >热门</span>,
             children: <ArticleList
                 articleList={articleList}
+                isInitialLoading={isInitialLoading}
+                isLoadingMore={isLoadingMore}
+                hasMore={hasMore}
+                error={error}
+                onRetry={() => void getPublishedArticleList({ isInit: true, sort: currentTab })}
+                loadMoreRef={loadMoreRef}
             />,
         },
     ];
@@ -62,17 +91,11 @@ export default function Home() {
             <NavLayout>
             {messageContext}
                 <div
+                    ref={containerRef}
                     className={styles.container}
-                    onScroll={(e) => {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        const {scrollTop, clientHeight, scrollHeight} = e.target;
-                        if (scrollTop + clientHeight >= scrollHeight) {
-                            loadMore();
-                        }
-                    }}
                 >
                     <Tabs
+                        activeKey={currentTab}
                         className={`${styles.tabContainer} ${!userInfo.login ? styles.tabContainerFull : ''}`}
                         items={items}
                         onChange={(tabKey) => {
@@ -181,29 +204,57 @@ type ArticleListItemType = {
 }
 
 const ArticleList = (props: {
-    articleList: ArticleListItemType[] }) => {
-    const {articleList} = props;
+    articleList: ArticleListItemType[];
+    isInitialLoading: boolean;
+    isLoadingMore: boolean;
+    hasMore: boolean;
+    error: string;
+    onRetry: () => void;
+    loadMoreRef: React.Ref<HTMLDivElement>;
+}) => {
+    const {articleList, isInitialLoading, isLoadingMore, hasMore, error, onRetry, loadMoreRef} = props;
+    if (isInitialLoading) {
+        return <div className={styles.articleList}>
+            <Skeleton active/>
+        </div>
+    }
+
+    if (error) {
+        return <div className={styles.articleList}>
+            <div className={styles.articleState}>
+                <div>{error}</div>
+                <Button type="primary" onClick={onRetry}>重试</Button>
+            </div>
+        </div>
+    }
+
+    if (articleList.length === 0) {
+        return <div className={styles.articleList}>
+            <div className={styles.articleState}>暂无文章</div>
+        </div>
+    }
+
     return <div
         className={styles.articleList}
     >
         {
-            articleList.length === 0 ?
-                <Skeleton active/>
-                :
-                articleList.map((article) => {
-                    return <ArticleItem
-                        key={article.id}
-                        title={article.title}
-                        articleId={article.id}
-                        author={article.author_nickname}
-                        updateTime={article.updated_time}
-                        likes_count={article.like_count}
-                        looks_count={article.look_count}
-                        summary={article.summary}
-                        tags={article.tags}
-                        cover={article.cover}
-                    />
-                })
+            articleList.map((article) => {
+                return <ArticleItem
+                    key={article.id}
+                    title={article.title}
+                    articleId={article.id}
+                    author={article.author_nickname}
+                    updateTime={article.updated_time}
+                    likes_count={article.like_count}
+                    looks_count={article.look_count}
+                    summary={article.summary}
+                    tags={article.tags}
+                    cover={article.cover}
+                />
+            })
         }
+        <div ref={loadMoreRef} className={styles.loadMoreTrigger}/>
+        {isLoadingMore && <Skeleton active paragraph={{rows: 1}}/>}
+        {!hasMore && <div className={styles.articleState}>没有更多数据了</div>}
     </div>
 }

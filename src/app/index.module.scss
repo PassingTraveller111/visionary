@@ -17,6 +17,18 @@ $leftBarWidth: 300px;
     .articleList {
       width: 100%;
       background: #fff;
+      .articleState{
+        color: #8a919f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        min-height: 80px;
+      }
+      .loadMoreTrigger{
+        width: 100%;
+        height: 1px;
+      }
     }
   }
   .tabContainerFull{

@@ -48,7 +48,10 @@ export type GetArticleListResponse = {
 export type GetPublishedArticleListRequest = {
     pageNum: number;
     pageSize: number;
+    sort?: ArticleListSort;
 };
+
+export type ArticleListSort = 'new' | 'hot';
 
 export type GetPublishedArticleListResponse = {
     msg: 'success' | 'error';

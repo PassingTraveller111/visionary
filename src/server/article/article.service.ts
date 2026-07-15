@@ -2,7 +2,7 @@ import {randomUUID} from "crypto";
 import type {PoolConnection} from "mysql2/promise";
 import {revalidatePath} from "next/cache";
 import pool from "@/lib/db";
-import {article} from "@/server/sql/article";
+import {article, type ArticleListSort} from "@/server/sql/article";
 import {columns} from "@/server/sql/columns";
 import {uploadImageToCos} from "@/server/cos/upload";
 import type {ArticleDto, ArticleListItemDto, ColumnArticleItemDto, PublishedArticleItemDto} from "@/shared/api/article";
@@ -63,8 +63,8 @@ export const getArticleList = async (authorId: number, viewerUserId = 0) => {
     }
 }
 
-export const getPublishedArticleList = async (pageNum: number, pageSize: number) => {
-    const results = await article.getPublishedArticlesList(pageNum, pageSize);
+export const getPublishedArticleList = async (pageNum: number, pageSize: number, sort: ArticleListSort = 'new') => {
+    const results = await article.getPublishedArticlesList(pageNum, pageSize, sort);
     const total = await article.getPublishedArticleCount();
     if (!results || !total) return null;
     const [ rows ] = results;
