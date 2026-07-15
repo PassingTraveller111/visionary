@@ -25,10 +25,11 @@ type ReaderClientShellProps = {
     authorId: number;
     markdown: string;
     children: React.ReactNode;
+    isPreview?: boolean;
 };
 
 const ReaderClientShell = (props: ReaderClientShellProps) => {
-    const {articleId, authorId, markdown, children} = props;
+    const {articleId, authorId, markdown, children, isPreview = false} = props;
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
     const hasInsertedData = useRef(false);
@@ -53,10 +54,10 @@ const ReaderClientShell = (props: ReaderClientShellProps) => {
     }, []);
 
     useEffect(() => {
-        if (hasInsertedData.current || isLoading || !articleId || !userId) return;
+        if (isPreview || hasInsertedData.current || isLoading || !articleId || !userId) return;
         void insertArticleReadingRecord(articleId, userId);
         hasInsertedData.current = true;
-    }, [articleId, insertArticleReadingRecord, isLoading, userId]);
+    }, [articleId, insertArticleReadingRecord, isLoading, isPreview, userId]);
 
     const requireLogin = useCallback(() => {
         if (login) return true;
@@ -79,8 +80,8 @@ const ReaderClientShell = (props: ReaderClientShellProps) => {
     return <>
         {messageContext}
         <div ref={scrollContainerRef} className={styles.readerScroll}>
-            <div className={styles.readerContainer}>
-                <div className={styles.operator}>
+            <div className={classNames(styles.readerContainer, {[styles.previewContainer]: isPreview})}>
+                {!isPreview && <div className={styles.operator}>
                     <div className={styles.operatorFix}>
                         <OperateButton
                             type="icon-like"
@@ -101,10 +102,10 @@ const ReaderClientShell = (props: ReaderClientShellProps) => {
                         />
                         <OperateButton type="icon-zhuanfa" onClick={onShare} />
                     </div>
-                </div>
+                </div>}
                 <div className={styles.centerContent}>
                     {children}
-                    <Comments articleId={articleId} />
+                    {!isPreview && <Comments articleId={articleId} />}
                 </div>
                 {showRightBar && <div className={styles.rightBar}>
                     <AuthorBar authorId={authorId} />

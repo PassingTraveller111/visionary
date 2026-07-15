@@ -21,6 +21,17 @@ export const getArticle = async (articleId: number, viewerUserId = 0) => {
     }
 }
 
+export const getPublishedPublicArticle = async (articleId: number) => {
+    const connection = await pool.getConnection();
+    try {
+        const sql = `SELECT * FROM articles WHERE id = ? AND is_published = 1 AND view_permission = 'all'`;
+        const [ rows ] = await connection.execute(sql, [articleId]);
+        return Array.isArray(rows) && rows.length > 0 ? rows[0] as ArticleDto : null;
+    } finally {
+        connection.release();
+    }
+}
+
 export const getArticleList = async (authorId: number, viewerUserId = 0) => {
     const connection = await pool.getConnection();
     try {

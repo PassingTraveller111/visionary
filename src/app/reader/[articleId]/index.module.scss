@@ -107,6 +107,12 @@ $rightBarWidth: 260px;
     width: $rightBarWidth;
     right: 20px;
   }
+  &.previewContainer {
+    .centerContent {
+      width: calc(100% - #{$rightBarWidth} - 20px);
+      margin-left: 0;
+    }
+  }
 }
 
 .readerHeaderContainer {
@@ -317,6 +323,11 @@ $rightBarWidth: 260px;
     }
     .rightBar{
       display: none !important;
+    }
+    &.previewContainer {
+      .centerContent {
+        width: 100%;
+      }
     }
   }
 

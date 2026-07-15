@@ -1,4 +1,5 @@
 import type {PoolConnection} from "mysql2/promise";
+import {revalidatePath} from "next/cache";
 import pool from "@/lib/db";
 import type {draftTableType, reviewStatusType} from "@/server/sql/type";
 import type {PublishDraftResult, UpdateDraftData} from "@/shared/api/draft";
@@ -161,6 +162,7 @@ const scheduleAuditArticle = (draft: draftTableType, articleId: number, reviewId
                 articleId,
             ]);
             await updateReviewStatus(reviewId, 'review_success', connection);
+            revalidatePath(`/reader/${articleId}`);
         } catch (error) {
             console.error(error);
         } finally {

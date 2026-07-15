@@ -1,15 +1,12 @@
-import React from 'react';
-import Link from 'next/link';
-import {cookies} from 'next/headers';
 import {notFound} from 'next/navigation';
 import type {Metadata} from 'next';
 import NavLayout from '@/components/NavLayout';
-import MarkdownServer from '@/components/ReactMarkdown/server';
-import {getArticle} from '@/server/article/article.service';
-import type {ArticleDto} from '@/shared/api/article';
-import {verifyToken} from '@/utils/auth';
-import ReaderClientShell, {ReaderEditLink} from './ReaderClientShell';
-import styles from './index.module.scss';
+import {getPublishedPublicArticle} from '@/server/article/article.service';
+import ArticleReaderContent from './ArticleReaderContent';
+import ReaderClientShell from './ReaderClientShell';
+
+export const dynamic = 'force-static';
+export const revalidate = 300;
 
 type ReaderPageProps = {
     params: Promise<{
@@ -24,18 +21,7 @@ const parseArticleId = (value: string) => {
 
 const getPublicArticle = async (articleId: number) => {
     if (!articleId) return null;
-    return getArticle(articleId, await getViewerUserId());
-};
-
-const getViewerUserId = async () => {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return 0;
-
-    try {
-        return verifyToken(token).userId;
-    } catch {
-        return 0;
-    }
+    return getPublishedPublicArticle(articleId);
 };
 
 export async function generateMetadata(props: ReaderPageProps): Promise<Metadata> {
@@ -64,36 +50,9 @@ const ReaderPage = async (props: ReaderPageProps) => {
 
     return <NavLayout>
         <ReaderClientShell articleId={article.id} authorId={article.author_id} markdown={article.content}>
-            <article className={styles.readerContent}>
-                <ReaderHeader article={article} />
-                <MarkdownServer>{article.content}</MarkdownServer>
-            </article>
+            <ArticleReaderContent article={article} />
         </ReaderClientShell>
     </NavLayout>;
-};
-
-const ReaderHeader = ({article}: { article: ArticleDto }) => {
-    return <div className={styles.readerHeaderContainer}>
-        <div>
-            <span className={styles.title}>{article.title}</span>
-        </div>
-        <div className={styles.introContainer}>
-            <span className={styles.left}>
-                <Link className={styles.authorName} href={`/userCenter/${article.author_id}`}>{article.author_nickname}</Link>
-                <span className={styles.publishTime}>{formatDate(article.published_time)}</span>
-            </span>
-            <ReaderEditLink authorId={article.author_id} draftId={article.draft_id} />
-        </div>
-    </div>;
-};
-
-const formatDate = (value?: string) => {
-    if (!value) return '';
-    return new Intl.DateTimeFormat('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(new Date(value));
 };
 
 export default ReaderPage;
