@@ -109,6 +109,38 @@ $rightBarWidth: 260px;
   }
 }
 
+.readerHeaderContainer {
+  background: #fff;
+  padding: 20px;
+  .title{
+    font-size: 32px;
+    font-weight: bold;
+  }
+  .introContainer{
+    display: flex;
+    justify-content: space-between;
+    .left{
+      .authorName{
+        color: #515767;
+        cursor: pointer;
+        &:hover{
+          color: #1e80ff;
+        }
+      }
+      .publishTime,
+      .view{
+        margin-left: 10px;
+        color: #8a919f;
+      }
+    }
+  }
+}
+
+.headerEdit{
+  color: #1e80ff;
+  cursor: pointer;
+}
+
 .authorBar{
   display: flex;
   background: #fff;
