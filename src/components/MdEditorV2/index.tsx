@@ -20,6 +20,14 @@ import TableModal from './components/TableModal';
 import MarkdownToolbar from './components/Toolbar';
 import styles from './index.module.scss';
 
+const HISTORY_LIMIT = 100;
+const INPUT_HISTORY_GROUP_DELAY = 800;
+
+type EditHistoryEntry = {
+    value: string;
+    selection: SelectionRange;
+};
+
 const MdEditorV2 = (props: MdEditorV2Props) => {
     const { value = '', onChange, onSaveDraft, saveStatus = 'success', lastSavedAt, hasUnsavedChanges = false, onRetrySave, className } = props;
     const [mode, setMode] = useState<EditorMode>('split');
@@ -44,6 +52,13 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     const highlightRef = useRef<HTMLPreElement>(null);
     const isSyncingScrollRef = useRef(false);
     const valueRef = useRef(value);
+    const undoStackRef = useRef<EditHistoryEntry[]>([]);
+    const redoStackRef = useRef<EditHistoryEntry[]>([]);
+    const inputHistoryGroupOpenRef = useRef(false);
+    const inputHistoryTimerRef = useRef<number | null>(null);
+    const selectionBeforeInputRef = useRef<SelectionRange | null>(null);
+    const [canUndo, setCanUndo] = useState(false);
+    const [canRedo, setCanRedo] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [diagramsList] = useGetDiagramsList();
     const updateDiagram = useUpdateDiagram();
@@ -51,10 +66,6 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     const deferredValue = useDeferredValue(value);
     const matches = useMemo(() => findMatches(value, debouncedFindQuery), [debouncedFindQuery, value]);
     const currentPosition = getLineColumn(value, cursorPosition.start);
-
-    useEffect(() => {
-        valueRef.current = value;
-    }, [value]);
 
     useEffect(() => {
         const html = document.documentElement;
@@ -91,12 +102,90 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         });
     }, []);
 
-    const applyChange = useCallback((nextValue: string, selection?: SelectionRange) => {
+    const updateHistoryState = useCallback(() => {
+        setCanUndo(undoStackRef.current.length > 0);
+        setCanRedo(redoStackRef.current.length > 0);
+    }, []);
+
+    const closeInputHistoryGroup = useCallback(() => {
+        inputHistoryGroupOpenRef.current = false;
+        if (inputHistoryTimerRef.current) {
+            window.clearTimeout(inputHistoryTimerRef.current);
+            inputHistoryTimerRef.current = null;
+        }
+    }, []);
+
+    const extendInputHistoryGroup = useCallback(() => {
+        if (inputHistoryTimerRef.current) window.clearTimeout(inputHistoryTimerRef.current);
+        inputHistoryTimerRef.current = window.setTimeout(closeInputHistoryGroup, INPUT_HISTORY_GROUP_DELAY);
+    }, [closeInputHistoryGroup]);
+
+    useEffect(() => {
+        if (value !== valueRef.current) {
+            undoStackRef.current = [];
+            redoStackRef.current = [];
+            closeInputHistoryGroup();
+            updateHistoryState();
+        }
+        valueRef.current = value;
+    }, [closeInputHistoryGroup, updateHistoryState, value]);
+
+    useEffect(() => closeInputHistoryGroup, [closeInputHistoryGroup]);
+
+    const pushUndoEntry = useCallback((entry: EditHistoryEntry) => {
+        undoStackRef.current.push(entry);
+        if (undoStackRef.current.length > HISTORY_LIMIT) undoStackRef.current.shift();
+        redoStackRef.current = [];
+        updateHistoryState();
+    }, [updateHistoryState]);
+
+    const applyChange = useCallback((nextValue: string, selection?: SelectionRange, recordHistory = true, historySelection?: SelectionRange) => {
+        const previousValue = valueRef.current;
+        if (recordHistory && nextValue !== previousValue) {
+            pushUndoEntry({
+                value: previousValue,
+                selection: historySelection ?? getSelection(),
+            });
+        }
+
         valueRef.current = nextValue;
         onChange(nextValue);
         onSaveDraft(nextValue);
         if (selection) focusSelection(selection);
+    }, [focusSelection, getSelection, onChange, onSaveDraft, pushUndoEntry]);
+
+    const restoreHistoryEntry = useCallback((entry: EditHistoryEntry) => {
+        valueRef.current = entry.value;
+        onChange(entry.value);
+        onSaveDraft(entry.value);
+        focusSelection(entry.selection);
     }, [focusSelection, onChange, onSaveDraft]);
+
+    const undo = useCallback(() => {
+        closeInputHistoryGroup();
+        const entry = undoStackRef.current.pop();
+        if (!entry) return;
+
+        redoStackRef.current.push({
+            value: valueRef.current,
+            selection: getSelection(),
+        });
+        restoreHistoryEntry(entry);
+        updateHistoryState();
+    }, [closeInputHistoryGroup, getSelection, restoreHistoryEntry, updateHistoryState]);
+
+    const redo = useCallback(() => {
+        closeInputHistoryGroup();
+        const entry = redoStackRef.current.pop();
+        if (!entry) return;
+
+        undoStackRef.current.push({
+            value: valueRef.current,
+            selection: getSelection(),
+        });
+        restoreHistoryEntry(entry);
+        updateHistoryState();
+    }, [closeInputHistoryGroup, getSelection, restoreHistoryEntry, updateHistoryState]);
 
     const updateCursorPosition = useCallback(() => {
         setCursorPosition(getSelection());
@@ -145,9 +234,10 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     }, [syncHighlightScroll]);
 
     const insertText = useCallback((insertValue: string) => {
+        closeInputHistoryGroup();
         const result = replaceRange(valueRef.current, getSelection(), insertValue);
         applyChange(result.value, result.selection);
-    }, [applyChange, getSelection]);
+    }, [applyChange, closeInputHistoryGroup, getSelection]);
 
     const insertTable = useCallback(() => {
         insertText(`\n${createMarkdownTable(tableRows, tableColumns)}\n`);
@@ -155,6 +245,18 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     }, [insertText, tableColumns, tableRows]);
 
     const runCommand = useCallback((command: EditorCommand) => {
+        closeInputHistoryGroup();
+
+        if (command === 'undo') {
+            undo();
+            return;
+        }
+
+        if (command === 'redo') {
+            redo();
+            return;
+        }
+
         if (command === 'save') {
             onSaveDraft(valueRef.current);
             return;
@@ -163,7 +265,7 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         const result = applyMarkdownCommand(valueRef.current, getSelection(), command);
         if (!result) return;
         applyChange(result.value, result.selection);
-    }, [applyChange, getSelection, onSaveDraft]);
+    }, [applyChange, closeInputHistoryGroup, getSelection, onSaveDraft, redo, undo]);
 
     const selectMatch = useCallback((matchIndex: number, nextMatches = matches) => {
         if (nextMatches.length === 0) return;
@@ -190,18 +292,20 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     const replaceCurrent = useCallback(() => {
         const match = matches[currentMatchIndex];
         if (!match) return;
+        closeInputHistoryGroup();
         const result = replaceRange(valueRef.current, match, replaceText);
         applyChange(result.value, result.selection);
         const nextMatches = findMatches(result.value, debouncedFindQuery);
         selectMatch(Math.min(currentMatchIndex, nextMatches.length - 1), nextMatches);
-    }, [applyChange, currentMatchIndex, debouncedFindQuery, matches, replaceText, selectMatch]);
+    }, [applyChange, closeInputHistoryGroup, currentMatchIndex, debouncedFindQuery, matches, replaceText, selectMatch]);
 
     const replaceAll = useCallback(() => {
         if (!debouncedFindQuery) return;
+        closeInputHistoryGroup();
         const nextValue = valueRef.current.replaceAll(debouncedFindQuery, replaceText);
         applyChange(nextValue, { start: 0, end: 0 });
         setCurrentMatchIndex(0);
-    }, [applyChange, debouncedFindQuery, replaceText]);
+    }, [applyChange, closeInputHistoryGroup, debouncedFindQuery, replaceText]);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -302,12 +406,35 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         void uploadImage(file);
     }, [uploadImage]);
 
+    const onBeforeInput = useCallback(() => {
+        selectionBeforeInputRef.current = getSelection();
+    }, [getSelection]);
+
+    const onTextChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const nextValue = event.target.value;
+        const previousValue = valueRef.current;
+        if (nextValue !== previousValue) {
+            if (!inputHistoryGroupOpenRef.current) {
+                pushUndoEntry({
+                    value: previousValue,
+                    selection: selectionBeforeInputRef.current ?? getSelection(),
+                });
+                inputHistoryGroupOpenRef.current = true;
+            }
+            extendInputHistoryGroup();
+        }
+
+        applyChange(nextValue, undefined, false);
+        selectionBeforeInputRef.current = null;
+    }, [applyChange, extendInputHistoryGroup, getSelection, pushUndoEntry]);
+
     const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         const isModKey = event.metaKey || event.ctrlKey;
         if (event.key === 'Enter' && !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey) {
             const result = getEnterContinuation(valueRef.current, getSelection());
             if (result) {
                 event.preventDefault();
+                closeInputHistoryGroup();
                 applyChange(result.value, result.selection);
                 return;
             }
@@ -315,13 +442,29 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
 
         if (event.key === 'Tab') {
             event.preventDefault();
+            closeInputHistoryGroup();
             const result = insertTabAtSelection(valueRef.current, getSelection());
             applyChange(result.value, result.selection);
             return;
         }
 
+        if (!isModKey && (event.key.length === 1 || event.key === 'Backspace' || event.key === 'Delete')) {
+            selectionBeforeInputRef.current = getSelection();
+        }
+
         if (!isModKey) return;
         const key = event.key.toLowerCase();
+        if (key === 'z') {
+            event.preventDefault();
+            if (event.shiftKey) redo();
+            else undo();
+            return;
+        }
+        if (key === 'y') {
+            event.preventDefault();
+            redo();
+            return;
+        }
         if (key === 'b') {
             event.preventDefault();
             runCommand('bold');
@@ -338,7 +481,7 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
             event.preventDefault();
             setFindPanelOpen(true);
         }
-    }, [applyChange, getSelection, onSaveDraft, runCommand]);
+    }, [applyChange, closeInputHistoryGroup, getSelection, onSaveDraft, redo, runCommand, undo]);
 
     const insertDiagram = useCallback((diagramId: number) => {
         insertText(`\n\`\`\`diagram?id=${diagramId}\n\`\`\`\n`);
@@ -448,6 +591,8 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         <MarkdownToolbar
             mode={mode}
             isFullscreen={isFullscreen}
+            canUndo={canUndo}
+            canRedo={canRedo}
             onCommand={runCommand}
             onModeChange={setMode}
             onFindClick={() => setFindPanelOpen(value => !value)}
@@ -502,7 +647,8 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
                     value={value}
                     placeholder="开始写作，支持 Markdown 语法..."
                     spellCheck={false}
-                    onChange={(event) => applyChange(event.target.value)}
+                    onBeforeInput={onBeforeInput}
+                    onChange={onTextChange}
                     onKeyDown={onKeyDown}
                     onPaste={onPaste}
                     onClick={updateCursorPosition}

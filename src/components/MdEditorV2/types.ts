@@ -17,6 +17,8 @@ export type EditorCommand =
     | 'blockCode'
     | 'table'
     | 'formula'
+    | 'undo'
+    | 'redo'
     | 'save';
 
 export type SelectionRange = {

@@ -9,6 +9,8 @@ import styles from '../index.module.scss';
 type MarkdownToolbarProps = {
     mode: EditorMode;
     isFullscreen: boolean;
+    canUndo: boolean;
+    canRedo: boolean;
     onCommand: (command: EditorCommand) => void;
     onModeChange: (mode: EditorMode) => void;
     onFindClick: () => void;
@@ -26,7 +28,7 @@ const titleItems: MenuProps['items'] = [
 ];
 
 const MarkdownToolbar = (props: MarkdownToolbarProps) => {
-    const { mode, isFullscreen, onCommand, onModeChange, onFindClick, onFullscreenClick, onTableClick, onImageClick, onImageSizeClick, onDiagramClick } = props;
+    const { mode, isFullscreen, canUndo, canRedo, onCommand, onModeChange, onFindClick, onFullscreenClick, onTableClick, onImageClick, onImageSizeClick, onDiagramClick } = props;
 
     return <div className={styles.toolbar}>
         <Space size={6} wrap>
@@ -56,6 +58,8 @@ const MarkdownToolbar = (props: MarkdownToolbarProps) => {
             <Button size="small" onClick={onDiagramClick}>图表</Button>
         </Space>
         <Space size={6} className={styles.modeSwitch}>
+            <Tooltip title="撤销 Ctrl/Cmd + Z"><Button size="small" disabled={!canUndo} onClick={() => onCommand('undo')}>撤销</Button></Tooltip>
+            <Tooltip title="恢复 Ctrl/Cmd + Shift + Z / Ctrl + Y"><Button size="small" disabled={!canRedo} onClick={() => onCommand('redo')}>恢复</Button></Tooltip>
             <Tooltip title="查找/替换 Ctrl/Cmd + F"><Button size="small" onClick={onFindClick}>查找</Button></Tooltip>
             <Button size="small" type={mode === 'edit' ? 'primary' : 'default'} onClick={() => onModeChange(mode === 'edit' ? 'split' : 'edit')}>仅编辑</Button>
             <Button size="small" type={mode === 'preview' ? 'primary' : 'default'} onClick={() => onModeChange(mode === 'preview' ? 'split' : 'preview')}>仅预览</Button>

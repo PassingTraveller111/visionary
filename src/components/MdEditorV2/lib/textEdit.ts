@@ -165,6 +165,8 @@ export const applyMarkdownCommand = (
             return insertBlock(value, selection, '| 标题 | 标题 |\n| --- | --- |\n| 内容 | 内容 |\n');
         case 'formula':
             return wrapSelection(value, selection, '$', '$', 'E = mc^2');
+        case 'undo':
+        case 'redo':
         case 'save':
             return null;
     }
