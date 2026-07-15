@@ -1,5 +1,6 @@
 import {randomUUID} from "crypto";
 import type {PoolConnection} from "mysql2/promise";
+import {revalidatePath} from "next/cache";
 import pool from "@/lib/db";
 import {article} from "@/server/sql/article";
 import {columns} from "@/server/sql/columns";
@@ -95,6 +96,7 @@ export const deleteArticleById = async (articleId: number) => {
         const draftId = await getDraftId(articleId, connection);
         await connection.execute(`DELETE FROM articles WHERE id = ?;`, [articleId]);
         if (draftId) await connection.execute(`DELETE FROM drafts WHERE id = ?;`, [draftId]);
+        revalidatePath(`/reader/${articleId}`);
         return '删除成功';
     } finally {
         connection.release();

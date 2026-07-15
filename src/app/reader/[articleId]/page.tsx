@@ -6,7 +6,7 @@ import ArticleReaderContent from './ArticleReaderContent';
 import ReaderClientShell from './ReaderClientShell';
 
 export const dynamic = 'force-static';
-export const revalidate = 300;
+export const revalidate = false;
 
 type ReaderPageProps = {
     params: Promise<{
