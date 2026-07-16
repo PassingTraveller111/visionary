@@ -1,3 +1,5 @@
+"use client"
+
 import {ComponentType} from "@/components/ReactMarkdown/components/type";
 import {useId, useState} from "react";
 import styles from './index.module.scss';
