@@ -14,6 +14,11 @@ import {TrackProvider} from "@/app/TrackProvider";
 export const metadata: Metadata = {
   title: "创见",
   description: "Visionary",
+  verification: {
+    other: {
+      "baidu-site-verification": "codeva-fVYgDETRW8",
+    },
+  },
 };
 
 export const viewport: Viewport = {
@@ -27,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <ReduxProvider>
             <ConfigProvider locale={locale}>
