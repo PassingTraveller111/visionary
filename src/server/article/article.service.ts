@@ -21,7 +21,12 @@ export const getArticle = async (articleId: number, viewerUserId = 0) => {
     try {
         const sql = `SELECT * FROM articles WHERE id = ? AND ((is_published = 1 AND view_permission = 'all') OR author_id = ?)`;
         const [ rows ] = await connection.execute(sql, [articleId, viewerUserId]);
-        return Array.isArray(rows) && rows.length > 0 ? rows[0] as ArticleDto : null;
+        if (!Array.isArray(rows) || rows.length === 0) return null;
+        const article = rows[0] as ArticleDto;
+        return {
+            ...article,
+            ...await getArticleMeta(articleId, connection),
+        };
     } finally {
         connection.release();
     }
@@ -32,10 +37,39 @@ export const getPublishedPublicArticle = async (articleId: number) => {
     try {
         const sql = `SELECT * FROM articles WHERE id = ? AND is_published = 1 AND view_permission = 'all'`;
         const [ rows ] = await connection.execute(sql, [articleId]);
-        return Array.isArray(rows) && rows.length > 0 ? rows[0] as ArticleDto : null;
+        if (!Array.isArray(rows) || rows.length === 0) return null;
+        const article = rows[0] as ArticleDto;
+        return {
+            ...article,
+            ...await getArticleMeta(articleId, connection),
+        };
     } finally {
         connection.release();
     }
+}
+
+const getArticleMeta = async (articleId: number, connection: PoolConnection) => {
+    const [readRows] = await connection.execute(
+        `SELECT COUNT(*) AS look_count FROM article_reading_records WHERE article_id = ?`,
+        [articleId]
+    );
+    const [columnRows] = await connection.execute(
+        `SELECT c.column_id, c.column_name
+         FROM article_columns ac
+                  INNER JOIN columns c ON c.column_id = ac.column_id
+         WHERE ac.article_id = ?
+         ORDER BY c.created_at DESC`,
+        [articleId]
+    );
+
+    const lookCount = Array.isArray(readRows) && readRows.length > 0
+        ? Number((readRows[0] as { look_count: number }).look_count)
+        : 0;
+
+    return {
+        look_count: lookCount,
+        columns: Array.isArray(columnRows) ? columnRows as ArticleDto['columns'] : [],
+    };
 }
 
 export const getPublishedPublicArticleSitemapItems = async () => {

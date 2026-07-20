@@ -1,3 +1,8 @@
+export type ArticleColumnDto = {
+    column_id: number;
+    column_name: string;
+};
+
 export type ArticleDto = {
     id: number;
     content: string;
@@ -14,6 +19,8 @@ export type ArticleDto = {
     draft_id?: number;
     review_id?: number;
     cover?: string;
+    look_count?: number;
+    columns?: ArticleColumnDto[];
 };
 
 export type GetArticleRequest = {

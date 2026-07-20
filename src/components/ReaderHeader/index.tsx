@@ -23,7 +23,7 @@ const ReaderHeader= (props: ReaderHeaderProps) => {
         window.open(`/editor/draft/v2/${draft_id}`, '_blank');
     }
     const gotoProfile = () => {
-        router.push(`/userCenter/${authorId}`);
+        router.push(`/userCenter/${authorId}/article`);
     }
     return <div
         className={styles.readerHeaderContainer}

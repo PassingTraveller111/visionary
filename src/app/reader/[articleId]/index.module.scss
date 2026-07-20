@@ -137,6 +137,10 @@ $rightBarWidth: 260px;
     display: flex;
     justify-content: space-between;
     .left{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      align-items: center;
       .authorName{
         color: #515767;
         cursor: pointer;
@@ -145,9 +149,20 @@ $rightBarWidth: 260px;
         }
       }
       .publishTime,
-      .view{
-        margin-left: 10px;
+      .view,
+      .columns{
         color: #8a919f;
+      }
+      .columnLink{
+        color: #515767;
+        text-decoration: none;
+        &:hover{
+          color: #1e80ff;
+        }
+      }
+      .columnSeparator{
+        margin: 0 6px;
+        color: #c2c8d1;
       }
     }
   }
