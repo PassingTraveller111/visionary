@@ -8,6 +8,7 @@ import {Profile} from "@/components/Profile";
 import classNames from "classnames";
 import ArticleSearch from "@/components/Navigation/components/ArticleSearch";
 import {useAppSelector} from "@/store";
+import Link from "next/link";
 
 const Navigation = () => {
     const router = useRouter();
@@ -15,15 +16,14 @@ const Navigation = () => {
 
     return <div className={styles['nav-container']}>
         <span className={styles['nav-left']}>
-            <span
+            <Link
+                href="/"
+                aria-label="创见博客首页"
                 className={classNames(styles.logo)}
-                onClick={() => {
-                    router.push('/');
-                }}
             >
                 <LogoIcon/>
-                <span className={styles.logoText}>创见</span>
-            </span>
+                <span className={styles.logoText}>创见博客</span>
+            </Link>
         </span>
         <span className={styles['nav-right']}>
             <ArticleSearch/>

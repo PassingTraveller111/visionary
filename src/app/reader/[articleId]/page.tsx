@@ -8,6 +8,8 @@ import ReaderClientShell from './ReaderClientShell';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
+const siteUrl = 'https://visionaryblog.cn';
+
 type ReaderPageProps = {
     params: Promise<{
         articleId: string;
@@ -32,6 +34,9 @@ export async function generateMetadata(props: ReaderPageProps): Promise<Metadata
     return {
         title: article.title,
         description: article.summary || article.content.slice(0, 120),
+        alternates: {
+            canonical: `${siteUrl}/reader/${article.id}`,
+        },
         openGraph: {
             title: article.title,
             description: article.summary || article.content.slice(0, 120),

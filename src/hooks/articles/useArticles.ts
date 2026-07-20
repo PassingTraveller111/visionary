@@ -68,15 +68,19 @@ export const useGetArticleList = () => {
     return { articleList, getArticleList };
 }
 
-export const useGetPublishedArticleList = () => {
-    const [articleList, setArticleList] = useState<PublishedArticleItemDto[]>([]);
-    const [isInitialLoading, setIsInitialLoading] = useState(true);
+export const useGetPublishedArticleList = (initialData?: ArticleQueryResult) => {
+    const [articleList, setArticleList] = useState<PublishedArticleItemDto[]>(initialData?.items ?? []);
+    const [isInitialLoading, setIsInitialLoading] = useState(!initialData);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(() => {
+        if (!initialData) return true;
+        const loadedCount = initialData.pageNum * initialData.pageSize + initialData.items.length;
+        return initialData.total === undefined ? initialData.items.length === initialData.pageSize : loadedCount < initialData.total;
+    });
     const [error, setError] = useState('');
     const [pageInfo, setPageInfo] = useState({
-        pageNum: 0,
-        pageSize: 8,
+        pageNum: initialData?.pageNum ?? 0,
+        pageSize: initialData?.pageSize ?? 8,
     });
     const [messageApi, contextHandle] = useMessage();
     const getPublishedArticleList = useCallback(async ({ pageNum = 0, pageSize = 8, isInit = false, sort = 'new' }: { pageNum?: number; pageSize?: number; isInit?: boolean; sort?: ArticleListSort }) => {
