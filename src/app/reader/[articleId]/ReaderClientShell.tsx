@@ -1,6 +1,7 @@
 'use client'
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
 import {Anchor, Button, Input, Popconfirm} from 'antd';
@@ -18,28 +19,34 @@ import {AppDispatch, useAppSelector} from '@/store';
 import {setArticle} from '@/store/features/articleSlice';
 import type {commentItem, SendCommentRequest} from '@/shared/api/article_comments';
 import type {ApiResponse} from '@/shared/api/response';
+import type {PublishedArticleItemDto} from '@/shared/api/article';
 import styles from './index.module.scss';
+
+export type RelatedArticleItem = Pick<PublishedArticleItemDto, 'id' | 'title' | 'summary' | 'updated_time'>;
 
 type ReaderClientShellProps = {
     articleId: number;
     authorId: number;
     markdown: string;
     children: React.ReactNode;
+    relatedArticles?: RelatedArticleItem[];
     isPreview?: boolean;
 };
 
 const ReaderClientShell = (props: ReaderClientShellProps) => {
-    const {articleId, authorId, markdown, children, isPreview = false} = props;
+    const {articleId, authorId, markdown, children, relatedArticles = [], isPreview = false} = props;
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
     const hasInsertedData = useRef(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const rightBarContentRef = useRef<HTMLDivElement>(null);
     const [messageApi, messageContext] = useMessage();
     const {isLoading, id: userId, login} = useAppSelector(state => state.rootReducer.userReducer.value);
     const {isLike, setArticleIsLike} = useArticleLike();
     const {isCollected, setArticleIsCollected} = useSetArticleIsCollected();
     const insertArticleReadingRecord = useInsertArticleReadingRecord();
     const [showRightBar, setShowRightBar] = useState(false);
+    const [showStickyRightBar, setShowStickyRightBar] = useState(false);
 
     useEffect(() => {
         dispatch(setArticle({articleId, authorId, content: markdown}));
@@ -58,6 +65,33 @@ const ReaderClientShell = (props: ReaderClientShellProps) => {
         void insertArticleReadingRecord(articleId, userId);
         hasInsertedData.current = true;
     }, [articleId, insertArticleReadingRecord, isLoading, isPreview, userId]);
+
+    useEffect(() => {
+        if (!showRightBar || isPreview) {
+            setShowStickyRightBar(false);
+            return;
+        }
+
+        const scrollContainer = scrollContainerRef.current;
+        const rightBarContent = rightBarContentRef.current;
+        if (!scrollContainer || !rightBarContent) return;
+
+        const syncStickyRightBar = () => {
+            const containerRect = scrollContainer.getBoundingClientRect();
+            const contentRect = rightBarContent.getBoundingClientRect();
+            const shouldShowSticky = contentRect.bottom <= containerRect.top;
+            setShowStickyRightBar(previous => previous === shouldShowSticky ? previous : shouldShowSticky);
+        };
+
+        syncStickyRightBar();
+        scrollContainer.addEventListener('scroll', syncStickyRightBar, {passive: true});
+        window.addEventListener('resize', syncStickyRightBar);
+
+        return () => {
+            scrollContainer.removeEventListener('scroll', syncStickyRightBar);
+            window.removeEventListener('resize', syncStickyRightBar);
+        };
+    }, [isPreview, relatedArticles.length, showRightBar]);
 
     const requireLogin = useCallback(() => {
         if (login) return true;
@@ -108,8 +142,15 @@ const ReaderClientShell = (props: ReaderClientShellProps) => {
                     {!isPreview && <Comments articleId={articleId} />}
                 </div>
                 {showRightBar && <div className={styles.rightBar}>
-                    <AuthorBar authorId={authorId} />
-                    <OutlineBar scrollContainerRef={scrollContainerRef} markdown={markdown} />
+                    <div ref={rightBarContentRef}>
+                        <AuthorBar authorId={authorId} />
+                        <OutlineBar scrollContainerRef={scrollContainerRef} markdown={markdown} />
+                        {!isPreview && <RelatedArticlesBar articles={relatedArticles} />}
+                    </div>
+                    {!isPreview && <div className={classNames(styles.stickyRightBar, {[styles.stickyRightBarVisible]: showStickyRightBar})}>
+                        <OutlineBar scrollContainerRef={scrollContainerRef} markdown={markdown} />
+                        <RelatedArticlesBar articles={relatedArticles} />
+                    </div>}
                 </div>}
             </div>
         </div>
@@ -137,6 +178,21 @@ const AuthorBar = (props: AuthorBarProps) => {
         <div className={styles.authorInfo}>
             <div className={styles.nickName} onClick={() => router.push(`/userCenter/${authorId}/article`)}>{authorInfo?.nick_name}</div>
             <div>{authorInfo?.email}</div>
+        </div>
+    </div>;
+};
+
+const RelatedArticlesBar = ({articles}: { articles: RelatedArticleItem[] }) => {
+    if (articles.length === 0) return null;
+
+    return <div className={styles.relatedBarContainer}>
+        <div className={styles.relatedHeader}>相关推荐</div>
+        <div className={styles.relatedList}>
+            {articles.map(article => <Link key={article.id} href={`/reader/${article.id}`} className={styles.relatedItem}>
+                <div className={styles.relatedTitle}>{article.title}</div>
+                {article.summary && <div className={styles.relatedSummary}>{article.summary}</div>}
+                <div className={styles.relatedTime}>{dayjs(article.updated_time).format('YYYY-MM-DD')}</div>
+            </Link>)}
         </div>
     </div>;
 };
@@ -197,6 +253,7 @@ const OutlineBar = (props: OutlineBarProps) => {
             [styles.outlineIsOpen]: outlineOpen,
         })}>
             <Anchor
+                affix={false}
                 onClick={(event, link) => scrollToHeading(event, link.href)}
                 getContainer={() => scrollContainerRef.current ?? document.body}
                 items={outline}
