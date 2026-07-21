@@ -48,6 +48,20 @@ export const getPublishedPublicArticle = async (articleId: number) => {
     }
 }
 
+export const getPublishedPublicArticleMeta = async (articleId: number) => {
+    const connection = await pool.getConnection();
+    try {
+        const [ rows ] = await connection.execute(
+            `SELECT id FROM articles WHERE id = ? AND is_published = 1 AND view_permission = 'all'`,
+            [articleId]
+        );
+        if (!Array.isArray(rows) || rows.length === 0) return null;
+        return getArticleMeta(articleId, connection);
+    } finally {
+        connection.release();
+    }
+}
+
 const getArticleMeta = async (articleId: number, connection: PoolConnection) => {
     const [readRows] = await connection.execute(
         `SELECT COUNT(*) AS look_count FROM article_reading_records WHERE article_id = ?`,

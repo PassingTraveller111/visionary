@@ -23,6 +23,8 @@ export type ArticleDto = {
     columns?: ArticleColumnDto[];
 };
 
+export type ArticleMetaDto = Pick<ArticleDto, 'look_count' | 'columns'>;
+
 export type GetArticleRequest = {
     articleId: number;
 };
