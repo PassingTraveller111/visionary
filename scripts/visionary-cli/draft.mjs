@@ -47,14 +47,27 @@ async function publishDraftRequest(options, draftId) {
 }
 
 async function loadContent(options, existingContent = '') {
+  if (options.content !== undefined && options.contentFile) {
+    throw new Error('Use either --content or --content-file, not both.');
+  }
+
+  if (options.content !== undefined) {
+    return options.keepTitle ? options.content : stripLeadingH1(options.content);
+  }
+
   if (!options.contentFile) return existingContent;
   const content = await readFile(options.contentFile, 'utf8');
   return options.keepTitle ? content : stripLeadingH1(content);
 }
 
+function requireDraftContent(options) {
+  if (options.content !== undefined || options.contentFile) return;
+  throw new Error('Missing required option --content or --content-file');
+}
+
 async function createDraft(options) {
   const title = requireOption(options, 'title');
-  requireOption(options, 'contentFile');
+  requireDraftContent(options);
 
   const [user, content] = await Promise.all([
     getCurrentUser(options),

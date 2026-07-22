@@ -217,6 +217,7 @@ export VISIONARY_COOKIE='token=<token-cookie-value>'
 
 ```bash
 npm run visionary -- draft create --title "Article title" --content-file ./draft.md --summary "Short summary" --tags "Next.js,React" --json
+npm run visionary -- draft create --title "Article title" --content $'## Intro\n\nMarkdown content' --summary "Short summary" --tags "Next.js,React" --json
 ```
 
 读取草稿：
@@ -229,6 +230,7 @@ npm run visionary -- draft get --id 1 --json
 
 ```bash
 npm run visionary -- draft update --id 1 --content-file ./draft.md --title "Updated title" --json
+npm run visionary -- draft update --id 1 --content $'## Updated\n\nMarkdown content' --title "Updated title" --json
 ```
 
 发布草稿：

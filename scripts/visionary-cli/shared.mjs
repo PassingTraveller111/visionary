@@ -1,9 +1,9 @@
 export function printUsage() {
   console.log(`Usage:
   npm run visionary -- auth login --username <username> --password <password> [--base-url <url>] [--remember]
-  npm run visionary -- draft create --title <title> --content-file <path> [--summary <text>] [--tags <a,b>] [--cover <url>] [--keep-title]
+  npm run visionary -- draft create --title <title> (--content <markdown> | --content-file <path>) [--summary <text>] [--tags <a,b>] [--cover <url>] [--keep-title]
   npm run visionary -- draft get --id <id>
-  npm run visionary -- draft update --id <id> [--title <title>] [--content-file <path>] [--summary <text>] [--tags <a,b>] [--cover <url>] [--keep-title]
+  npm run visionary -- draft update --id <id> [--title <title>] [--content <markdown> | --content-file <path>] [--summary <text>] [--tags <a,b>] [--cover <url>] [--keep-title]
   npm run visionary -- draft publish --id <id> --confirm
   npm run visionary -- article list [--user-id <id>] [--limit <n>] [--published-only]
   npm run visionary -- article public-list [--page-num <n>] [--page-size <n>] [--sort new|hot]
@@ -28,7 +28,7 @@ Options:
   --cookie <cookie>    Full Cookie header. Defaults to VISIONARY_COOKIE.
   --remember           Ask login API to issue a longer-lived token.
   --confirm            Required for commands that publish content.
-  --keep-title         Keep a leading H1 from --content-file. By default, leading H1 is stripped before upload.
+  --keep-title         Keep a leading H1 from --content/--content-file. By default, leading H1 is stripped before upload.
   --json               Kept for agent compatibility. Output is always JSON.
   --help               Show this help.
 `);
