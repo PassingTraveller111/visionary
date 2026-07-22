@@ -162,7 +162,7 @@ const scheduleAuditArticle = (draft: draftTableType, articleId: number, reviewId
                 articleId,
             ]);
             await updateReviewStatus(reviewId, 'review_success', connection);
-            revalidatePath(`/reader/${articleId}`);
+            await revalidateReaderPath(articleId);
         } catch (error) {
             console.error(error);
         } finally {
@@ -173,4 +173,34 @@ const scheduleAuditArticle = (draft: draftTableType, articleId: number, reviewId
 
 const updateReviewStatus = async (reviewId: number, status: reviewStatusType, connection: PoolConnection) => {
     await connection.execute(`UPDATE reviews SET status = ? WHERE id = ?;`, [status, reviewId]);
+}
+
+const getInternalAppUrl = () => {
+    return (process.env.INTERNAL_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:3000').replace(/\/+$/, '');
+}
+
+const revalidateReaderPath = async (articleId: number) => {
+    const path = `/reader/${articleId}`;
+    const secret = process.env.SECRET_KEY;
+
+    if (!secret) {
+        revalidatePath(path);
+        return;
+    }
+
+    try {
+        const response = await fetch(`${getInternalAppUrl()}/api/internal/revalidate/reader/${articleId}`, {
+            method: 'POST',
+            headers: {
+                'x-internal-secret': secret,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to revalidate ${path}: HTTP ${response.status}`);
+        }
+    } catch (error) {
+        console.error(error);
+        revalidatePath(path);
+    }
 }
