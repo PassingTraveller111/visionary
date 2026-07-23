@@ -1,39 +1,45 @@
-"use client"
-import {useParams} from "next/navigation";
-import {AppDispatch, useAppSelector} from "@/store";
-import {useDispatch} from "react-redux";
-import {useEffect} from "react";
-import ReaderHeader from "@/components/ReaderHeader";
-import NavLayout from "@/components/NavLayout";
-import ReactMarkdown from "@/components/ReactMarkdown";
-import styles from './index.module.scss';
-import {setReview} from "@/store/features/reviewSlice";
-import {useGetReview} from "@/hooks/reviews/useReviews";
+import {notFound} from 'next/navigation';
+import type {Metadata} from 'next';
+import NavLayout from '@/components/NavLayout';
+import {getReview} from '@/server/review/review.service';
+import ReaderClientShell from '../../[articleId]/ReaderClientShell';
+import ReviewReaderContent from './ReviewReaderContent';
 
-const ReviewReaderPage = () => {
-    const { reviewId } =  useParams();
-    const review = useAppSelector(state => state.rootReducer.reviewReducer.value);
-    const getReview = useGetReview();
-    const dispatch = useDispatch<AppDispatch>();
-    useEffect(() => {
-        const id = Number(reviewId);
-        dispatch(setReview({
-            ...review,
-            id,
-        }))
-        if(id) getReview(id);
-        // Initialize the review once for the current route id.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [reviewId])
-    return <>
-        <NavLayout>
-            <div className={styles.readerContainer}>
-                <div className={styles.readerContent}>
-                    <ReaderHeader title={review.title} authorName={review.author_nickname} authorId={review.author_id} draft_id={review.draft_id} />
-                    <ReactMarkdown>{review.content}</ReactMarkdown>
-                </div>
-            </div>
-        </NavLayout>
-    </>
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+type ReviewReaderPageProps = {
+    params: Promise<{
+        reviewId: string;
+    }>;
+};
+
+const parseReviewId = (value: string) => {
+    const reviewId = Number(value);
+    return Number.isInteger(reviewId) && reviewId > 0 ? reviewId : 0;
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: '审核稿预览',
+        robots: {
+            index: false,
+            follow: false,
+        },
+    };
 }
+
+const ReviewReaderPage = async (props: ReviewReaderPageProps) => {
+    const {reviewId: reviewIdParam} = await props.params;
+    const review = await getReview(parseReviewId(reviewIdParam));
+
+    if (!review) notFound();
+
+    return <NavLayout>
+        <ReaderClientShell articleId={review.article_id ?? 0} authorId={review.author_id} markdown={review.content} isPreview>
+            <ReviewReaderContent review={review} />
+        </ReaderClientShell>
+    </NavLayout>;
+};
+
 export default ReviewReaderPage;

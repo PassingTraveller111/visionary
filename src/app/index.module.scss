@@ -91,6 +91,59 @@ $leftBarWidth: 300px;
         }
       }
     }
+    .cliRecommendBar{
+      margin-top: 16px;
+      padding: 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #f4f8ff 100%);
+      border: 1px solid #e8f0ff;
+      &:first-child{
+        margin-top: 0;
+      }
+      .cliRecommendTitle{
+        font-size: 16px;
+        font-weight: 600;
+        color: #1d2129;
+      }
+      .cliRecommendDesc{
+        margin-top: 8px;
+        color: #515767;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .cliInstallCommand{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        padding: 8px;
+        border-radius: 8px;
+        overflow-x: auto;
+        background: #eef4ff;
+        color: #1d4ed8;
+        font-size: 13px;
+        white-space: nowrap;
+        code{
+          flex: 1;
+          min-width: 0;
+          overflow-x: auto;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+      }
+      .cliCopyButton{
+        flex: 0 0 auto;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 8px;
+        background: #fff;
+        color: #1e80ff;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(30, 128, 255, 0.14);
+        &:hover{
+          background: #e8f3ff;
+        }
+      }
+    }
   }
 }
 

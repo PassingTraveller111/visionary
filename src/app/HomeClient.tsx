@@ -5,6 +5,7 @@ import React, {useEffect, useRef, useState} from "react";
 import styles from './index.module.scss';
 import { useRouter } from "next/navigation";
 import {Button, Skeleton, Tabs, TabsProps} from "antd";
+import useMessage from "antd/es/message/useMessage";
 import Image from "next/image";
 import {useAppSelector} from "@/store";
 import {apiClient} from "@/clientApi";
@@ -30,6 +31,7 @@ export default function HomeClient({ initialArticles }: { initialArticles?: Arti
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const { articleList, getPublishedArticleList, loadMore, messageContext, isInitialLoading, isLoadingMore, hasMore, error } = useGetPublishedArticleList(initialArticles);
+    const showLeftBar = showUserBar;
     useEffect(() => {
         const mediaQuery = window.matchMedia('(min-width: 769px)');
         const syncShowUserBar = () => setShowUserBar(mediaQuery.matches);
@@ -101,14 +103,15 @@ export default function HomeClient({ initialArticles }: { initialArticles?: Arti
                 >
                     <Tabs
                         activeKey={currentTab}
-                        className={`${styles.tabContainer} ${!userInfo.login ? styles.tabContainerFull : ''}`}
+                        className={`${styles.tabContainer} ${!showLeftBar ? styles.tabContainerFull : ''}`}
                         items={items}
                         onChange={(tabKey) => {
                             setCurrentTab(tabKey as tabKeysType);
                         }}
                     />
-                    {userInfo.login && showUserBar && <div className={styles.leftBar}>
-                        <UserBar/>
+                    {showLeftBar && <div className={styles.leftBar}>
+                        {userInfo.login && <UserBar/>}
+                        <CliRecommendBar />
                     </div>}
                 </div>
             </NavLayout>
@@ -194,6 +197,30 @@ const UserBar = () => {
             </span>
         </div>
     </div>
+}
+
+const CliRecommendBar = () => {
+    const [messageApi, contextHolder] = useMessage();
+    const installCommand = 'npm install -g visionary-cli';
+
+    const copyInstallCommand = async () => {
+        try {
+            await navigator.clipboard.writeText(installCommand);
+            messageApi.success('复制成功');
+        } catch {
+            messageApi.error('复制失败');
+        }
+    };
+
+    return <div className={styles.cliRecommendBar}>
+        {contextHolder}
+        <div className={styles.cliRecommendTitle}>用 CLI 发布更高效</div>
+        <div className={styles.cliRecommendDesc}>安装 Visionary CLI 后，可以在终端中创建草稿、上传 Markdown 并发布文章。</div>
+        <div className={styles.cliInstallCommand}>
+            <code>{installCommand}</code>
+            <button type="button" className={styles.cliCopyButton} onClick={copyInstallCommand}>复制</button>
+        </div>
+    </div>;
 }
 
 type ArticleListItemType = {
