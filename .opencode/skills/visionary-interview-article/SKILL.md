@@ -20,11 +20,11 @@ This skill is for the local Visionary project at `/Users/bytedance/Desktop/proje
 Use the project CLI instead of browser automation when possible:
 
 ```bash
-node scripts/visionary-cli.mjs article list --published-only --limit 30
-node scripts/visionary-cli.mjs article get --id <articleId>
-node scripts/visionary-cli.mjs draft create --title "<title>" --content-file "<path>" --summary "<summary>" --tags "<tags>"
-node scripts/visionary-cli.mjs draft publish --id <draftId> --confirm
-node scripts/visionary-cli.mjs article get --id <articleId>
+visionary-cli article list --published-only --limit 30
+visionary-cli article get --id <articleId>
+visionary-cli draft create --title "<title>" --content-file "<path>" --summary "<summary>" --tags "<tags>"
+visionary-cli draft publish --id <draftId> --confirm
+visionary-cli article get --id <articleId>
 ```
 
 The CLI uses saved auth from `~/.visionary-cli/config.json`, `VISIONARY_TOKEN`, or `VISIONARY_COOKIE`.
@@ -36,7 +36,7 @@ The CLI uses saved auth from `~/.visionary-cli/config.json`, `VISIONARY_TOKEN`, 
 When the user asks to use article history, personal history, recent articles, or Visionary content, run:
 
 ```bash
-node scripts/visionary-cli.mjs article list --published-only --limit 30
+visionary-cli article list --published-only --limit 30
 ```
 
 Prefer recent published articles. Identify frontend-focused topics such as:
@@ -55,15 +55,15 @@ Prefer recent published articles. Identify frontend-focused topics such as:
 If the first batch is not enough, increase the limit or use targeted search:
 
 ```bash
-node scripts/visionary-cli.mjs article search --keyword "Next.js" --page-size 20
-node scripts/visionary-cli.mjs article search --keyword "React" --page-size 20
-node scripts/visionary-cli.mjs article search --keyword "埋点" --page-size 20
+visionary-cli article search --keyword "Next.js" --page-size 20
+visionary-cli article search --keyword "React" --page-size 20
+visionary-cli article search --keyword "埋点" --page-size 20
 ```
 
 Then fetch the most relevant article bodies:
 
 ```bash
-node scripts/visionary-cli.mjs article get --id <articleId>
+visionary-cli article get --id <articleId>
 ```
 
 Do not invent article content. If a question is described as coming from an article, base it on fetched titles, summaries, tags, and article content.
@@ -298,7 +298,7 @@ Recommended tags:
 Create the draft:
 
 ```bash
-node scripts/visionary-cli.mjs draft create \
+visionary-cli draft create \
   --title "模拟面试（一）" \
   --content-file "tmp/模拟面试一点评.md" \
   --summary "基于一次模拟前端面试回答的逐题点评，覆盖 Next.js、React、SSR/ISR、Hydration、SEO 和前端埋点等主题。" \
@@ -308,13 +308,13 @@ node scripts/visionary-cli.mjs draft create \
 Publish the draft:
 
 ```bash
-node scripts/visionary-cli.mjs draft publish --id <draftId> --confirm
+visionary-cli draft publish --id <draftId> --confirm
 ```
 
 Verify the article status:
 
 ```bash
-node scripts/visionary-cli.mjs article get --id <articleId>
+visionary-cli article get --id <articleId>
 ```
 
 Report back with:
@@ -335,5 +335,5 @@ If the article returns `review_status: pending_review` or `is_published: 0`, exp
 - If creating a temporary Markdown file, use `apply_patch` for manual file creation or edits.
 - Keep published content faithful to the final feedback already given to the user.
 - Preserve full questions and original user answers in the published article. Do not collapse questions into short headings such as only `Server Component 和 Client Component` unless the full question is also present.
-- If the CLI reports missing auth, ask the user to run `node scripts/visionary-cli.mjs auth login ...` or provide `VISIONARY_TOKEN` / `VISIONARY_COOKIE`.
+- If the CLI reports missing auth, ask the user to run `visionary-cli auth login ...` or provide `VISIONARY_TOKEN` / `VISIONARY_COOKIE`.
 - If publishing succeeds but review is pending, do not claim it is publicly live.

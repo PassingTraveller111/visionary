@@ -29,8 +29,7 @@ Visionary 是一个基于 Next.js App Router 的创作与阅读平台，站点�
 ```text
 .
 ├── public/                         # 静态资源，包含站点 logo、favicon、编辑器插件图标
-├── scripts/
-│   └── visionary-cli.mjs           # 面向脚本/Agent 的 Visionary CLI
+├── scripts/                         # 项目辅助脚本
 ├── src/
 │   ├── app/                        # Next.js App Router 页面、布局和 REST API Route Handlers
 │   │   ├── api/                    # 资源式 REST 接口：articles、drafts、users、columns、diagrams 等
@@ -183,19 +182,24 @@ npm run dev       # 启动 Next.js 开发服务
 npm run build     # 构建生产包
 npm run start     # 启动生产服务
 npm run lint      # 运行 lint 脚本
-npm run visionary # 运行本地 Visionary CLI
 ```
 
 注意：当前 `next.config.ts` 中配置了 `eslint.ignoreDuringBuilds` 和 `typescript.ignoreBuildErrors`，生产构建不会因为 ESLint 或 TypeScript 错误失败。提交前仍建议单独检查类型和质量问题。
 
 ## Visionary CLI
 
-本地 CLI 位于 `scripts/visionary-cli.mjs`，用于通过现有网站 API 操作草稿。输出始终为 JSON，适合自动化脚本和 Agent 使用。
+Visionary CLI 已抽出为 npm 包，用于通过现有网站 API 操作草稿。输出始终为 JSON，适合自动化脚本和 Agent 使用。
+
+安装 CLI：
+
+```bash
+npm install -g visionary-cli
+```
 
 登录并保存 token：
 
 ```bash
-npm run visionary -- auth login --base-url https://visionaryblog.cn --username <username> --password <password> --remember --json
+visionary-cli auth login --base-url https://visionaryblog.cn --username <username> --password <password> --remember --json
 ```
 
 token 会保存到：
@@ -216,27 +220,27 @@ export VISIONARY_COOKIE='token=<token-cookie-value>'
 创建草稿：
 
 ```bash
-npm run visionary -- draft create --title "Article title" --content-file ./draft.md --summary "Short summary" --tags "Next.js,React" --json
-npm run visionary -- draft create --title "Article title" --content $'## Intro\n\nMarkdown content' --summary "Short summary" --tags "Next.js,React" --json
+visionary-cli draft create --title "Article title" --content-file ./draft.md --summary "Short summary" --tags "Next.js,React" --json
+visionary-cli draft create --title "Article title" --content $'## Intro\n\nMarkdown content' --summary "Short summary" --tags "Next.js,React" --json
 ```
 
 读取草稿：
 
 ```bash
-npm run visionary -- draft get --id 1 --json
+visionary-cli draft get --id 1 --json
 ```
 
 更新草稿：
 
 ```bash
-npm run visionary -- draft update --id 1 --content-file ./draft.md --title "Updated title" --json
-npm run visionary -- draft update --id 1 --content $'## Updated\n\nMarkdown content' --title "Updated title" --json
+visionary-cli draft update --id 1 --content-file ./draft.md --title "Updated title" --json
+visionary-cli draft update --id 1 --content $'## Updated\n\nMarkdown content' --title "Updated title" --json
 ```
 
 发布草稿：
 
 ```bash
-npm run visionary -- draft publish --id 1 --confirm --json
+visionary-cli draft publish --id 1 --confirm --json
 ```
 
 发布命令必须显式传入 `--confirm`，避免脚本误发布。
