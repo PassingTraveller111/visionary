@@ -20,7 +20,7 @@ This skill is for the local Visionary project at `/Users/bytedance/Desktop/proje
 Use the project CLI instead of browser automation when possible:
 
 ```bash
-visionary-cli article list --published-only --limit 30
+visionary-cli article list --published-only --limit 200
 visionary-cli article get --id <articleId>
 visionary-cli draft create --title "<title>" --content-file "<path>" --summary "<summary>" --tags "<tags>"
 visionary-cli draft publish --id <draftId> --confirm
@@ -33,13 +33,21 @@ The CLI uses saved auth from `~/.visionary-cli/config.json`, `VISIONARY_TOKEN`, 
 
 ### 1. Collect article history and choose question sources
 
-When the user asks to use article history, personal history, recent articles, or Visionary content, run:
+When the user asks to use article history, personal history, random article history, or Visionary content, build a broad article pool instead of only reading the newest articles:
 
 ```bash
-visionary-cli article list --published-only --limit 30
+visionary-cli article list --published-only --limit 200
 ```
 
-Prefer recent published articles. Identify frontend-focused topics such as:
+Default article selection should be global-random, not recent-first:
+
+- Fetch a broad published-article list, preferably `--limit 200` or higher when needed.
+- Randomly sample candidate articles from the full returned pool.
+- Do not just take the first 8 to 10 articles from the list, because those are usually the most recent.
+- Prefer frontend-focused articles after random sampling, but keep enough topic diversity so the interview does not repeatedly focus on the newest writing streak.
+- If the user explicitly asks for recent articles, then and only then prioritize the newest published articles.
+
+Useful frontend-focused topics include:
 
 - React
 - Next.js
@@ -52,7 +60,7 @@ Prefer recent published articles. Identify frontend-focused topics such as:
 - IntersectionObserver
 - page stay / exposure tracking
 
-If the first batch is not enough, increase the limit or use targeted search:
+If the broad article pool is not enough, increase the limit or use targeted search to supplement the random pool:
 
 ```bash
 visionary-cli article search --keyword "Next.js" --page-size 20
@@ -60,7 +68,7 @@ visionary-cli article search --keyword "React" --page-size 20
 visionary-cli article search --keyword "埋点" --page-size 20
 ```
 
-Then fetch the most relevant article bodies:
+Then fetch the sampled and most relevant article bodies:
 
 ```bash
 visionary-cli article get --id <articleId>
@@ -76,7 +84,7 @@ Question sources can be mixed:
 
 If the user does not specify the source, use a balanced default:
 
-- About 60% article-derived or hybrid questions.
+- About 60% article-derived or hybrid questions, based on globally random sampled articles rather than only recent articles.
 - About 40% random general frontend questions.
 
 If the user explicitly asks for random questions, broader scope, or not limited to article history, you may skip article fetching or use article history only as light inspiration.
