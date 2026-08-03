@@ -1,6 +1,6 @@
 import {query} from "@/server/db/query";
 import {columnsTableType} from "@/server/sql/type";
-import type {PublicColumnDto} from "@/shared/api/columns";
+import type {PublicColumnDto, PublicColumnSitemapItem} from "@/shared/api/columns";
 
 
 const updateColumn = async (column_id: number, column_name: string, author_id: number, description: string, cover_image?: string) => {
@@ -74,6 +74,17 @@ const getPublicColumnCount = async () => {
                             AND a.view_permission = 'all'`) as [[{recordCounts: number}]] | null;
 }
 
+const getPublicColumnSitemapItems = async () => {
+    return await query(`SELECT c.column_id,
+                               MAX(a.updated_time) AS latest_article_updated_at
+                        FROM columns c
+                                 INNER JOIN article_columns ac ON ac.column_id = c.column_id
+                                 INNER JOIN articles a ON a.id = ac.article_id
+                            AND a.is_published = 1
+                            AND a.view_permission = 'all'
+                        GROUP BY c.column_id`) as [PublicColumnSitemapItem[]] | null;
+}
+
 
 export const columns = {
     insertColumn,
@@ -83,4 +94,5 @@ export const columns = {
     getColumn,
     getPublicColumns,
     getPublicColumnCount,
+    getPublicColumnSitemapItems,
 }

@@ -35,6 +35,13 @@ export const getPublicColumns = async (pageNum: number, pageSize: number) => {
     };
 }
 
+export const getPublicColumnSitemapItems = async () => {
+    const result = await columns.getPublicColumnSitemapItems();
+    if (!result) return [];
+    const [items] = result;
+    return items;
+}
+
 export const upsertColumn = async (data: UpdateColumnRequest, userId: number) => {
     if (data.column_id) {
         return columns.updateColumn(data.column_id, data.column_name, userId, data.description, data.cover_image);

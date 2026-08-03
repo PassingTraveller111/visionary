@@ -14,6 +14,8 @@ export type PublicColumnDto = ColumnDto & {
     latest_article_updated_at: string;
 };
 
+export type PublicColumnSitemapItem = Pick<PublicColumnDto, 'column_id' | 'latest_article_updated_at'>;
+
 export type PublicColumnQueryResult = {
     items: PublicColumnDto[];
     total: number;
