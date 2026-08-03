@@ -5,6 +5,10 @@ $rightBarWidth: 260px;
   height: 100%;
 }
 .readerContainer {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  box-sizing: border-box;
   padding: 20px;
   display: flex;
   .operatorFix{

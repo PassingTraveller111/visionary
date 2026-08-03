@@ -18,6 +18,23 @@ export const getColumnById = async (columnId: number) => {
     return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
 }
 
+export const getPublicColumns = async (pageNum: number, pageSize: number) => {
+    const [columnResult, countResult] = await Promise.all([
+        columns.getPublicColumns(pageNum, pageSize),
+        columns.getPublicColumnCount(),
+    ]);
+    if (!columnResult || !countResult) return null;
+
+    const [items] = columnResult;
+    const [[{recordCounts}]] = countResult;
+    return {
+        items,
+        total: Number(recordCounts),
+        pageNum,
+        pageSize,
+    };
+}
+
 export const upsertColumn = async (data: UpdateColumnRequest, userId: number) => {
     if (data.column_id) {
         return columns.updateColumn(data.column_id, data.column_name, userId, data.description, data.cover_image);

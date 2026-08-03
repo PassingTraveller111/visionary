@@ -9,6 +9,18 @@ export type ColumnDto = {
     created_at: string;
 };
 
+export type PublicColumnDto = ColumnDto & {
+    article_count: number;
+    latest_article_updated_at: string;
+};
+
+export type PublicColumnQueryResult = {
+    items: PublicColumnDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+};
+
 export type UpdateColumnRequest = {
     column_id?: number;
     column_name: string;

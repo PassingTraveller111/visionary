@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {Button, Skeleton, Tabs, TabsProps} from "antd";
 import useMessage from "antd/es/message/useMessage";
 import Image from "next/image";
+import Link from "next/link";
 import {useAppSelector} from "@/store";
 import {apiClient} from "@/clientApi";
 import type {QuoteDto} from "@/shared/api/quotes";
@@ -18,19 +19,34 @@ import {useGetLookCountByUserId} from "@/hooks/article_reading_records/useArticl
 import {useGetArticleLikeCountByUserId} from "@/hooks/article_likes/useArticleLikes";
 import ArticleItem from "@/components/ArticleItem";
 import type {ApiResponse} from "@/shared/api/response";
+import type {PublicColumnDto, PublicColumnQueryResult} from "@/shared/api/columns";
 
 
 
-type tabKeysType = 'new' | 'hot';
+type tabKeysType = 'new' | 'hot' | 'columns';
 
-export default function HomeClient({ initialArticles }: { initialArticles?: ArticleQueryResult }) {
+type HomeClientProps = {
+    initialArticles?: ArticleQueryResult;
+    initialColumns?: PublicColumnQueryResult;
+};
+
+export default function HomeClient({initialArticles, initialColumns}: HomeClientProps) {
     const [currentTab, setCurrentTab] = useState<tabKeysType>('new');
     const [showUserBar, setShowUserBar] = useState(false);
     const didUseInitialArticlesRef = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
+    const columnLoadMoreRef = useRef<HTMLDivElement>(null);
     const userInfo = useAppSelector(state => state.rootReducer.userReducer.value);
     const { articleList, getPublishedArticleList, loadMore, messageContext, isInitialLoading, isLoadingMore, hasMore, error } = useGetPublishedArticleList(initialArticles);
+    const [columnList, setColumnList] = useState(initialColumns?.items ?? []);
+    const [columnPageNum, setColumnPageNum] = useState(initialColumns?.pageNum ?? 0);
+    const [isColumnLoading, setIsColumnLoading] = useState(!initialColumns);
+    const [columnError, setColumnError] = useState('');
+    const [hasMoreColumns, setHasMoreColumns] = useState(() => {
+        if (!initialColumns) return true;
+        return initialColumns.items.length < initialColumns.total;
+    });
     const showLeftBar = showUserBar;
     useEffect(() => {
         const mediaQuery = window.matchMedia('(min-width: 769px)');
@@ -40,19 +56,55 @@ export default function HomeClient({ initialArticles }: { initialArticles?: Arti
         return () => mediaQuery.removeEventListener('change', syncShowUserBar);
     }, []);
     useEffect(() => {
+        if (currentTab === 'columns') return;
         if (!didUseInitialArticlesRef.current && currentTab === 'new' && initialArticles) {
             didUseInitialArticlesRef.current = true;
             return;
         }
         void getPublishedArticleList({ isInit: true, sort: currentTab });
     }, [getPublishedArticleList, currentTab, initialArticles]);
+
+    const getPublicColumnList = React.useCallback(async (pageNum: number, isInit = false) => {
+        if (isInit) setIsColumnLoading(true);
+        setColumnError('');
+        try {
+            const res = await apiClient(`columns?pageNum=${pageNum}&pageSize=8`) as ApiResponse<PublicColumnQueryResult>;
+            if (!res.ok) {
+                setColumnError(res.error.message);
+                return;
+            }
+
+            setColumnList(current => isInit ? res.data.items : [...current, ...res.data.items]);
+            setColumnPageNum(res.data.pageNum);
+            setHasMoreColumns((res.data.pageNum * res.data.pageSize) + res.data.items.length < res.data.total);
+        } catch {
+            setColumnError('专栏列表加载失败');
+        } finally {
+            setIsColumnLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (currentTab === 'columns' && !initialColumns && columnList.length === 0 && !columnError) {
+            void getPublicColumnList(0, true);
+        }
+    }, [columnError, columnList.length, currentTab, getPublicColumnList, initialColumns]);
+
+    const loadMoreColumns = React.useCallback(() => {
+        if (isColumnLoading || !hasMoreColumns) return;
+        setIsColumnLoading(true);
+        void getPublicColumnList(columnPageNum + 1);
+    }, [columnPageNum, getPublicColumnList, hasMoreColumns, isColumnLoading]);
+
     useEffect(() => {
         const container = containerRef.current;
-        const sentinel = loadMoreRef.current;
+        const sentinel = currentTab === 'columns' ? columnLoadMoreRef.current : loadMoreRef.current;
         if (!container || !sentinel) return;
 
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0]?.isIntersecting) loadMore(currentTab);
+            if (!entries[0]?.isIntersecting) return;
+            if (currentTab === 'columns') loadMoreColumns();
+            else loadMore(currentTab);
         }, {
             root: container,
             rootMargin: '120px 0px',
@@ -60,7 +112,7 @@ export default function HomeClient({ initialArticles }: { initialArticles?: Arti
 
         observer.observe(sentinel);
         return () => observer.disconnect();
-    }, [currentTab, loadMore]);
+    }, [currentTab, loadMore, loadMoreColumns]);
     const items: TabsProps['items'] = [
         {
             key: 'new',
@@ -73,7 +125,7 @@ export default function HomeClient({ initialArticles }: { initialArticles?: Arti
                 isLoadingMore={isLoadingMore}
                 hasMore={hasMore}
                 error={error}
-                onRetry={() => void getPublishedArticleList({ isInit: true, sort: currentTab })}
+                onRetry={() => void getPublishedArticleList({isInit: true, sort: 'new'})}
                 loadMoreRef={loadMoreRef}
             />,
         },
@@ -88,8 +140,20 @@ export default function HomeClient({ initialArticles }: { initialArticles?: Arti
                 isLoadingMore={isLoadingMore}
                 hasMore={hasMore}
                 error={error}
-                onRetry={() => void getPublishedArticleList({ isInit: true, sort: currentTab })}
+                onRetry={() => void getPublishedArticleList({isInit: true, sort: 'hot'})}
                 loadMoreRef={loadMoreRef}
+            />,
+        },
+        {
+            key: 'columns',
+            label: <span className={styles.tabLabel}>专栏</span>,
+            children: <ColumnList
+                columns={columnList}
+                isLoading={isColumnLoading}
+                hasMore={hasMoreColumns}
+                error={columnError}
+                onRetry={() => void getPublicColumnList(0, true)}
+                loadMoreRef={columnLoadMoreRef}
             />,
         },
     ];
@@ -290,3 +354,57 @@ const ArticleList = (props: {
         {!hasMore && <div className={styles.articleState}>没有更多数据了</div>}
     </div>
 }
+
+const ColumnList = (props: {
+    columns: PublicColumnDto[];
+    isLoading: boolean;
+    hasMore: boolean;
+    error: string;
+    onRetry: () => void;
+    loadMoreRef: React.Ref<HTMLDivElement>;
+}) => {
+    const {columns, isLoading, hasMore, error, onRetry, loadMoreRef} = props;
+
+    if (error && columns.length === 0) {
+        return <div className={styles.articleState}>
+            <div>{error}</div>
+            <Button type="primary" onClick={onRetry}>重试</Button>
+        </div>;
+    }
+
+    if (isLoading && columns.length === 0) return <Skeleton active/>;
+    if (columns.length === 0) return <div className={styles.articleState}>暂无专栏</div>;
+
+    return <div>
+        <div className={styles.columnList}>
+            {columns.map(column => <Link
+                key={column.column_id}
+                href={`/userCenter/Columns/${column.column_id}`}
+                className={styles.columnCard}
+            >
+                {column.cover_image && <Image
+                    className={styles.columnCover}
+                    src={column.cover_image}
+                    alt={`${column.column_name}专栏封面`}
+                    width={160}
+                    height={112}
+                />}
+                <div className={styles.columnContent}>
+                    <h2>{column.column_name}</h2>
+                    <p>{column.description}</p>
+                    <div className={styles.columnMeta}>
+                        <span>{column.article_count} 篇文章</span>
+                        <span>更新于 {new Date(column.latest_article_updated_at).toISOString().slice(0, 10)}</span>
+                    </div>
+                </div>
+            </Link>)}
+        </div>
+        <div ref={loadMoreRef} className={styles.loadMoreTrigger}/>
+        {isLoading && <Skeleton active paragraph={{rows: 1}}/>}
+        {error && <div className={styles.articleState}>
+            <div>{error}</div>
+            <Button onClick={onRetry}>重试</Button>
+        </div>}
+        {!hasMore && <div className={styles.articleState}>没有更多数据了</div>}
+    </div>;
+};

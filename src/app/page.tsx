@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import HomeClient from "./HomeClient";
 import {getPublishedArticleList} from "@/server/article/article.service";
+import {getPublicColumns} from "@/server/columns/columns.service";
 import type {ArticleQueryResult} from "@/shared/api/article";
 
 const siteUrl = "https://visionaryblog.cn";
@@ -17,13 +18,16 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-    const result = await getPublishedArticleList(0, homePageSize, 'new');
-    const initialArticles: ArticleQueryResult | undefined = result ? {
-        items: result.rows,
-        total: result.total,
+    const [articleResult, initialColumns] = await Promise.all([
+        getPublishedArticleList(0, homePageSize, 'new'),
+        getPublicColumns(0, homePageSize),
+    ]);
+    const initialArticles: ArticleQueryResult | undefined = articleResult ? {
+        items: articleResult.rows,
+        total: articleResult.total,
         pageNum: 0,
         pageSize: homePageSize,
     } : undefined;
 
-    return <HomeClient initialArticles={initialArticles} />;
+    return <HomeClient initialArticles={initialArticles} initialColumns={initialColumns ?? undefined}/>;
 }
