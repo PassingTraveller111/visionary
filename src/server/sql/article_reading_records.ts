@@ -15,7 +15,23 @@ const getArticleReadingRecordsByUserId = async (userId: number, pageNum: number 
 }
 // 添加浏览记录
 const insertArticleReadingRecord = async (article_id: number, user_id: number) => {
-    return (await query(`INSERT INTO article_reading_records (article_id, user_id) VALUES (?, ?)`, [article_id, user_id])) as [ { insertId: number } ] | null;
+    return (await query(`INSERT INTO article_reading_records (article_id, user_id) VALUES (?, ?)`, [article_id, user_id])) as [ { insertId: number, affectedRows: number } ] | null;
+}
+
+const insertAnonymousArticleReadingRecord = async (articleId: number, visitorId: string) => {
+    return (await query(`INSERT INTO article_reading_records (article_id, user_id, visitor_id)
+                         SELECT a.id, NULL, ?
+                         FROM articles a
+                         WHERE a.id = ?
+                           AND a.is_published = 1
+                           AND a.view_permission = 'all'
+                           AND NOT EXISTS (
+                             SELECT 1
+                             FROM article_reading_records
+                             WHERE article_id = ?
+                               AND visitor_id = ?
+                               AND read_time >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+                           )`, [visitorId, articleId, articleId, visitorId])) as [ { insertId: number, affectedRows: number } ] | null;
 }
 // 获取某用户的文章被阅读总量
 const getArticleReadingRecordsCountByUserId = async (userId: number) => {
@@ -25,5 +41,6 @@ const getArticleReadingRecordsCountByUserId = async (userId: number) => {
 export const article_reading_records = {
     getArticleReadingRecordsByUserId,
     insertArticleReadingRecord,
+    insertAnonymousArticleReadingRecord,
     getArticleReadingRecordsCountByUserId,
 }

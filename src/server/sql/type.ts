@@ -62,7 +62,8 @@ export type quotesTableType = {
 export type article_reading_recordsTableType = {
     record_id: number,
     article_id: number,
-    user_id: number,
+    user_id: number | null,
+    visitor_id: string | null,
     read_time: string, // 阅读时间
 }
 

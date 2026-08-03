@@ -13,15 +13,10 @@ export type LookCount = {
     look_count: number;
 };
 
-export type insertArticleReadingRecordRequestType = {
-    userId: number;
-    articleId: number;
-};
-
 export type insertArticleReadingRecordResponseType = {
     msg: 'success';
     data: {
-        insertId: number;
+        inserted: boolean;
     };
 } | {
     msg: 'error';

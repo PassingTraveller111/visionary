@@ -61,12 +61,14 @@ const ReaderClientShell = (props: ReaderClientShellProps) => {
     }, []);
 
     useEffect(() => {
-        if (isPreview || hasInsertedData.current || isLoading || !articleId || !userId) return;
-        void insertArticleReadingRecord(articleId, userId).then(() => {
-            window.dispatchEvent(new CustomEvent('article-reading-record-inserted', {detail: {articleId}}));
+        if (isPreview || hasInsertedData.current || isLoading || !articleId) return;
+        void insertArticleReadingRecord(articleId).then(inserted => {
+            if (inserted) {
+                window.dispatchEvent(new CustomEvent('article-reading-record-inserted', {detail: {articleId}}));
+            }
         });
         hasInsertedData.current = true;
-    }, [articleId, insertArticleReadingRecord, isLoading, isPreview, userId]);
+    }, [articleId, insertArticleReadingRecord, isLoading, isPreview]);
 
     useEffect(() => {
         if (!showRightBar || isPreview) {

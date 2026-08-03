@@ -1,7 +1,4 @@
 import {apiClient} from "@/clientApi";
-import {
-    insertArticleReadingRecordRequestType
-} from "@/shared/api/article_reading_records";
 import {useCallback, useState} from "react";
 import {
     ArticleReadingRecordItem, getArticleReadingRecordsByUserIdRequestType
@@ -14,15 +11,12 @@ import type {ApiResponse} from "@/shared/api/response";
 
 
 export const useInsertArticleReadingRecord = () => {
-    return useCallback(async (article_id: number, user_id: number) => {
-        if(article_id === 0 || user_id === 0) return;
-        const apiData: insertArticleReadingRecordRequestType = {
-            articleId: article_id,
-            userId: user_id,
-        }
-        await apiClient(`articles/${apiData.articleId}/reading-records`, {
+    return useCallback(async (articleId: number) => {
+        if(articleId === 0) return false;
+        const res = await apiClient(`articles/${articleId}/reading-records`, {
             method: "POST",
-        }) as ApiResponse<{ insertId: number }>;
+        }) as ApiResponse<{ inserted: boolean }>;
+        return res.ok && res.data.inserted;
     }, [])
 }
 

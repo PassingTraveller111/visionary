@@ -1,12 +1,16 @@
 import {article_reading_records} from "@/server/sql/article_reading_records";
 import type {ArticleReadingRecordItem, LookCount} from "@/shared/api/article_reading_records";
 
-export const insertArticleReadingRecord = async (articleId: number, userId: number) => {
-    const results = await article_reading_records.insertArticleReadingRecord(articleId, userId);
+export const insertArticleReadingRecord = async (articleId: number, userId: number | null, visitorId?: string) => {
+    const results = userId
+        ? await article_reading_records.insertArticleReadingRecord(articleId, userId)
+        : visitorId
+            ? await article_reading_records.insertAnonymousArticleReadingRecord(articleId, visitorId)
+            : null;
     if (!results) return null;
 
-    const [{ insertId }] = results;
-    return { insertId };
+    const [{ affectedRows }] = results;
+    return { inserted: affectedRows > 0 };
 }
 
 export const getArticleReadingRecordsByUserId = async (userId: number, pageNum = 0, pageSize = 8): Promise<ArticleReadingRecordItem[] | null> => {
