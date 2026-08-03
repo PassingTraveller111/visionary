@@ -1,46 +1,72 @@
-"use client"
+import {cache} from "react";
+import type {Metadata} from "next";
+import {cookies} from "next/headers";
+import {notFound} from "next/navigation";
 import NavLayout from "@/components/NavLayout";
-import styles from "./index.module.scss";
-import {Empty} from "antd";
-import {useGetArticleListByColumnId, useGetColumn} from "@/hooks/columns/useColumns";
-import ArticleItem from "@/components/ArticleItem";
-import {useEffect} from "react";
-import {useParams} from "next/navigation";
+import {getArticleListByColumnId} from "@/server/article/article.service";
+import {getColumnById} from "@/server/columns/columns.service";
+import {verifyToken} from "@/utils/auth";
+import ColumnsPageContent from "./ColumnsPageContent";
 
+export const dynamic = "force-dynamic";
 
+const siteUrl = "https://visionaryblog.cn";
+const getColumn = cache(getColumnById);
 
-const ColumnsPage = () => {
-    const column_id = Number(useParams().column_id);
-    const [articleList, getArticleList] = useGetArticleListByColumnId();
-    const [column] = useGetColumn(column_id);
-    useEffect(() => {
-        getArticleList(column_id)
-    }, [column_id, getArticleList])
-    return <>
-        <NavLayout>
-            <div
-                className={styles['column-container']}
-            >
-                <div className={styles['articleList-container']}>
-                    <div className={styles.headerContainer}>
-                        {column.column_name}
-                    </div>
-                    {articleList.length === 0 && <Empty/>}
-                    {articleList.map((article) => {
-                        return <ArticleItem
-                            key={article.id}
-                            title={article.title}
-                            articleId={article.id}
-                            cover={article.cover}
-                            tags={article.tags}
-                            summary={article.summary}
-                            updateTime={article.updated_time}
-                        />
-                    })}
-                </div>
-            </div>
-        </NavLayout>
-    </>
+type ColumnsPageProps = {
+    params: Promise<{
+        column_id: string;
+    }>;
+};
+
+const parseColumnId = (value: string) => {
+    const columnId = Number(value);
+    return Number.isInteger(columnId) && columnId > 0 ? columnId : 0;
+};
+
+const getViewerUserId = async () => {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return 0;
+
+    try {
+        return verifyToken(token).userId;
+    } catch {
+        return 0;
+    }
+};
+
+export async function generateMetadata({params}: ColumnsPageProps): Promise<Metadata> {
+    const {column_id: columnIdParam} = await params;
+    const column = await getColumn(parseColumnId(columnIdParam));
+    if (!column) return {};
+
+    return {
+        title: `${column.column_name} | 创见`,
+        description: column.description,
+        alternates: {
+            canonical: `${siteUrl}/userCenter/Columns/${column.column_id}`,
+        },
+        openGraph: {
+            title: `${column.column_name} | 创见`,
+            description: column.description,
+            images: column.cover_image ? [column.cover_image] : undefined,
+            type: "website",
+        },
+    };
 }
+
+const ColumnsPage = async ({params}: ColumnsPageProps) => {
+    const {column_id: columnIdParam} = await params;
+    const columnId = parseColumnId(columnIdParam);
+    const [column, articleList] = await Promise.all([
+        getColumn(columnId),
+        getArticleListByColumnId(columnId, await getViewerUserId()),
+    ]);
+    if (!column) notFound();
+
+    return <NavLayout>
+        <ColumnsPageContent column={column} articleList={articleList ?? []}/>
+    </NavLayout>;
+};
 
 export default ColumnsPage;
