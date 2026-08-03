@@ -4,6 +4,7 @@ import {ComponentType} from "@/components/ReactMarkdown/components/type";
 import { useMemo } from "react";
 import CodeComponents from "@/components/ReactMarkdown/components/CodeBlock";
 import DiagramComponents from "@/components/ReactMarkdown/components/Diagram";
+import MermaidComponents from "@/components/ReactMarkdown/components/Mermaid";
 
 const PreParseComponents: ComponentType  = (props) => {
     const { children } = props
@@ -14,6 +15,9 @@ const PreParseComponents: ComponentType  = (props) => {
     const ParseComponent = useMemo(() => {
         if(languageLabel === 'diagram'){
             return DiagramComponents
+        }
+        if(languageLabel === 'mermaid'){
+            return MermaidComponents
         }
         return CodeComponents
     },[languageLabel])
