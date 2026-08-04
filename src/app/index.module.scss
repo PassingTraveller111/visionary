@@ -2,11 +2,9 @@
 $leftBarWidth: 300px;
 .container {
   width: 100%;
-  max-width: 1240px;
-  margin: 0 auto;
   height: calc(100vh - #{var.$nav-container-height});
   display: flex;
-  padding: 20px 100px;
+  padding: 20px max(100px, calc((100% - 1040px) / 2));
   overflow: auto;
   justify-content: space-between;
   .tabContainer{
