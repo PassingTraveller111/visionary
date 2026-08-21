@@ -45,6 +45,9 @@ const ArticleItem = (props: ArticleItemProps) => {
                 {status && <ArticleStatus status={status} />}
             </div>
             <div className={styles.summary}>{summary}</div>
+            {tags.length > 0 && <div className={styles.tags}>
+                {tags.map((tag) => <Tag key={tag}>{tag}</Tag>)}
+            </div>}
             <div className={styles.bottom}>
                 <div className={styles.bottomLeft}>
                     {author && <span className={styles.author}>{author}</span>}
@@ -58,14 +61,6 @@ const ArticleItem = (props: ArticleItemProps) => {
                         <span>{looks_count}</span>
                     </span>}
                 </div>
-                <div className={styles.bottomRight}>
-                    {
-                        tags.map((tag) => {
-                            return <Tag key={tag}>{tag}</Tag>
-                        })
-                    }
-                </div>
-
             </div>
         </div>
         <div className={styles.rightBar}>

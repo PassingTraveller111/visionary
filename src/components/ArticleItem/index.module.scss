@@ -46,22 +46,26 @@ $editWidth: 40px;
     }
     .bottom{
       display: flex;
-      justify-content: space-between;
       .bottomLeft{
         font-size: 14px;
         color: #666666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         &>span+span{
           border-left: 1px solid #666666;
           padding-left: 10px;
           margin-left: 10px;
         }
       }
-      .bottomRight{
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
+    }
+    .tags{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      row-gap: 4px;
+      margin: 6px 0;
+      text-align: left;
     }
   }
   .rightBar{
@@ -130,25 +134,17 @@ $editWidth: 40px;
         -webkit-box-orient: vertical;
       }
       .bottom{
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 10px;
         .bottomLeft{
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px 10px;
           font-size: 13px;
           &>span+span{
-            border-left: none;
-            padding-left: 0;
-            margin-left: 0;
+            padding-left: 6px;
+            margin-left: 6px;
           }
         }
-        .bottomRight{
-          white-space: normal;
-          :global(.ant-tag){
-            margin-bottom: 4px;
-          }
+      }
+      .tags{
+        :global(.ant-tag){
+          margin-bottom: 0;
         }
       }
     }
