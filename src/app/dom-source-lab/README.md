@@ -26,7 +26,7 @@ dom-source-lab/
 └── page.tsx           # 方案概览
 ```
 
-源码内容由 `src/app/api/dom-source-lab/source/route.ts` 提供。接口只读取明确加入 `ALLOWED_SOURCE_FILES` 的文件，禁止将用户输入直接拼成任意磁盘路径。
+源码内容由 `src/app/api/dom-source-lab/source/route.ts` 提供。构建脚本只把明确列在 `bundledSourceFiles` 中的文件写入 `_generated/source-files.json`，API 从该生成产物读取内容，不在远程运行时访问项目源码目录。
 
 ## 映射器约定
 
@@ -75,11 +75,14 @@ npm run generate:dom-source-ast
 ```text
 ast/Fixture.generated.tsx
 ast/fixture-map.json
+_generated/source-files.json
 ```
 
 页面渲染 `Fixture.generated.tsx`，源码面板展示 `Fixture.source.tsx`。`astMapper` 从 DOM 读取短 ID，再通过 `/api/dom-source-lab/ast-location` 查询完整位置。
 
 生成文件带有 `Do not edit` 注释，不应手工修改。`predev` 和 `prebuild` 会自动执行生成命令；单独修改源 Fixture 后，也可以手工运行生成命令刷新产物。
+
+`source-files.json` 只包含源码面板允许展示的文件内容。因为它会被 Next.js 打包进运行时产物，所以只部署 `.next` 时仍可读取源码。新增文件必须显式加入生成脚本中的 `bundledSourceFiles`；不要扫描整个 `src` 目录，也不要把密钥、环境配置或服务端敏感代码加入其中。
 
 当前转换器只注入小写宿主节点，例如 `div`、`button`、`svg` 和 `path`。自定义组件调用和 Fragment 不直接注入，因为它们不一定对应真实 DOM；自定义组件实现内部的宿主 JSX 仍会正常参与转换。
 
@@ -90,7 +93,7 @@ ast/fixture-map.json
 1. 在 `_strategies` 下实现一个 `DomSourceMapper`。
 2. 新建方案子路由和独立 Fixture，避免不同编译方式相互干扰。
 3. 使用 `DemoShell` 复用选择、状态和源码展示交互。
-4. 如需读取新的源码文件，将精确路径加入 API 的 `ALLOWED_SOURCE_FILES`。
+4. 如需展示新的源码文件，将精确路径加入生成脚本的 `bundledSourceFiles`。
 5. 在 `layout.tsx` 启用导航入口，并更新本 README 的状态表。
 
 Source Map 方案应建立在“DOM 节点已经能关联到生成代码位置”的前提上，不应直接用序列化 DOM 猜测代码偏移。
