@@ -4,7 +4,7 @@ import styles from './lab.module.scss';
 
 const strategies = [
   { href: '/dom-source-lab/line-marker', label: '行号标记', available: true },
-  { href: '/dom-source-lab/ast', label: 'AST 映射', available: false },
+  { href: '/dom-source-lab/ast', label: 'AST 映射', available: true },
   { href: '/dom-source-lab/source-map', label: 'Source Map', available: false },
   { href: '/dom-source-lab/runtime', label: '运行时匹配', available: false },
   { href: '/dom-source-lab/compare', label: '方案对比', available: false },

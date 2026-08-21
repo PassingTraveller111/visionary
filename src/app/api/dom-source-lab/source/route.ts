@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const ALLOWED_SOURCE_FILES = new Set([
   'src/app/dom-source-lab/line-marker/Fixture.tsx',
+  'src/app/dom-source-lab/ast/Fixture.source.tsx',
 ]);
 
 export async function GET(request: NextRequest) {

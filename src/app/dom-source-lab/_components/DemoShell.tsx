@@ -109,7 +109,7 @@ export function DemoShell({ mapper, title, description, children }: DemoShellPro
                 {selection.location ? (
                   <p>{selection.location.file}:{selection.location.start.line}:{selection.location.start.column}</p>
                 ) : (
-                  <p>该元素及其祖先没有源码标记</p>
+                  <p>该元素及其祖先没有可用的源码映射</p>
                 )}
               </>
             ) : (

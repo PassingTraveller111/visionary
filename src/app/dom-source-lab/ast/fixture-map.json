@@ -1,0 +1,506 @@
+{
+  "ast_0d8fc112f2": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 7,
+      "column": 10
+    },
+    "end": {
+      "line": 7,
+      "column": 61
+    },
+    "nodeId": "ast_0d8fc112f2",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_6c8f7846cb": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 14,
+      "column": 5
+    },
+    "end": {
+      "line": 61,
+      "column": 11
+    },
+    "nodeId": "ast_6c8f7846cb",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_da51d15eab": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 15,
+      "column": 7
+    },
+    "end": {
+      "line": 22,
+      "column": 17
+    },
+    "nodeId": "ast_da51d15eab",
+    "tagName": "section",
+    "confidence": 1
+  },
+  "ast_77e4b5c037": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 17,
+      "column": 9
+    },
+    "end": {
+      "line": 17,
+      "column": 33
+    },
+    "nodeId": "ast_77e4b5c037",
+    "tagName": "h2",
+    "confidence": 1
+  },
+  "ast_a2656641c1": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 18,
+      "column": 9
+    },
+    "end": {
+      "line": 18,
+      "column": 46
+    },
+    "nodeId": "ast_a2656641c1",
+    "tagName": "p",
+    "confidence": 1
+  },
+  "ast_3b3136071d": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 19,
+      "column": 9
+    },
+    "end": {
+      "line": 21,
+      "column": 15
+    },
+    "nodeId": "ast_3b3136071d",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_e8a26104d1": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 11
+    },
+    "end": {
+      "line": 20,
+      "column": 27
+    },
+    "nodeId": "ast_e8a26104d1",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_b160a37290": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 27
+    },
+    "end": {
+      "line": 20,
+      "column": 35
+    },
+    "nodeId": "ast_b160a37290",
+    "tagName": "i",
+    "confidence": 1
+  },
+  "ast_44558d95f9": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 35
+    },
+    "end": {
+      "line": 20,
+      "column": 51
+    },
+    "nodeId": "ast_44558d95f9",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_3c429548ee": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 51
+    },
+    "end": {
+      "line": 20,
+      "column": 59
+    },
+    "nodeId": "ast_3c429548ee",
+    "tagName": "i",
+    "confidence": 1
+  },
+  "ast_54a145074e": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 59
+    },
+    "end": {
+      "line": 20,
+      "column": 75
+    },
+    "nodeId": "ast_54a145074e",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_6c7a388cc1": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 75
+    },
+    "end": {
+      "line": 20,
+      "column": 83
+    },
+    "nodeId": "ast_6c7a388cc1",
+    "tagName": "i",
+    "confidence": 1
+  },
+  "ast_f6641f5634": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 20,
+      "column": 83
+    },
+    "end": {
+      "line": 20,
+      "column": 102
+    },
+    "nodeId": "ast_f6641f5634",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_b1765b4ee1": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 24,
+      "column": 7
+    },
+    "end": {
+      "line": 42,
+      "column": 13
+    },
+    "nodeId": "ast_b1765b4ee1",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_db225b69ab": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 25,
+      "column": 9
+    },
+    "end": {
+      "line": 29,
+      "column": 19
+    },
+    "nodeId": "ast_db225b69ab",
+    "tagName": "article",
+    "confidence": 1
+  },
+  "ast_d1c914c6a3": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 26,
+      "column": 11
+    },
+    "end": {
+      "line": 26,
+      "column": 43
+    },
+    "nodeId": "ast_d1c914c6a3",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_6c67a041df": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 27,
+      "column": 11
+    },
+    "end": {
+      "line": 27,
+      "column": 70
+    },
+    "nodeId": "ast_6c67a041df",
+    "tagName": "pre",
+    "confidence": 1
+  },
+  "ast_b1c995d177": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 27,
+      "column": 16
+    },
+    "end": {
+      "line": 27,
+      "column": 64
+    },
+    "nodeId": "ast_b1c995d177",
+    "tagName": "code",
+    "confidence": 1
+  },
+  "ast_7a2cdfd1c7": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 28,
+      "column": 11
+    },
+    "end": {
+      "line": 28,
+      "column": 39
+    },
+    "nodeId": "ast_7a2cdfd1c7",
+    "tagName": "p",
+    "confidence": 1
+  },
+  "ast_e55f3d0a09": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 31,
+      "column": 9
+    },
+    "end": {
+      "line": 41,
+      "column": 19
+    },
+    "nodeId": "ast_e55f3d0a09",
+    "tagName": "article",
+    "confidence": 1
+  },
+  "ast_b5a9af053d": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 32,
+      "column": 11
+    },
+    "end": {
+      "line": 35,
+      "column": 17
+    },
+    "nodeId": "ast_b5a9af053d",
+    "tagName": "svg",
+    "confidence": 1
+  },
+  "ast_2b92f81913": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 33,
+      "column": 13
+    },
+    "end": {
+      "line": 33,
+      "column": 145
+    },
+    "nodeId": "ast_2b92f81913",
+    "tagName": "path",
+    "confidence": 1
+  },
+  "ast_98b2d945f5": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 34,
+      "column": 13
+    },
+    "end": {
+      "line": 34,
+      "column": 47
+    },
+    "nodeId": "ast_98b2d945f5",
+    "tagName": "circle",
+    "confidence": 1
+  },
+  "ast_7a5bd092f7": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 36,
+      "column": 11
+    },
+    "end": {
+      "line": 40,
+      "column": 17
+    },
+    "nodeId": "ast_7a5bd092f7",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_482d019765": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 37,
+      "column": 13
+    },
+    "end": {
+      "line": 37,
+      "column": 40
+    },
+    "nodeId": "ast_482d019765",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_eac6b5a6bf": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 38,
+      "column": 13
+    },
+    "end": {
+      "line": 38,
+      "column": 30
+    },
+    "nodeId": "ast_eac6b5a6bf",
+    "tagName": "h3",
+    "confidence": 1
+  },
+  "ast_85814ed2dd": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 39,
+      "column": 13
+    },
+    "end": {
+      "line": 39,
+      "column": 61
+    },
+    "nodeId": "ast_85814ed2dd",
+    "tagName": "p",
+    "confidence": 1
+  },
+  "ast_c2046aa541": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 44,
+      "column": 7
+    },
+    "end": {
+      "line": 60,
+      "column": 17
+    },
+    "nodeId": "ast_c2046aa541",
+    "tagName": "section",
+    "confidence": 1
+  },
+  "ast_fe0f4bef7a": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 45,
+      "column": 9
+    },
+    "end": {
+      "line": 48,
+      "column": 15
+    },
+    "nodeId": "ast_fe0f4bef7a",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_b29e64fda1": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 46,
+      "column": 11
+    },
+    "end": {
+      "line": 46,
+      "column": 42
+    },
+    "nodeId": "ast_b29e64fda1",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_b443b5ae5e": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 47,
+      "column": 11
+    },
+    "end": {
+      "line": 47,
+      "column": 35
+    },
+    "nodeId": "ast_b443b5ae5e",
+    "tagName": "h3",
+    "confidence": 1
+  },
+  "ast_b1ed9b5fc5": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 49,
+      "column": 9
+    },
+    "end": {
+      "line": 51,
+      "column": 18
+    },
+    "nodeId": "ast_b1ed9b5fc5",
+    "tagName": "button",
+    "confidence": 1
+  },
+  "ast_6ac7a590ea": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 52,
+      "column": 9
+    },
+    "end": {
+      "line": 59,
+      "column": 15
+    },
+    "nodeId": "ast_6ac7a590ea",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_3cf2e550df": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 54,
+      "column": 13
+    },
+    "end": {
+      "line": 57,
+      "column": 19
+    },
+    "nodeId": "ast_3cf2e550df",
+    "tagName": "div",
+    "confidence": 1
+  },
+  "ast_8fbe2c6250": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 55,
+      "column": 15
+    },
+    "end": {
+      "line": 55,
+      "column": 64
+    },
+    "nodeId": "ast_8fbe2c6250",
+    "tagName": "span",
+    "confidence": 1
+  },
+  "ast_9d921dfaf1": {
+    "file": "src/app/dom-source-lab/ast/Fixture.source.tsx",
+    "start": {
+      "line": 56,
+      "column": 15
+    },
+    "end": {
+      "line": 56,
+      "column": 38
+    },
+    "nodeId": "ast_9d921dfaf1",
+    "tagName": "strong",
+    "confidence": 1
+  }
+}

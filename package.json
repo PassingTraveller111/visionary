@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate:dom-source-ast": "node scripts/generate-dom-source-ast.mjs",
+    "predev": "npm run generate:dom-source-ast",
     "dev": "next dev",
+    "prebuild": "npm run generate:dom-source-ast",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."
@@ -43,6 +46,10 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@babel/generator": "^8.0.0",
+    "@babel/parser": "^8.0.4",
+    "@babel/traverse": "^8.0.4",
+    "@babel/types": "^8.0.4",
     "@eslint/eslintrc": "^3",
     "@svgr/webpack": "^8.1.0",
     "@types/jsonwebtoken": "^9.0.10",
