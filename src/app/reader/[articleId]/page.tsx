@@ -27,6 +27,82 @@ const getPublicArticle = async (articleId: number) => {
     return getPublishedPublicArticle(articleId);
 };
 
+const toAbsoluteUrl = (value: string) => {
+    if (/^https?:\/\//i.test(value)) return value;
+    return `${siteUrl}/${value.replace(/^\//, '')}`;
+};
+
+const toIsoDate = (value: string) => {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+};
+
+const getArticleJsonLd = (article: ArticleDto) => {
+    const articleUrl = `${siteUrl}/reader/${article.id}`;
+    const description = article.summary || article.content.slice(0, 120);
+
+    return {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'BlogPosting',
+                '@id': `${articleUrl}/#article`,
+                headline: article.title,
+                description,
+                url: articleUrl,
+                mainEntityOfPage: {
+                    '@type': 'WebPage',
+                    '@id': articleUrl,
+                },
+                image: article.cover ? toAbsoluteUrl(article.cover) : undefined,
+                datePublished: toIsoDate(article.published_time),
+                dateModified: toIsoDate(article.updated_time),
+                inLanguage: 'zh-CN',
+                keywords: article.tags?.length ? article.tags : undefined,
+                author: {
+                    '@type': 'Person',
+                    '@id': `${siteUrl}/userCenter/${article.author_id}/article#person`,
+                    name: article.author_nickname,
+                    url: `${siteUrl}/userCenter/${article.author_id}/article`,
+                },
+                publisher: {
+                    '@type': 'Organization',
+                    '@id': `${siteUrl}/#organization`,
+                    name: '创见博客',
+                    logo: {
+                        '@type': 'ImageObject',
+                        url: `${siteUrl}/logo.svg`,
+                    },
+                },
+                isPartOf: {
+                    '@type': 'WebSite',
+                    '@id': `${siteUrl}/#website`,
+                    name: '创见博客',
+                    url: siteUrl,
+                },
+            },
+            {
+                '@type': 'BreadcrumbList',
+                '@id': `${articleUrl}/#breadcrumb`,
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: '首页',
+                        item: siteUrl,
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: article.title,
+                        item: articleUrl,
+                    },
+                ],
+            },
+        ],
+    };
+};
+
 const getRelatedArticles = (article: ArticleDto, candidates: PublishedArticleItemDto[]): RelatedArticleItem[] => {
     const currentTags = new Set(article.tags ?? []);
 
@@ -80,8 +156,13 @@ const ReaderPage = async (props: ReaderPageProps) => {
     if (!article) notFound();
 
     const relatedArticles = getRelatedArticles(article, publishedArticleResult?.rows ?? []);
+    const jsonLd = getArticleJsonLd(article);
 
     return <NavLayout>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd).replace(/</g, '\\u003c')}}
+        />
         <ReaderClientShell articleId={article.id} authorId={article.author_id} markdown={article.content} relatedArticles={relatedArticles}>
             <ArticleReaderContent article={article} />
         </ReaderClientShell>
