@@ -13,7 +13,7 @@ const CodeComponents: ComponentType  = ({children, className}) => {
     const [isUnFold, setIsUnFold] = useState(true);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const match = /language-(\w+)/.exec(children && children.props.className || "");
+    const match = /language-(\w+)/.exec((children?.props?.className) || "");
     const languageLabel = match ? match[1] : '';
     const handleCopy = async () => {
         try {

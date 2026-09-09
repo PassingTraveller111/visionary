@@ -4,7 +4,6 @@ import styles from './index.module.scss';
 import {Dropdown, MenuProps, Tag} from "antd";
 import moment from "moment";
 import {IconFont} from "@/components/IconFont";
-import {useRouter} from "next/navigation";
 import Image from "next/image";
 
 
@@ -27,14 +26,13 @@ export type ArticleItemProps = {
 
 const ArticleItem = (props: ArticleItemProps) => {
     const { title, summary, author, articleId, updateTime, likes_count = 0, looks_count = 0, operateMenuItems = [], tags = [], cover, status, itemOnClick } = props;
-    const router = useRouter();
     return <div className={styles.ArticleItemContainer}
         onClick={() => {
             if(itemOnClick) {
                 itemOnClick(articleId);
                 return;
             }
-            router.push('/reader/' + articleId);
+            window.open('/reader/' + articleId, '_blank');
         }}
     >
         <div

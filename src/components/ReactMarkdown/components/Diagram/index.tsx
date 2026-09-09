@@ -18,7 +18,7 @@ const DiagramComponents: ComponentType  = ({children}) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     // 假设 children.props.className 的值为 "luanguage-diagram?id=17"
-    const targetClassName = children && children.props.className || "";
+    const targetClassName = (children?.props?.className) || "";
     const idMatch = /\?id=(\w+)/.exec(targetClassName);
     const idValue = idMatch ? idMatch[1] : "";
     useEffect(() => {

@@ -10,7 +10,7 @@ const PreParseComponents: ComponentType  = (props) => {
     const { children } = props
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const match = /language-(\w+)/.exec(children && children.props.className || "");
+    const match = /language-(\w+)/.exec((children?.props?.className) || "");
     const languageLabel = match ? match[1] : '';
     const ParseComponent = useMemo(() => {
         if(languageLabel === 'diagram'){
