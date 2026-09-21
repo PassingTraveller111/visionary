@@ -9,10 +9,10 @@ Use this skill for this project's manual production deployment flow on the Ubunt
 
 ## Context
 
-- Local project path: `/Users/bytedance/Desktop/project/visionary/visionary`
+- Local project path: `/Users/ljm/Desktop/code/visionary`
 - Remote SSH user: `ubuntu`
 - Remote host: `82.157.210.93`
-- SSH key: `/Users/bytedance/.ssh/visionary_ubuntu_ed25519`
+- SSH key: `/Users/ljm/.ssh/id_ed25519`
 - Remote project path: `/root/visionary`
 - PM2 process name: `nextjs-app`
 - App port behind Nginx: `3000`
@@ -31,27 +31,27 @@ npm run build
 2. Confirm local build exists:
 
 ```bash
-du -sh "/Users/bytedance/Desktop/project/visionary/visionary/.next"
-test -f "/Users/bytedance/Desktop/project/visionary/visionary/.next/BUILD_ID"
+du -sh "/Users/ljm/Desktop/code/visionary/.next"
+test -f "/Users/ljm/Desktop/code/visionary/.next/BUILD_ID"
 ```
 
 3. Create a compressed archive outside the workspace. Exclude the local Next image optimizer cache; it can contain macOS AppleDouble metadata or stale optimized variants that make browser image requests return `application/octet-stream` instead of an image.
 
 ```bash
-tar --exclude='.next/cache/images' -czf "/var/folders/lp/6x2b3c_d53xbs75131fyc16h0000gn/T/opencode/visionary_next.tar.gz" -C "/Users/bytedance/Desktop/project/visionary/visionary" .next
-du -sh "/var/folders/lp/6x2b3c_d53xbs75131fyc16h0000gn/T/opencode/visionary_next.tar.gz"
+tar --exclude='.next/cache/images' -czf "/var/folders/4w/c0p5mcc95bn_lpz81__ntb9m0000gn/T/opencode/visionary_next.tar.gz" -C "/Users/ljm/Desktop/code/visionary" .next
+du -sh "/var/folders/4w/c0p5mcc95bn_lpz81__ntb9m0000gn/T/opencode/visionary_next.tar.gz"
 ```
 
 4. Upload the archive:
 
 ```bash
-scp -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" "/var/folders/lp/6x2b3c_d53xbs75131fyc16h0000gn/T/opencode/visionary_next.tar.gz" ubuntu@82.157.210.93:/tmp/visionary_next.tar.gz
+scp -i "/Users/ljm/.ssh/id_ed25519" "/var/folders/4w/c0p5mcc95bn_lpz81__ntb9m0000gn/T/opencode/visionary_next.tar.gz" ubuntu@82.157.210.93:/tmp/visionary_next.tar.gz
 ```
 
 5. Extract to a temporary directory, then replace remote `.next`:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "rm -rf /tmp/visionary_next_extract && mkdir -p /tmp/visionary_next_extract && tar -xzf /tmp/visionary_next.tar.gz -C /tmp/visionary_next_extract && test -d /tmp/visionary_next_extract/.next && sudo rm -rf /root/visionary/.next && sudo mv /tmp/visionary_next_extract/.next /root/visionary/.next && sudo chown -R root:root /root/visionary/.next"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "rm -rf /tmp/visionary_next_extract && mkdir -p /tmp/visionary_next_extract && tar -xzf /tmp/visionary_next.tar.gz -C /tmp/visionary_next_extract && test -d /tmp/visionary_next_extract/.next && sudo rm -rf /root/visionary/.next && sudo mv /tmp/visionary_next_extract/.next /root/visionary/.next && sudo chown -R root:root /root/visionary/.next"
 ```
 
 If Linux `tar` prints `Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'`, it is a macOS extended attribute warning and does not affect the deployed files.
@@ -59,14 +59,14 @@ If Linux `tar` prints `Ignoring unknown extended header keyword 'LIBARCHIVE.xatt
 6. Verify remote build:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo ls -ld /root/visionary/.next && sudo du -sh /root/visionary/.next && sudo test -f /root/visionary/.next/BUILD_ID && sudo wc -c /root/visionary/.next/BUILD_ID"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo ls -ld /root/visionary/.next && sudo du -sh /root/visionary/.next && sudo test -f /root/visionary/.next/BUILD_ID && sudo wc -c /root/visionary/.next/BUILD_ID"
 ```
 
 7. Clean temporary files:
 
 ```bash
-rm -f "/var/folders/lp/6x2b3c_d53xbs75131fyc16h0000gn/T/opencode/visionary_next.tar.gz"
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "rm -f /tmp/visionary_next.tar.gz && rm -rf /tmp/visionary_next_extract /tmp/visionary_next_upload"
+rm -f "/var/folders/4w/c0p5mcc95bn_lpz81__ntb9m0000gn/T/opencode/visionary_next.tar.gz"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "rm -f /tmp/visionary_next.tar.gz && rm -rf /tmp/visionary_next_extract /tmp/visionary_next_upload"
 ```
 
 ## Restart PM2
@@ -76,25 +76,25 @@ The active production PM2 process is under root's PM2 home, not ubuntu's.
 1. Inspect both PM2 contexts if needed:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "pm2 list || true; sudo pm2 list || true"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "pm2 list || true; sudo pm2 list || true"
 ```
 
 2. Restart the production process from `/root/visionary`:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'cd /root/visionary && pm2 restart nextjs-app --update-env && pm2 save && pm2 list'"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'cd /root/visionary && pm2 restart nextjs-app --update-env && pm2 save && pm2 list'"
 ```
 
 If the process must be recreated instead of restarted:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'cd /root/visionary && pm2 delete nextjs-app || true && pm2 start npm --name \"nextjs-app\" -- start && pm2 save && pm2 list'"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'cd /root/visionary && pm2 delete nextjs-app || true && pm2 start npm --name \"nextjs-app\" -- start && pm2 save && pm2 list'"
 ```
 
 3. Verify the app is serving locally:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo pm2 list && curl -I --max-time 10 http://127.0.0.1:3000/ || true"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo pm2 list && curl -I --max-time 10 http://127.0.0.1:3000/ || true"
 ```
 
 Expected healthy response includes `HTTP/1.1 200 OK`.
@@ -112,7 +112,7 @@ AppleDouble encoded Macintosh file
 Clear the remote Next image optimizer cache and restart PM2:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo rm -rf /root/visionary/.next/cache/images && sudo pm2 restart nextjs-app --update-env"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo rm -rf /root/visionary/.next/cache/images && sudo pm2 restart nextjs-app --update-env"
 ```
 
 Then retest with browser image headers. A healthy response should be `image/webp`, `image/png`, or another real image type, not `application/octet-stream`.
@@ -131,14 +131,14 @@ This means the app is missing `DATABASE_*` and/or `REDIS_*` variables. The local
 Upload and install it:
 
 ```bash
-scp -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" "/Users/bytedance/Desktop/project/visionary/visionary/.env.local" ubuntu@82.157.210.93:/tmp/visionary.env.local
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'mv /tmp/visionary.env.local /root/visionary/.env.local && chown root:root /root/visionary/.env.local && chmod 600 /root/visionary/.env.local && cd /root/visionary && pm2 restart nextjs-app --update-env && pm2 save && pm2 list'"
+scp -i "/Users/ljm/.ssh/id_ed25519" "/Users/ljm/Desktop/code/visionary/.env.local" ubuntu@82.157.210.93:/tmp/visionary.env.local
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'mv /tmp/visionary.env.local /root/visionary/.env.local && chown root:root /root/visionary/.env.local && chmod 600 /root/visionary/.env.local && cd /root/visionary && pm2 restart nextjs-app --update-env && pm2 save && pm2 list'"
 ```
 
 Verify without exposing values:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 'sudo bash -lc '\''ls -l /root/visionary/.env.local; for k in DATABASE_HOST DATABASE_USER DATABASE_PASSWORD DATABASE_NAME REDIS_HOST REDIS_PASSWORD SECRET_KEY; do v=$(printenv "$k"); if [ -n "$v" ]; then printf "%s=set\n" "$k"; else printf "%s=missing\n" "$k"; fi; done'\'''
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 'sudo bash -lc '\''ls -l /root/visionary/.env.local; for k in DATABASE_HOST DATABASE_USER DATABASE_PASSWORD DATABASE_NAME REDIS_HOST REDIS_PASSWORD SECRET_KEY; do v=$(printenv "$k"); if [ -n "$v" ]; then printf "%s=set\n" "$k"; else printf "%s=missing\n" "$k"; fi; done'\'''
 ```
 
 Note: `printenv` may still show missing because Next.js loads `.env.local` internally, not necessarily into the parent shell. A better functional test is the login endpoint below.
@@ -148,19 +148,19 @@ Note: `printenv` may still show missing because Next.js loads `.env.local` inter
 Fetch app logs:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo pm2 logs nextjs-app --lines 200 --nostream"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo pm2 logs nextjs-app --lines 200 --nostream"
 ```
 
 Fetch Nginx logs:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo journalctl -u nginx --no-pager -n 100 || true; sudo tail -n 100 /var/log/nginx/error.log 2>/dev/null || true"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo journalctl -u nginx --no-pager -n 100 || true; sudo tail -n 100 /var/log/nginx/error.log 2>/dev/null || true"
 ```
 
 Test the login endpoint with invalid credentials. A healthy backend returns 401, not 500:
 
 ```bash
-ssh -i "/Users/bytedance/.ssh/visionary_ubuntu_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'curl -sS -o /tmp/login_check.out -w \"%{http_code}\n\" -X POST http://127.0.0.1:3000/api/auth/login -H \"Content-Type: application/json\" --data '\''{\"username\":\"__invalid__\",\"password\":\"__invalid__\",\"isRemember\":false}'\''; cat /tmp/login_check.out'"
+ssh -i "/Users/ljm/.ssh/id_ed25519" ubuntu@82.157.210.93 "sudo bash -lc 'curl -sS -o /tmp/login_check.out -w \"%{http_code}\n\" -X POST http://127.0.0.1:3000/api/auth/login -H \"Content-Type: application/json\" --data '\''{\"username\":\"__invalid__\",\"password\":\"__invalid__\",\"isRemember\":false}'\''; cat /tmp/login_check.out'"
 ```
 
 Expected output:
