@@ -57,6 +57,7 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
     const inputHistoryGroupOpenRef = useRef(false);
     const inputHistoryTimerRef = useRef<number | null>(null);
     const selectionBeforeInputRef = useRef<SelectionRange | null>(null);
+    const isComposingRef = useRef(false);
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -449,7 +450,18 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         selectionBeforeInputRef.current = null;
     }, [applyChange, extendInputHistoryGroup, getSelection, pushUndoEntry]);
 
+    const onCompositionStart = useCallback(() => {
+        isComposingRef.current = true;
+    }, []);
+
+    const onCompositionEnd = useCallback(() => {
+        isComposingRef.current = false;
+        updateCursorPosition();
+    }, [updateCursorPosition]);
+
     const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (isComposingRef.current || event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return;
+
         const isModKey = event.metaKey || event.ctrlKey;
         if (event.key === 'Enter' && !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey) {
             const result = getEnterContinuation(valueRef.current, getSelection());
@@ -717,6 +729,8 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
                     spellCheck={false}
                     onBeforeInput={onBeforeInput}
                     onChange={onTextChange}
+                    onCompositionStart={onCompositionStart}
+                    onCompositionEnd={onCompositionEnd}
                     onKeyDown={onKeyDown}
                     onPaste={onPaste}
                     onClick={updateCursorPosition}
