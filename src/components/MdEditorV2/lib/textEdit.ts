@@ -75,7 +75,7 @@ const wrapBlockCode = (value: string, selection: SelectionRange): TextEditResult
 
 const getSelectedLineRange = (value: string, selection: SelectionRange) => {
     const safeSelection = normalizeSelection(selection, value.length);
-    const lineStart = value.lastIndexOf('\n', Math.max(0, safeSelection.start - 1)) + 1;
+    const lineStart = safeSelection.start === 0 ? 0 : value.lastIndexOf('\n', safeSelection.start - 1) + 1;
     const lineEndBreak = value.indexOf('\n', safeSelection.end);
     const lineEnd = lineEndBreak === -1 ? value.length : lineEndBreak;
 
@@ -83,6 +83,208 @@ const getSelectedLineRange = (value: string, selection: SelectionRange) => {
         start: lineStart,
         end: lineEnd,
     };
+}
+
+const LIST_ITEM_PATTERN = /^[ \t]*(?:[-*+]|\d+[.)])[ \t]+/;
+const ORDERED_LIST_ITEM_PATTERN = /^([ \t]*)(\d+)([.)])([ \t]+)/;
+const UNORDERED_LIST_ITEM_PATTERN = /^([ \t]*)([-*+])([ \t]+)/;
+const LIST_INDENT = '    ';
+
+const getLineAtPosition = (value: string, position: number) => {
+    const lineStart = position === 0 ? 0 : value.lastIndexOf('\n', position - 1) + 1;
+    const lineEndBreak = value.indexOf('\n', position);
+    return value.slice(lineStart, lineEndBreak === -1 ? value.length : lineEndBreak);
+}
+
+const changeSelectedLines = (
+    value: string,
+    selection: SelectionRange,
+    createChange: (line: string) => { prefix: string; removeLength: number } | null,
+): TextEditResult | null => {
+    const range = getSelectedLineRange(value, selection);
+    const lines = value.slice(range.start, range.end).split('\n');
+    const lineStarts: number[] = [];
+    const lineOffsets: number[] = [];
+    const deltas: number[] = [];
+    let offset = 0;
+    let cumulativeDelta = 0;
+    let changed = false;
+
+    const nextLines = lines.map(line => {
+        lineStarts.push(offset);
+        lineOffsets.push(cumulativeDelta);
+        offset += line.length + 1;
+
+        const change = createChange(line);
+        if (!change) {
+            deltas.push(0);
+            return line;
+        }
+
+        const delta = change.prefix.length - change.removeLength;
+        deltas.push(delta);
+        cumulativeDelta += delta;
+        if (delta !== 0) changed = true;
+        return `${change.prefix}${line.slice(change.removeLength)}`;
+    });
+
+    if (!changed) return null;
+
+    const mapPosition = (position: number) => {
+        let lineIndex = 0;
+        for (let index = 0; index < lineStarts.length; index += 1) {
+            if (range.start + lineStarts[index] <= position) lineIndex = index;
+            else break;
+        }
+
+        const oldLineStart = range.start + lineStarts[lineIndex];
+        const newLineStart = oldLineStart + lineOffsets[lineIndex];
+        const lineDelta = deltas[lineIndex];
+        const lineOffset = position - oldLineStart;
+        const nextLineOffset = lineDelta >= 0
+            ? (lineOffset > 0 ? lineOffset + lineDelta : 0)
+            : Math.max(0, lineOffset + lineDelta);
+        return newLineStart + nextLineOffset;
+    }
+
+    return replaceRange(value, range, nextLines.join('\n'), {
+        start: mapPosition(selection.start),
+        end: mapPosition(selection.end),
+    });
+}
+
+const isListRelatedLine = (line: string) => {
+    if (!line.trim()) return true;
+    return LIST_ITEM_PATTERN.test(line) || /^[ \t]+\S/.test(line);
+}
+
+const renumberOrderedListItems = (value: string, selection: SelectionRange): TextEditResult => {
+    const initialRange = getSelectedLineRange(value, selection);
+    let blockStart = initialRange.start;
+    let blockEnd = initialRange.end;
+
+    while (blockStart > 0) {
+        const previousLineEnd = blockStart - 1;
+        const previousLineStart = previousLineEnd === 0 ? 0 : value.lastIndexOf('\n', previousLineEnd - 1) + 1;
+        const previousLine = value.slice(previousLineStart, previousLineEnd);
+        if (!isListRelatedLine(previousLine)) break;
+        blockStart = previousLineStart;
+    }
+
+    while (blockEnd < value.length) {
+        const nextLineStart = blockEnd + 1;
+        const nextLineEndBreak = value.indexOf('\n', nextLineStart);
+        const nextLineEnd = nextLineEndBreak === -1 ? value.length : nextLineEndBreak;
+        const nextLine = value.slice(nextLineStart, nextLineEnd);
+        if (!isListRelatedLine(nextLine)) break;
+        blockEnd = nextLineEnd;
+    }
+
+    const lines = value.slice(blockStart, blockEnd).split('\n');
+    const levels: { indent: number; ordered: boolean; counter: number }[] = [];
+    const lineStarts: number[] = [];
+    const lineOffsets: number[] = [];
+    const lineDeltas: number[] = [];
+    const lineChangeStarts: number[] = [];
+    let offset = 0;
+    let cumulativeDelta = 0;
+    let changed = false;
+
+    const nextLines = lines.map(line => {
+        lineStarts.push(offset);
+        lineOffsets.push(cumulativeDelta);
+        offset += line.length + 1;
+
+        const orderedMatch = ORDERED_LIST_ITEM_PATTERN.exec(line);
+        const unorderedMatch = orderedMatch ? null : UNORDERED_LIST_ITEM_PATTERN.exec(line);
+        if (!orderedMatch && !unorderedMatch) {
+            lineDeltas.push(0);
+            lineChangeStarts.push(0);
+            return line;
+        }
+
+        const indent = (orderedMatch?.[1] ?? unorderedMatch?.[1] ?? '').length;
+        const ordered = Boolean(orderedMatch);
+
+        while (levels.length > 0 && levels[levels.length - 1].indent > indent) levels.pop();
+        let level = levels[levels.length - 1];
+
+        if (!level || level.indent < indent) {
+            level = { indent, ordered, counter: 1 };
+            levels.push(level);
+        } else if (level.ordered !== ordered) {
+            level.ordered = ordered;
+            level.counter = 1;
+        } else if (ordered) {
+            level.counter += 1;
+        }
+
+        if (!orderedMatch) {
+            lineDeltas.push(0);
+            lineChangeStarts.push(0);
+            return line;
+        }
+
+        const numberStart = orderedMatch[1].length;
+        const oldNumber = orderedMatch[2];
+        const nextNumber = String(level.counter);
+        lineChangeStarts.push(numberStart);
+        if (nextNumber === oldNumber) {
+            lineDeltas.push(0);
+            return line;
+        }
+
+        const delta = nextNumber.length - oldNumber.length;
+        lineDeltas.push(delta);
+        cumulativeDelta += delta;
+        changed = true;
+        return `${line.slice(0, numberStart)}${nextNumber}${line.slice(numberStart + oldNumber.length)}`;
+    });
+
+    if (!changed) return { value, selection };
+
+    const mapPosition = (position: number) => {
+        let lineIndex = 0;
+        for (let index = 0; index < lineStarts.length; index += 1) {
+            if (blockStart + lineStarts[index] <= position) lineIndex = index;
+            else break;
+        }
+
+        const oldLineStart = blockStart + lineStarts[lineIndex];
+        const newLineStart = oldLineStart + lineOffsets[lineIndex];
+        const lineOffset = position - oldLineStart;
+        const lineDelta = lineDeltas[lineIndex];
+        const changeStart = lineChangeStarts[lineIndex];
+        const nextLineOffset = lineDelta !== 0 && lineOffset > changeStart
+            ? Math.max(changeStart, lineOffset + lineDelta)
+            : lineOffset;
+        return newLineStart + nextLineOffset;
+    }
+
+    return replaceRange(value, { start: blockStart, end: blockEnd }, nextLines.join('\n'), {
+        start: mapPosition(selection.start),
+        end: mapPosition(selection.end),
+    });
+}
+
+export const indentListItems = (value: string, selection: SelectionRange): TextEditResult | null => {
+    if (!LIST_ITEM_PATTERN.test(getLineAtPosition(value, selection.start))) return null;
+
+    const result = changeSelectedLines(value, selection, line => (
+        LIST_ITEM_PATTERN.test(line) ? { prefix: LIST_INDENT, removeLength: 0 } : null
+    ));
+    return result ? renumberOrderedListItems(result.value, result.selection) : null;
+}
+
+export const outdentListItems = (value: string, selection: SelectionRange): TextEditResult | null => {
+    if (!LIST_ITEM_PATTERN.test(getLineAtPosition(value, selection.start))) return null;
+
+    const result = changeSelectedLines(value, selection, line => {
+        if (!LIST_ITEM_PATTERN.test(line)) return null;
+        const indent = /^[ \t]{1,4}/.exec(line)?.[0] ?? '';
+        return indent ? { prefix: '', removeLength: indent.length } : null;
+    });
+    return result ? renumberOrderedListItems(result.value, result.selection) : null;
 }
 
 const prefixSelectedLines = (

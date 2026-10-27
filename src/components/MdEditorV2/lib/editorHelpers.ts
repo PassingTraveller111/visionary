@@ -117,7 +117,7 @@ export const findImageTarget = (value: string, cursor: number): ImageTarget | nu
 export const getEnterContinuation = (value: string, selection: SelectionRange) => {
     if (selection.start !== selection.end) return null;
     const cursor = selection.start;
-    const lineStart = value.lastIndexOf('\n', Math.max(0, cursor - 1)) + 1;
+    const lineStart = cursor === 0 ? 0 : value.lastIndexOf('\n', cursor - 1) + 1;
     const currentLineBeforeCursor = value.slice(lineStart, cursor);
     const taskMatch = /^(\s*)([-*+])\s+\[([ xX])\]\s+(.*)$/.exec(currentLineBeforeCursor);
     const unorderedMatch = /^(\s*)([-*+])\s+(.*)$/.exec(currentLineBeforeCursor);

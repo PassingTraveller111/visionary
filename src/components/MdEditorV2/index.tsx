@@ -12,7 +12,7 @@ import type {ApiResponse} from '@/shared/api/response';
 import type {EditorCommand, EditorMode, HighlightRange, ImageTarget, MdEditorV2Props, SelectionRange} from './types';
 import {collectMarkdownHighlightRanges, createMarkdownTable, escapeHtmlAttribute, findImageTarget, findMatches, formatSavedAt, getEnterContinuation, getLineColumn, getRandomId} from './lib/editorHelpers';
 import {compressImageFile, EDITOR_IMAGE_UPLOAD_LIMIT} from './lib/imageCompression';
-import {applyMarkdownCommand, insertTabAtSelection, replaceRange} from './lib/textEdit';
+import {applyMarkdownCommand, indentListItems, insertTabAtSelection, outdentListItems, replaceRange} from './lib/textEdit';
 import DiagramModal from './components/DiagramModal';
 import FindPanel from './components/FindPanel';
 import ImageSizeModal from './components/ImageSizeModal';
@@ -476,7 +476,21 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         if (event.key === 'Tab') {
             event.preventDefault();
             closeInputHistoryGroup();
-            const result = insertTabAtSelection(valueRef.current, getSelection());
+            const selection = getSelection();
+
+            if (event.shiftKey) {
+                const result = outdentListItems(valueRef.current, selection);
+                if (result) applyChange(result.value, result.selection);
+                return;
+            }
+
+            const listResult = indentListItems(valueRef.current, selection);
+            if (listResult) {
+                applyChange(listResult.value, listResult.selection);
+                return;
+            }
+
+            const result = insertTabAtSelection(valueRef.current, selection);
             applyChange(result.value, result.selection);
             return;
         }
