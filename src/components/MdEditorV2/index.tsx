@@ -85,16 +85,33 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         };
     }, []);
 
-    const focusSelection = useCallback((selection: SelectionRange) => {
+    const focusSelection = useCallback((selection: SelectionRange, options?: { center?: boolean; anchorTop?: number; anchorLeft?: number }) => {
+        const anchorTop = options?.anchorTop ?? textareaRef.current?.scrollTop ?? 0;
+        const anchorLeft = options?.anchorLeft ?? textareaRef.current?.scrollLeft ?? 0;
         window.setTimeout(() => {
             const textarea = textareaRef.current;
             if (!textarea) return;
             textarea.focus();
             textarea.setSelectionRange(selection.start, selection.end);
             const lineCount = valueRef.current.slice(0, selection.start).split('\n').length;
-            const lineHeight = Number.parseFloat(window.getComputedStyle(textarea).lineHeight) || 28;
-            const targetTop = Math.max(0, (lineCount - 1) * lineHeight - textarea.clientHeight / 2);
-            textarea.scrollTop = targetTop;
+            const computedStyle = window.getComputedStyle(textarea);
+            const lineHeight = Number.parseFloat(computedStyle.lineHeight) || 28;
+            const paddingTop = Number.parseFloat(computedStyle.paddingTop) || 0;
+            const caretTop = paddingTop + (lineCount - 1) * lineHeight;
+            const caretBottom = caretTop + lineHeight;
+            const viewportHeight = textarea.clientHeight;
+
+            let nextScrollTop = anchorTop;
+            if (options?.center) {
+                nextScrollTop = caretTop - viewportHeight / 2 + lineHeight / 2;
+            } else if (caretTop < anchorTop) {
+                nextScrollTop = caretTop - paddingTop;
+            } else if (caretBottom > anchorTop + viewportHeight) {
+                nextScrollTop = caretBottom - viewportHeight + lineHeight;
+            }
+
+            textarea.scrollTop = Math.max(0, nextScrollTop);
+            textarea.scrollLeft = anchorLeft;
             if (highlightRef.current) {
                 highlightRef.current.scrollTop = textarea.scrollTop;
                 highlightRef.current.scrollLeft = textarea.scrollLeft;
@@ -141,6 +158,8 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
 
     const applyChange = useCallback((nextValue: string, selection?: SelectionRange, recordHistory = true, historySelection?: SelectionRange) => {
         const previousValue = valueRef.current;
+        const anchorTop = textareaRef.current?.scrollTop;
+        const anchorLeft = textareaRef.current?.scrollLeft;
         if (recordHistory && nextValue !== previousValue) {
             pushUndoEntry({
                 value: previousValue,
@@ -151,14 +170,16 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         valueRef.current = nextValue;
         onChange(nextValue);
         onSaveDraft(nextValue);
-        if (selection) focusSelection(selection);
+        if (selection) focusSelection(selection, { anchorTop, anchorLeft });
     }, [focusSelection, getSelection, onChange, onSaveDraft, pushUndoEntry]);
 
     const restoreHistoryEntry = useCallback((entry: EditHistoryEntry) => {
+        const anchorTop = textareaRef.current?.scrollTop;
+        const anchorLeft = textareaRef.current?.scrollLeft;
         valueRef.current = entry.value;
         onChange(entry.value);
         onSaveDraft(entry.value);
-        focusSelection(entry.selection);
+        focusSelection(entry.selection, { anchorTop, anchorLeft });
     }, [focusSelection, onChange, onSaveDraft]);
 
     const undo = useCallback(() => {
@@ -271,7 +292,7 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
         if (nextMatches.length === 0) return;
         const normalizedIndex = (matchIndex + nextMatches.length) % nextMatches.length;
         setCurrentMatchIndex(normalizedIndex);
-        focusSelection(nextMatches[normalizedIndex]);
+        focusSelection(nextMatches[normalizedIndex], { center: true });
     }, [focusSelection, matches]);
 
     const findNext = useCallback(() => {
@@ -454,32 +475,79 @@ const MdEditorV2 = (props: MdEditorV2Props) => {
 
         if (!isModKey) return;
         const key = event.key.toLowerCase();
-        if (key === 'z') {
-            event.preventDefault();
-            if (event.shiftKey) redo();
-            else undo();
+
+        if (event.altKey) {
+            if (!event.shiftKey && key === 't') {
+                event.preventDefault();
+                setTableModalOpen(true);
+            }
             return;
         }
-        if (key === 'y') {
-            event.preventDefault();
-            redo();
+
+        if (event.shiftKey) {
+            if (key === 'z') {
+                event.preventDefault();
+                redo();
+            } else if (key === 'u') {
+                event.preventDefault();
+                runCommand('ul');
+            } else if (key === 'o') {
+                event.preventDefault();
+                runCommand('ol');
+            } else if (key === 'k') {
+                event.preventDefault();
+                runCommand('inlineCode');
+            } else if (key === 'c') {
+                event.preventDefault();
+                runCommand('blockCode');
+            } else if (key === 'i') {
+                event.preventDefault();
+                fileInputRef.current?.click();
+            }
             return;
         }
-        if (key === 'b') {
-            event.preventDefault();
-            runCommand('bold');
-        }
-        if (key === 'i') {
-            event.preventDefault();
-            runCommand('italic');
-        }
-        if (key === 's') {
-            event.preventDefault();
-            onSaveDraft(valueRef.current);
-        }
-        if (key === 'f') {
-            event.preventDefault();
-            setFindPanelOpen(true);
+
+        switch (key) {
+            case 'z':
+                event.preventDefault();
+                undo();
+                break;
+            case 'y':
+                event.preventDefault();
+                redo();
+                break;
+            case 'b':
+                event.preventDefault();
+                runCommand('bold');
+                break;
+            case 'i':
+                event.preventDefault();
+                runCommand('italic');
+                break;
+            case 'k':
+                event.preventDefault();
+                runCommand('link');
+                break;
+            case 's':
+                event.preventDefault();
+                onSaveDraft(valueRef.current);
+                break;
+            case 'f':
+                event.preventDefault();
+                setFindPanelOpen(true);
+                break;
+            case '1':
+                event.preventDefault();
+                runCommand('h1');
+                break;
+            case '2':
+                event.preventDefault();
+                runCommand('h2');
+                break;
+            case '3':
+                event.preventDefault();
+                runCommand('h3');
+                break;
         }
     }, [applyChange, closeInputHistoryGroup, getSelection, onSaveDraft, redo, runCommand, undo]);
 

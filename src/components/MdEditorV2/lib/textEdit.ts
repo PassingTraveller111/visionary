@@ -54,6 +54,25 @@ const wrapSelection = (value: string, selection: SelectionRange, before: string,
     return replaceRange(value, safeSelection, insertText, { start, end });
 }
 
+const wrapBlockCode = (value: string, selection: SelectionRange): TextEditResult => {
+    const safeSelection = normalizeSelection(selection, value.length);
+    const selectedText = value.slice(safeSelection.start, safeSelection.end);
+    const before = value.slice(0, safeSelection.start);
+    const after = value.slice(safeSelection.end);
+    const prefix = before && !before.endsWith('\n') ? '\n' : '';
+    const suffix = after && !after.startsWith('\n') ? '\n' : '';
+    const content = selectedText || '代码块';
+    const fence = '```';
+    const language = 'js';
+    const insertText = `${prefix}${fence}${language}\n${content}\n${fence}${suffix}`;
+    const contentStart = safeSelection.start + prefix.length + fence.length + language.length + 1;
+
+    return replaceRange(value, safeSelection, insertText, {
+        start: contentStart,
+        end: contentStart + content.length,
+    });
+}
+
 const getSelectedLineRange = (value: string, selection: SelectionRange) => {
     const safeSelection = normalizeSelection(selection, value.length);
     const lineStart = value.lastIndexOf('\n', Math.max(0, safeSelection.start - 1)) + 1;
@@ -160,7 +179,7 @@ export const applyMarkdownCommand = (
         case 'inlineCode':
             return wrapSelection(value, selection, '`', '`', 'code');
         case 'blockCode':
-            return insertBlock(value, selection, '```\n代码块\n```\n');
+            return wrapBlockCode(value, selection);
         case 'table':
             return insertBlock(value, selection, '| 标题 | 标题 |\n| --- | --- |\n| 内容 | 内容 |\n');
         case 'formula':

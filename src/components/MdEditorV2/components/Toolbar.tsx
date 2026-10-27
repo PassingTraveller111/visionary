@@ -22,9 +22,9 @@ type MarkdownToolbarProps = {
 };
 
 const titleItems: MenuProps['items'] = [
-    { key: 'h1', label: '一级标题' },
-    { key: 'h2', label: '二级标题' },
-    { key: 'h3', label: '三级标题' },
+    { key: 'h1', label: '一级标题 Ctrl/Cmd + 1' },
+    { key: 'h2', label: '二级标题 Ctrl/Cmd + 2' },
+    { key: 'h3', label: '三级标题 Ctrl/Cmd + 3' },
 ];
 
 const MarkdownToolbar = (props: MarkdownToolbarProps) => {
@@ -43,17 +43,17 @@ const MarkdownToolbar = (props: MarkdownToolbarProps) => {
             <Tooltip title="加粗 Ctrl/Cmd + B"><Button size="small" onClick={() => onCommand('bold')}>B</Button></Tooltip>
             <Tooltip title="斜体 Ctrl/Cmd + I"><Button size="small" onClick={() => onCommand('italic')}>I</Button></Tooltip>
             <Tooltip title="删除线"><Button size="small" onClick={() => onCommand('delete')}>S</Button></Tooltip>
-            <Button size="small" onClick={() => onCommand('ul')}>无序列表</Button>
-            <Button size="small" onClick={() => onCommand('ol')}>有序列表</Button>
+            <Tooltip title="无序列表 Ctrl/Cmd + Shift + U"><Button size="small" onClick={() => onCommand('ul')}>无序列表</Button></Tooltip>
+            <Tooltip title="有序列表 Ctrl/Cmd + Shift + O"><Button size="small" onClick={() => onCommand('ol')}>有序列表</Button></Tooltip>
             <Button size="small" onClick={() => onCommand('taskList')}>任务列表</Button>
             <Button size="small" onClick={() => onCommand('quote')}>引用</Button>
             <Button size="small" onClick={() => onCommand('divider')}>分割线</Button>
-            <Button size="small" onClick={() => onCommand('link')}>链接</Button>
-            <Button size="small" onClick={() => onCommand('inlineCode')}>行内代码</Button>
-            <Button size="small" onClick={() => onCommand('blockCode')}>代码块</Button>
-            <Button size="small" onClick={onTableClick}>表格</Button>
+            <Tooltip title="链接 Ctrl/Cmd + K"><Button size="small" onClick={() => onCommand('link')}>链接</Button></Tooltip>
+            <Tooltip title="行内代码 Ctrl/Cmd + Shift + K"><Button size="small" onClick={() => onCommand('inlineCode')}>行内代码</Button></Tooltip>
+            <Tooltip title="代码块 Ctrl/Cmd + Shift + C"><Button size="small" onClick={() => onCommand('blockCode')}>代码块</Button></Tooltip>
+            <Tooltip title="表格 Ctrl/Cmd + Alt + T"><Button size="small" onClick={onTableClick}>表格</Button></Tooltip>
             <Button size="small" onClick={() => onCommand('formula')}>公式</Button>
-            <Button size="small" onClick={onImageClick}>图片</Button>
+            <Tooltip title="图片 Ctrl/Cmd + Shift + I"><Button size="small" onClick={onImageClick}>图片</Button></Tooltip>
             <Button size="small" onClick={onImageSizeClick}>图片尺寸</Button>
             <Button size="small" onClick={onDiagramClick}>图表</Button>
         </Space>
